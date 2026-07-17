@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Product Details | Flipkart Clone</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- =========================
+         Navbar
+    ========================== -->
+    <nav id="main-nav">
+        <!-- Logo -->
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart" class="brand-img">
+            <div class="logo-sub">
+                Explore <span>Plus</span>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/plus_aef861.png" alt="plus-icon" class="plus-icon">
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="search" placeholder="Search for products, brands and more" autocomplete="off">
+            <i class="fas fa-search search-icon"></i>
+            <div id="suggestions"></div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="nav-right">
+            <div id="user-area">
+                <button onclick="openLogin()" class="login-btn">Login</button>
+            </div>
+
+            <button onclick="window.location.href='orders.html'" class="nav-btn">
+                <i class="fas fa-box"></i> Orders
+            </button>
+            <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
+                <i class="fas fa-shopping-cart cart-icon"></i> Cart
+            </button>
+        </div>
+    </nav>
+
+
+
+    <!-- =========================
+         Product Details Page
+    ========================== -->
+
+    <div class="product-page">
+
+        <div id="product-details"></div>
+
+    </div>
+
+
+
+    <!-- =========================
+         JavaScript
+    ========================== -->
+
+
+
+    <script src="js/script.js"></script>
+    <script src="js/product.js"></script>
+
+    <!-- Modals -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Login</h1>
+                <p>Unlock personalized recommendations, track orders and manage your wishlist.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeLogin()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="login-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="login-password" placeholder="Enter Password">
+                <button onclick="loginUser()">Login</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    New to Flipkart? <span onclick="openSignup()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Create an account</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Sign Up</h1>
+                <p>Join the world's most loved shopping community and enjoy exclusive benefits.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeSignup()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="signup-name" placeholder="Full Name">
+                <input type="text" id="signup-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="signup-password" placeholder="Set Password">
+                <button onclick="signupUser()">Create Account</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    Already have an account? <span onclick="openLogin()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Login here</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>ABOUT</h3>
+                <ul>
+                    <li>Contact Us</li>
+                    <li>About Us</li>
+                    <li>Careers</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>HELP</h3>
+                <ul>
+                    <li>Payments</li>
+                    <li>Shipping</li>
+                    <li>Returns</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>SOCIAL</h3>
+                <ul>
+                    <li>Facebook</li>
+                    <li>Twitter</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Flipkart-Clone. All Rights Reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

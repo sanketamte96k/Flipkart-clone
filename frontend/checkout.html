@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+    <nav>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart" class="brand-img">
+            <div class="logo-sub">
+                Explore <span>Plus</span>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/plus_aef861.png" alt="plus-icon" class="plus-icon">
+            </div>
+        </div>
+        <h2>Checkout</h2>
+    </nav>
+
+    <!-- =========================
+         CHECKOUT CONTAINER
+    ========================== -->
+    <div class="cart-container">
+        <!-- LEFT: Address Form -->
+        <div class="cart-left">
+            <div class="checkout-step active" style="padding: 24px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <span style="background: #2874f0; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">1</span>
+                    <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">DELIVERY ADDRESS</h3>
+                </div>
+                <div class="step-body" style="padding-left: 40px;">
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <input type="text" id="name" placeholder="Name" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
+                        <input type="text" id="mobile" placeholder="10-digit mobile number" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <input type="text" id="pincode" placeholder="Pincode" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
+                        <input type="text" id="locality" placeholder="Locality" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
+                    </div>
+                    <textarea id="address" placeholder="Address (Area and Street)" style="width: 100%; height: 80px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none; margin-bottom: 20px; font-family: inherit;"></textarea>
+                    
+                    <button class="checkout-btn" onclick="placeOrder()" style="padding: 16px 40px;">DELIVER HERE</button>
+                </div>
+            </div>
+            
+            <div class="checkout-step" style="padding: 16px 24px; background: white; border-top: 1px solid #f0f0f0;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="background: #f0f0f0; color: #212121; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">2</span>
+                    <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">ORDER SUMMARY</h3>
+                </div>
+            </div>
+            
+            <div class="checkout-step" style="padding: 16px 24px; background: white; border-top: 1px solid #f0f0f0;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="background: #f0f0f0; color: #212121; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">3</span>
+                    <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">PAYMENT OPTIONS</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Price Details -->
+        <div class="cart-right">
+            <div class="price-details-card">
+                <h3>PRICE DETAILS</h3>
+                <hr style="border: none; border-top: 1px solid #f0f0f0; margin-bottom: 20px;">
+                <div class="price-row">
+                    <span>Price (<span id="summary-count">0</span> items)</span>
+                    <span id="summary-price">₹0</span>
+                </div>
+                <div class="price-row">
+                    <span>Delivery Charges</span>
+                    <span class="free-text"><del>₹40</del> Free</span>
+                </div>
+                <hr style="margin: 15px 0; border: none; border-top: 1px dashed #e0e0e0;">
+                <div class="price-row total-row">
+                    <span>Amount Payable</span>
+                    <span id="checkout-total">₹0</span>
+                </div>
+            </div>
+            <div class="safety-banner">
+                <i class="fas fa-shield-alt" style="color: #878787;"></i> Safe and Secure Payments. Easy returns. 100% Authentic products.
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+    <script src="js/script.js"></script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let total = 0;
+
+        document.getElementById("summary-count").innerText = cart.length;
+
+        cart.forEach(product => {
+            total += product.price * product.quantity;
+        });
+
+        document.getElementById("summary-price").innerText = "₹" + total.toLocaleString();
+        document.getElementById("checkout-total").innerText = "₹" + total.toLocaleString();
+
+        function placeOrder() {
+            let name = document.getElementById("name").value.trim();
+            let mobile = document.getElementById("mobile").value.trim();
+            let address = document.getElementById("address").value.trim();
+
+            if (name === "" || mobile === "" || address === "") {
+                showToast("Please fill all address details securely.", "error");
+                return;
+            }
+
+            let orderDetails = { name, mobile, address, total };
+            localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
+            window.location.href = "payment.html";
+        }
+    </script>
+</body>
+</html>

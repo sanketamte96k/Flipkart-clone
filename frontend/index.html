@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipkart Clone | Premium Shopping Experience</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- =========================
+         TOP TICKER BANNER
+    ========================== -->
+    <div class="top-ticker">
+        <div class="ticker-content">
+            ✨ BIG BILLION DAYS ARE LIVE! | 10% Instant Discount on SBI Cards | FREE Delivery on your first order! | Up to 80% Off on Top Electronics | Trendy Fashion starting at ₹499 ✨
+        </div>
+    </div>
+
+    <!-- =========================
+         Navbar
+    ========================== -->
+    <nav id="main-nav">
+        <!-- Logo -->
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart" class="brand-img">
+            <div class="logo-sub">
+                Explore <span>Plus</span>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/plus_aef861.png" alt="plus-icon" class="plus-icon">
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="search" placeholder="Search for products, brands and more" autocomplete="off">
+            <i class="fas fa-search search-icon"></i>
+            <div id="suggestions"></div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="nav-right">
+            <div id="user-area">
+                <button onclick="openLogin()" class="login-btn">Login</button>
+            </div>
+
+            <button onclick="window.location.href='orders.html'" class="nav-btn">
+                <i class="fas fa-box"></i> Orders
+            </button>
+            <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
+                <i class="fas fa-shopping-cart cart-icon"></i> Cart
+            </button>
+        </div>
+    </nav>
+
+    <!-- =========================
+         Hero Slider
+    ========================== -->
+    <div class="slider-container">
+        <div class="slider">
+            <!-- Slide 1: Tech & Gadgets -->
+            <div class="slide" style="background: linear-gradient(135deg, #0b1329, #1e293b);">
+                <div class="hero-text">
+                    <h1>The Big Billion Days 2026</h1>
+                    <p>Upgrade your lifestyle with exclusive deals on premium smartphones, laptops, and accessories.</p>
+                    <button onclick="document.getElementById('products-section').scrollIntoView({ behavior: 'smooth' })">Shop the Sale</button>
+                </div>
+                <div class="hero-image">
+                    <img src="images/tech_banner.png" alt="Tech Showcase">
+                </div>
+            </div>
+
+            <!-- Slide 2: Luxury Fashion -->
+            <div class="slide" style="background: linear-gradient(135deg, #2e1009, #4c1d11);">
+                <div class="hero-text">
+                    <h1>Fashion Forward</h1>
+                    <p>Flat 50% OFF on Top International Brands. Minimalist & Premium Apparel.</p>
+                    <button onclick="filterProducts('Fashion'); document.getElementById('products-section').scrollIntoView({ behavior: 'smooth' })">Explore Styles</button>
+                </div>
+                <div class="hero-image">
+                    <img src="images/fashion_banner.png" alt="Fashion Showcase">
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-dots">
+            <span class="dot active" onclick="setSlide(0)"></span>
+            <span class="dot" onclick="setSlide(1)"></span>
+        </div>
+
+        <button class="slider-arrow prev" onclick="prevSlide()">❮</button>
+        <button class="slider-arrow next" onclick="nextSlide()">❯</button>
+    </div>
+
+    <!-- =========================
+         Category Filters
+    ========================== -->
+    <div class="main-container" id="products-section">
+        <!-- Sidebar: Sort & Refine -->
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h3>Refine Results</h3>
+                
+                <div class="filter-group">
+                    <h4>Sort By</h4>
+                    <div class="filter-options">
+                        <label><input type="radio" name="sort" value="newest" checked onclick="applySort('newest')"> Newest First</label>
+                        <label><input type="radio" name="sort" value="price-low" onclick="applySort('price-low')"> Price: Low to High</label>
+                        <label><input type="radio" name="sort" value="price-high" onclick="applySort('price-high')"> Price: High to Low</label>
+                        <label><input type="radio" name="sort" value="rating" onclick="applySort('rating')"> Popularity</label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h4>Price Range</h4>
+                    <div class="price-range">
+                        <input type="number" id="min-price" placeholder="Min" oninput="applyFiltersAndSort()">
+                        <span>to</span>
+                        <input type="number" id="max-price" placeholder="Max" oninput="applyFiltersAndSort()">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h4>Customer Ratings</h4>
+                    <div class="filter-options">
+                        <label><input type="checkbox" value="4" onclick="applyFiltersAndSort()"> 4★ & above</label>
+                        <label><input type="checkbox" value="3" onclick="applyFiltersAndSort()"> 3★ & above</label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content: Category Tabs & Products -->
+        <main class="products-area">
+            <div class="category-tabs-bar">
+                <button class="cat-tab active" onclick="filterProducts('All', this)">All Collections</button>
+                <button class="cat-tab" onclick="filterProducts('Mobile', this)">Mobiles & Accessories</button>
+                <button class="cat-tab" onclick="filterProducts('Laptop', this)">Laptops & PCs</button>
+                <button class="cat-tab" onclick="filterProducts('Fashion', this)">Fashion & Wear</button>
+                <button class="cat-tab" onclick="filterProducts('Beauty', this)">Beauty & Personal Care</button>
+            </div>
+            
+            <div id="products"></div>
+        </main>
+    </div>
+
+    <!-- =========================
+         Modals
+    ========================== -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Login</h1>
+                <p>Unlock personalized recommendations, track orders and manage your wishlist.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeLogin()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="login-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="login-password" placeholder="Enter Password">
+                <button onclick="loginUser()">Login</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    New to Flipkart? <span onclick="openSignup()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Create an account</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Sign Up</h1>
+                <p>Join the world's most loved shopping community and enjoy exclusive benefits.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeSignup()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="signup-name" placeholder="Full Name">
+                <input type="text" id="signup-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="signup-password" placeholder="Set Password">
+                <button onclick="signupUser()">Create Account</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    Already have an account? <span onclick="openLogin()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Login here</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- =========================
+         Footer
+    ========================== -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>ABOUT</h3>
+                <ul>
+                    <li>Contact Us</li>
+                    <li>About Us</li>
+                    <li>Careers</li>
+                    <li>Press</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>HELP</h3>
+                <ul>
+                    <li>Payments</li>
+                    <li>Shipping</li>
+                    <li>Cancellations</li>
+                    <li>FAQ</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>POLICY</h3>
+                <ul>
+                    <li>Return Policy</li>
+                    <li>Terms Of Use</li>
+                    <li>Privacy</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>SOCIAL</h3>
+                <ul>
+                    <li>Facebook</li>
+                    <li>Twitter</li>
+                    <li>YouTube</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Flipkart-Clone. Engineered for Excellence.
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | Flipkart Clone</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="orders-body-bg">
+    <!-- =========================
+         Navbar
+    ========================== -->
+    <nav id="main-nav">
+        <!-- Logo -->
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart" class="brand-img">
+            <div class="logo-sub">
+                Explore <span>Plus</span>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/plus_aef861.png" alt="plus-icon" class="plus-icon">
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="search" placeholder="Search for products, brands and more" autocomplete="off">
+            <i class="fas fa-search search-icon"></i>
+            <div id="suggestions"></div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="nav-right">
+            <div id="user-area">
+                <button onclick="openLogin()" class="login-btn">Login</button>
+            </div>
+
+            <button onclick="window.location.href='orders.html'" class="nav-btn">
+                <i class="fas fa-box"></i> Orders
+            </button>
+            <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
+                <i class="fas fa-shopping-cart cart-icon"></i> Cart
+            </button>
+        </div>
+    </nav>
+
+    <!-- =========================
+         ORDERS CONTENT
+    ========================== -->
+    <main class="pro-orders-main">
+        <div class="pro-orders-header">
+            <h1>My Orders</h1>
+            <p>Track, manage and review your purchases</p>
+        </div>
+
+        <div id="orders-container" class="pro-orders-list">
+            <!-- Orders will be injected here -->
+        </div>
+    </main>
+
+    <!-- =========================
+         ULTRA-PRO REVIEW MODAL
+    ========================== -->
+    <div id="review-modal" class="pro-modal-overlay">
+        <div class="pro-review-sheet animate-slide-up">
+            <div class="pro-modal-top">
+                <h2>Rate & Review</h2>
+                <button class="pro-close-btn" onclick="closeReviewModal()"><i class="fa fa-times"></i></button>
+            </div>
+
+            <div class="pro-modal-body">
+                <!-- Product Overview -->
+                <div class="pro-product-summary">
+                    <div class="pro-prod-img">
+                        <img id="review-modal-img" src="" alt="">
+                    </div>
+                    <div class="pro-prod-info">
+                        <h3 id="review-product-name">Product Name</h3>
+                        <span class="pro-verified-badge"><i class="fa fa-check-circle"></i> Verified Purchase</span>
+                    </div>
+                </div>
+
+                <!-- Star Rating -->
+                <section class="pro-rating-section">
+                    <label>How would you rate this product?</label>
+                    <div class="pro-stars" id="star-box">
+                        <span class="pro-star" onclick="setRating(1)" onmouseover="hoverStar(1)" onmouseout="unhoverStar()">★</span>
+                        <span class="pro-star" onclick="setRating(2)" onmouseover="hoverStar(2)" onmouseout="unhoverStar()">★</span>
+                        <span class="pro-star" onclick="setRating(3)" onmouseover="hoverStar(3)" onmouseout="unhoverStar()">★</span>
+                        <span class="pro-star" onclick="setRating(4)" onmouseover="hoverStar(4)" onmouseout="unhoverStar()">★</span>
+                        <span class="pro-star" onclick="setRating(5)" onmouseover="hoverStar(5)" onmouseout="unhoverStar()">★</span>
+                    </div>
+                    <p id="rating-desc" class="pro-rating-label">Select Rating</p>
+                </section>
+
+                <!-- Feedback Text -->
+                <section class="pro-feedback-section">
+                    <label>Share your feedback</label>
+                    <div class="pro-input-group">
+                        <textarea id="review-text-input" placeholder="What did you like or dislike? How was the quality?" oninput="updateCharCount(this)"></textarea>
+                        <span class="pro-char-counter"><span id="char-count">0</span>/500</span>
+                    </div>
+                </section>
+
+                <!-- Photo Upload -->
+                <section class="pro-photo-section">
+                    <label>Add Photos</label>
+                    <div class="pro-upload-grid">
+                        <div class="pro-upload-box" onclick="document.getElementById('review-file-input').click()">
+                            <i class="fa fa-camera-retro"></i>
+                            <span>Add Photo</span>
+                            <input type="file" id="review-file-input" multiple accept="image/*" style="display:none" onchange="handleFileSelect(event)">
+                        </div>
+                        <div id="preview-gallery" class="pro-gallery"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="pro-modal-footer">
+                <button class="pro-cancel-btn" onclick="closeReviewModal()">Cancel</button>
+                <button class="pro-submit-btn" onclick="submitReview()">Submit Review</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Login</h1>
+                <p>Unlock personalized recommendations, track orders and manage your wishlist.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeLogin()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="login-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="login-password" placeholder="Enter Password">
+                <button onclick="loginUser()">Login</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    New to Flipkart? <span onclick="openSignup()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Create an account</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Sign Up</h1>
+                <p>Join the world's most loved shopping community and enjoy exclusive benefits.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeSignup()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="signup-name" placeholder="Full Name">
+                <input type="text" id="signup-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="signup-password" placeholder="Set Password">
+                <button onclick="signupUser()">Create Account</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    Already have an account? <span onclick="openLogin()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Login here</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="js/script.js"></script>
+    <script>
+        let orders = JSON.parse(localStorage.getItem("orders")) || [];
+        let selectedRating = 0;
+        const ratingMap = {
+            1: { text: "Terrible", color: "#ff6161" },
+            2: { text: "Poor", color: "#ff9f00" },
+            3: { text: "Fair", color: "#ff9f00" },
+            4: { text: "Good", color: "#388e3c" },
+            5: { text: "Excellent", color: "#388e3c" }
+        };
+
+        function renderOrders() {
+            const container = document.getElementById("orders-container");
+            container.innerHTML = "";
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="pro-empty-state">
+                        <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/myorders-empty_83141f.png">
+                        <h2>No orders found</h2>
+                        <p>Looks like you haven't placed any orders yet.</p>
+                        <button onclick="location.href='index.html'">Start Shopping</button>
+                    </div>
+                `;
+                return;
+            }
+
+            orders.slice().reverse().forEach((order, index) => {
+                let orderTime = new Date(order.date).getTime();
+                let now = new Date().getTime();
+                let diff = (now - orderTime) / (1000 * 60);
+                let isDelivered = diff >= 5;
+
+                container.innerHTML += `
+                    <div class="pro-order-card" style="display: flex; align-items: flex-start; justify-content: space-between; padding: 20px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: box-shadow 0.2s;">
+                        <div style="display: flex; gap: 20px; flex: 2; cursor: pointer;" onclick="window.location.href='track.html?id=${index}'">
+                            <img src="${order.products[0].image}" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h3 style="font-size: 1rem; color: #212121; margin-bottom: 5px; font-weight: 500;">${order.products[0].name}</h3>
+                                <p style="font-size: 0.85rem; color: #878787;">Color: Standard</p>
+                                <p style="font-size: 0.85rem; color: #878787;">Seller: RetailNet</p>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1; font-weight: 600; font-size: 1.1rem; color: #212121;">
+                            ₹${order.total.toLocaleString()}
+                        </div>
+                        
+                        <div style="flex: 1.5; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="font-weight: 600; font-size: 0.95rem; color: #212121; display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: ${isDelivered ? '#26a541' : '#ff9f00'};"></div>
+                                ${isDelivered ? 'Delivered on Oct 24' : 'Delivery expected by Oct 28'}
+                            </div>
+                            <p style="font-size: 0.8rem; color: #212121;">Your item has been ${isDelivered ? 'delivered' : 'shipped'}</p>
+                            ${isDelivered ? `<button style="background: none; border: none; color: #2874f0; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 10px;" onclick="openReviewModal('${order.products[0].name}', '${order.products[0].image}')">★ Rate & Review Product</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openReviewModal(name, img) {
+            document.getElementById("review-product-name").innerText = name;
+            document.getElementById("review-modal-img").src = img;
+            document.getElementById("review-modal").style.display = "flex";
+            resetModal();
+        }
+
+        function closeReviewModal() {
+            document.getElementById("review-modal").style.display = "none";
+        }
+
+        function resetModal() {
+            selectedRating = 0;
+            document.getElementById("review-text-input").value = "";
+            document.getElementById("char-count").innerText = "0";
+            document.getElementById("preview-gallery").innerHTML = "";
+            document.getElementById("rating-desc").innerText = "Select Rating";
+            document.getElementById("rating-desc").style.color = "#878787";
+            updateStars(0);
+        }
+
+        function hoverStar(n) {
+            updateStars(n);
+            document.getElementById("rating-desc").innerText = ratingMap[n].text;
+            document.getElementById("rating-desc").style.color = ratingMap[n].color;
+        }
+
+        function unhoverStar() {
+            updateStars(selectedRating);
+            document.getElementById("rating-desc").innerText = selectedRating ? ratingMap[selectedRating].text : "Select Rating";
+            document.getElementById("rating-desc").style.color = selectedRating ? ratingMap[selectedRating].color : "#878787";
+        }
+
+        function setRating(n) {
+            selectedRating = n;
+            updateStars(n);
+        }
+
+        function updateStars(n) {
+            const stars = document.querySelectorAll(".pro-star");
+            stars.forEach((s, i) => {
+                if (i < n) {
+                    s.classList.add("active");
+                    s.style.color = ratingMap[n || selectedRating || 1]?.color || "#c2c2c2";
+                } else {
+                    s.classList.remove("active");
+                    s.style.color = "#c2c2c2";
+                }
+            });
+        }
+
+        function updateCharCount(el) {
+            document.getElementById("char-count").innerText = el.value.length;
+        }
+
+        function handleFileSelect(e) {
+            const gallery = document.getElementById("preview-gallery");
+            const files = e.target.files;
+            for (let f of files) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const div = document.createElement("div");
+                    div.className = "pro-gallery-item";
+                    div.innerHTML = `<img src="${event.target.result}"><span onclick="this.parentElement.remove()"><i class="fa fa-times"></i></span>`;
+                    gallery.appendChild(div);
+                };
+                reader.readAsDataURL(f);
+            }
+        }
+
+        function submitReview() {
+            if (!selectedRating) {
+                showToast("Please select a rating to continue");
+                return;
+            }
+            showToast("Success! Your review has been submitted.");
+            closeReviewModal();
+        }
+
+
+
+        renderOrders();
+    </script>
+</body>
+</html>

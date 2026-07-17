@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+    <nav>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart" class="brand-img">
+            <div class="logo-sub">
+                Explore <span>Plus</span>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/plus_aef861.png" alt="plus-icon" class="plus-icon">
+            </div>
+        </div>
+        <h2>Payment</h2>
+    </nav>
+
+    <!-- =========================
+         PAYMENT CONTAINER
+    ========================== -->
+    <div class="cart-container">
+        <!-- LEFT: Payment Options -->
+        <div class="cart-left">
+            <div class="checkout-step" style="padding: 16px 24px; background: white; border-bottom: 1px solid #f0f0f0;">
+                <div style="display: flex; align-items: center; gap: 15px; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="background: #f0f0f0; color: #212121; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">1</span>
+                        <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">DELIVERY ADDRESS</h3>
+                    </div>
+                    <i class="fas fa-check" style="color: #2874f0;"></i>
+                </div>
+            </div>
+            
+            <div class="checkout-step" style="padding: 16px 24px; background: white; border-bottom: 1px solid #f0f0f0;">
+                <div style="display: flex; align-items: center; gap: 15px; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="background: #f0f0f0; color: #212121; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">2</span>
+                        <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">ORDER SUMMARY</h3>
+                    </div>
+                    <i class="fas fa-check" style="color: #2874f0;"></i>
+                </div>
+            </div>
+
+            <div class="checkout-step active" style="padding: 24px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <span style="background: #2874f0; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">3</span>
+                    <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">PAYMENT OPTIONS</h3>
+                </div>
+                
+                <div class="step-body" style="padding-left: 40px;">
+                    <!-- Payment Options -->
+                    <div style="border: 1px solid #e0e0e0; border-radius: 2px; overflow: hidden; margin-bottom: 20px;">
+                        <label class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer; background: #f5faff;">
+                            <input type="radio" name="payment" value="UPI" checked style="width: 18px; height: 18px; accent-color: #2874f0;">
+                            <div>
+                                <h4 style="font-size: 1rem; color: #212121; font-weight: 500;">UPI</h4>
+                                <p style="font-size: 0.8rem; color: #388e3c; margin-top: 2px;">Offers available</p>
+                            </div>
+                        </label>
+                        <label class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer;">
+                            <input type="radio" name="payment" value="Card" style="width: 18px; height: 18px; accent-color: #2874f0;">
+                            <div>
+                                <h4 style="font-size: 1rem; color: #212121; font-weight: 500;">Credit / Debit / ATM Card</h4>
+                                <p style="font-size: 0.8rem; color: #878787; margin-top: 2px;">Add and secure your card as per RBI guidelines</p>
+                            </div>
+                        </label>
+                        <label class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; cursor: pointer;">
+                            <input type="radio" name="payment" value="COD" style="width: 18px; height: 18px; accent-color: #2874f0;">
+                            <div>
+                                <h4 style="font-size: 1rem; color: #212121; font-weight: 500;">Cash on Delivery</h4>
+                                <p style="font-size: 0.8rem; color: #878787; margin-top: 2px;">Pay when the product is delivered</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <button class="checkout-btn" onclick="completePayment()" style="padding: 16px 40px; background: #fb641b;">CONFIRM ORDER</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Price Details -->
+        <div class="cart-right">
+            <div class="price-details-card">
+                <h3>PRICE DETAILS</h3>
+                <hr style="border: none; border-top: 1px solid #f0f0f0; margin-bottom: 20px;">
+                <div class="price-row">
+                    <span>Price (<span id="summary-count">0</span> items)</span>
+                    <span id="summary-price">₹0</span>
+                </div>
+                <div class="price-row">
+                    <span>Delivery Charges</span>
+                    <span class="free-text"><del>₹40</del> Free</span>
+                </div>
+                <hr style="margin: 15px 0; border: none; border-top: 1px dashed #e0e0e0;">
+                <div class="price-row total-row">
+                    <span>Amount Payable</span>
+                    <span id="payment-total-amount">₹0</span>
+                </div>
+            </div>
+            <div class="safety-banner">
+                <i class="fas fa-shield-alt" style="color: #878787;"></i> Safe and Secure Payments. Easy returns. 100% Authentic products.
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+    <script src="js/script.js"></script>
+    <script>
+        let orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+        if (!orderDetails) {
+            window.location.href = "checkout.html";
+        }
+
+        document.getElementById("summary-count").innerText = JSON.parse(localStorage.getItem("cart"))?.length || 1;
+        document.getElementById("summary-price").innerText = "₹" + orderDetails.total.toLocaleString();
+        document.getElementById("payment-total-amount").innerText = "₹" + orderDetails.total.toLocaleString();
+
+        function completePayment() {
+            let paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            let orders = JSON.parse(localStorage.getItem("orders")) || [];
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            let finalOrder = {
+                ...orderDetails,
+                paymentMethod,
+                products: cart,
+                date: new Date().toLocaleString()
+            };
+
+            orders.push(finalOrder);
+            localStorage.setItem("orders", JSON.stringify(orders));
+            localStorage.removeItem("cart");
+
+            showToast("Order Placed Successfully! ✅", "success");
+            setTimeout(() => {
+                window.location.href = "orders.html";
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

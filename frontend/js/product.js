@@ -1,0 +1,690 @@
+let container = document.getElementById("product-details");
+
+// =========================
+// Fetch and Display Product
+// =========================
+
+let currentProductList = [];
+
+async function fetchProductDetails() {
+    try {
+        let response = await fetch('http://127.0.0.1:5000/products');
+        currentProductList = await response.json();
+
+        let params = new URLSearchParams(window.location.search);
+        let productId = params.get("id");
+
+        let product = currentProductList.find(item => item.id == productId);
+
+        if (!product) {
+            container.innerHTML = `<h1 style="padding:40px;">Product Not Found</h1>`;
+            return;
+        }
+
+        displayProduct(product);
+    } catch (error) {
+        console.error('Error fetching product details:', error);
+        container.innerHTML = `<h1 style="padding:40px;">Error loading product details</h1>`;
+    }
+}
+
+function displayProduct(product) {
+    // Set default rating if missing
+    product.rating = product.rating || "4.5 ★";
+
+    // 1. Dynamic Bank Offers based on name and category
+    if (product.name.includes("Watch")) {
+        product.offers = [
+            "Bank Offer 10% off on Axis Bank Credit Cards, up to ₹1,250",
+            "Special Price Get extra ₹1,500 off on exchange of old smartwatches",
+            "Partner Offer Sign up for Flipkart Pay Later and get ₹500 Gift Voucher"
+        ];
+    } else if (product.name.includes("Sony") || product.name.includes("WH-1000")) {
+        product.offers = [
+            "Bank Offer 10% off on HDFC Bank Credit Cards, up to ₹2,000",
+            "Partner Offer Get 3 Months Spotify Premium Subscription Free",
+            "No Cost EMI available on major credit cards"
+        ];
+    } else if (product.category === "Mobile") {
+        product.offers = [
+            "Bank Offer 10% off on HDFC Bank Credit Card EMI Transactions, up to ₹1,500",
+            "Special Price Get extra ₹3,000 off (price inclusive of cashback/coupon)",
+            "Buy this Product and Get Extra ₹500 Off on Next Purchase"
+        ];
+    } else if (product.category === "Laptop") {
+        product.offers = [
+            "Bank Offer 10% off on SBI Credit Card, up to ₹1,750",
+            "Exchange Offer: Up to ₹15,000 off on exchange",
+            "No cost EMI starting from ₹3,333/month"
+        ];
+    } else if (product.category === "Fashion") {
+        product.offers = [
+            "Bank Offer 5% Cashback on Flipkart Axis Bank Card",
+            "Special Price Get extra 10% off on select apparel & footwear",
+            "Buy 2 get 10% off, Buy 3 get 15% off"
+        ];
+    } else {
+        product.offers = [
+            "Bank Offer 10% off on ICICI Bank Credit Cards, up to ₹1,250",
+            "Free Delivery on first order",
+            "Save ₹100 with SuperCoins on your purchase"
+        ];
+    }
+
+    // 2. Respect existing backend specs if provided, else dynamically generate realistic ones
+    if (!product.specs || product.specs.length === 0) {
+        if (product.name.includes("Watch")) {
+            product.specs = [
+                ["Brand", "Apple"],
+                ["Model Name", "Watch Series 8 GPS"],
+                ["Dial Size", "45 mm"],
+                ["Display Type", "Always-On Retina LTPO OLED"],
+                ["Battery Life", "Up to 18 hours"],
+                ["Water Resistant", "Yes, WR50 (50 meters)"]
+            ];
+        } else if (product.name.includes("Sony") || product.name.includes("WH-1000")) {
+            product.specs = [
+                ["Brand", "Sony"],
+                ["Model Name", "WH-1000XM5 Wireless Headphones"],
+                ["Headphone Type", "Over the Ear"],
+                ["Connectivity", "Bluetooth 5.2 & 3.5mm Jack"],
+                ["Battery Life", "Up to 30 Hours (ANC ON)"],
+                ["Noise Cancelling", "Yes, Industry Leading Dual Noise Canceling"]
+            ];
+        } else if (product.category === "Mobile") {
+            // High-fidelity fallback for mobiles
+            const ram = product.name.includes("Pixel") ? "8 GB" : "12 GB";
+            const storage = "128 GB";
+            const processor = product.name.includes("Pixel") ? "Google Tensor G2" : "Snapdragon 8+ Gen 1";
+            product.specs = [
+                ["Model Name", product.name],
+                ["Display Size", "16.51 cm (6.5 inch) OLED"],
+                ["Processor", processor],
+                ["RAM / Storage", `${ram} / ${storage}`],
+                ["Battery", "4500 mAh"]
+            ];
+        } else if (product.category === "Laptop") {
+            const ram = "8 GB";
+            const storage = "512 GB SSD";
+            const cpu = product.name.includes("Vivobook") ? "AMD Ryzen 5" : "Intel Core i5 12th Gen";
+            product.specs = [
+                ["Model Name", product.name],
+                ["Processor", cpu],
+                ["RAM / Storage", `${ram} / ${storage}`],
+                ["Operating System", "Windows 11 Home"],
+                ["Screen Size", "39.62 cm (15.6 inch) FHD Display"]
+            ];
+        } else if (product.category === "Fashion") {
+            const material = product.name.includes("Shoes") || product.name.includes("Sneakers") ? "Mesh & Premium Leather" : "100% Premium Cotton";
+            const type = product.name.includes("Shoes") || product.name.includes("Sneakers") ? "Sports & Lifestyle" : "Casual Apparel";
+            let brand = product.name.split(" ")[0];
+            if (product.name.startsWith("US Polo")) brand = "US Polo Assn";
+            product.specs = [
+                ["Brand", brand],
+                ["Material", material],
+                ["Product Type", type],
+                ["Fit / Size", "Standard Fit"],
+                ["Ideal For", "Men"]
+            ];
+        } else if (product.category === "Beauty") {
+            const type = product.name.includes("Perfume") ? "Eau de Parfum" : "Skincare Gel";
+            const size = product.name.includes("Perfume") ? "100 ml" : "50 g";
+            product.specs = [
+                ["Brand", product.name.split(" ")[0]],
+                ["Product Type", type],
+                ["Volume / Size", size],
+                ["Fragrance Family", product.name.includes("Sauvage") ? "Fresh & Woody" : "Floral & Fresh"],
+                ["Skin Type", "All Skin Types"]
+            ];
+        } else {
+            product.specs = [
+                ["Brand", product.name.split(" ")[0]],
+                ["Warranty", "1 Year Brand Warranty"],
+                ["In the Box", "1 Unit, Charging Cable, User Manual"]
+            ];
+        }
+    }
+
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    let isWishlisted = wishlist.find(item => item.id === product.id);
+    let heartColor = isWishlisted ? "#ff4343" : "#c2c2c2";
+
+    let galleryImages = getProductImages(product);
+
+    container.innerHTML = `
+        <div class="product-page-container">
+            <div class="product-left-section">
+                <div class="gallery-wrapper">
+                    <!-- Left: Gallery Thumbnails -->
+                    <div class="thumbnail-container">
+                        ${galleryImages.map((img, idx) => `
+                            <img src="${img}" 
+                                 class="thumbnail-item ${idx === 0 ? 'active' : ''}" 
+                                 onmouseover="changeMainImage('${img}', this)"
+                                 onclick="changeMainImage('${img}', this)"
+                                 referrerpolicy="no-referrer">
+                        `).join("")}
+                    </div>
+                    
+                    <!-- Right: Main Image Box -->
+                    <div class="main-image-box">
+                        <img src="${product.image}" id="main-product-image" referrerpolicy="no-referrer">
+                    </div>
+                </div>
+                
+                <div class="product-action-buttons">
+                    <button class="add-to-cart-btn" onclick='addToCart(${JSON.stringify(product)})'>
+                        <i class="fas fa-shopping-cart"></i> ADD TO CART
+                    </button>
+                    <button class="buy-now-btn" onclick="window.location.href='checkout.html?id=${product.id}'">
+                        <i class="fas fa-bolt"></i> BUY NOW
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-right-section">
+                <div class="product-header">
+                    <span class="wishlist-btn" style="color: ${heartColor};" onclick="toggleWishlist(event, ${product.id}, this)">♥</span>
+                    <div class="breadcrumb">Home > ${product.category} > ${product.name}</div>
+                    <h1>${product.name}</h1>
+                    <div class="rating-badge">${product.rating} (Verified Buyer)</div>
+                    <div class="price-container">
+                        <span class="current-price">₹${product.price.toLocaleString()}</span>
+                        <span class="original-price">₹${(product.price * 1.3).toFixed(0)}</span>
+                        <span class="discount-percent">30% off</span>
+                    </div>
+                </div>
+
+                <div class="offers-section">
+                    <h3>Available Offers</h3>
+                    <ul>
+                        ${product.offers.map(offer => `
+                            <li>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="#388e3c" style="margin-top: 2px;">
+                                    <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 8.25c-.97 0-1.75-.78-1.75-1.75s.78-1.75 1.75-1.75 1.75.78 1.75 1.75-.78 1.75-1.75 1.75z"/>
+                                </svg>
+                                <span><b>Bank Offer</b> ${offer}</span>
+                            </li>
+                        `).join("")}
+                    </ul>
+                </div>
+
+                <div class="specs-section">
+                    <h3>Specifications</h3>
+                    <table class="specs-table">
+                        ${product.specs.map(spec => `
+                            <tr>
+                                <td class="spec-label">${spec[0]}</td>
+                                <td class="spec-value">${spec[1]}</td>
+                            </tr>
+                        `).join("")}
+                    </table>
+                </div>
+
+                <div class="description-section">
+                    <h3>Description</h3>
+                    <p>
+                        Experience the ultimate in quality and performance with the <b>${product.name}</b>. 
+                        This top-rated product from our ${product.category} collection combines sleek design with 
+                        powerful features to enhance your lifestyle. Includes premium materials and 
+                        industry-leading performance benchmarks.
+                    </p>
+                </div>
+
+                <!-- Customer Reviews Section -->
+                <div class="reviews-section">
+                    <div class="reviews-header">
+                        <h3>Ratings & Reviews</h3>
+                        <div class="rating-summary">
+                            <div class="big-rating">${product.rating}</div>
+                            <div class="rating-info">
+                                <div>2,456 Ratings &</div>
+                                <div>412 Reviews</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Images -->
+                    <div class="customer-images">
+                        <h4>Images from Customers</h4>
+                        <div class="image-gallery" style="display: flex; gap: 10px; margin-top: 15px;">
+                            <img src="${galleryImages[0] || product.image}" alt="user-photo" onclick="openCustomerLightbox(0)" style="width: 64px; height: 64px; object-fit: cover; background: #fff; border-radius: 4px; border: 1px solid #e0e0e0; padding: 2px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" referrerpolicy="no-referrer">
+                            <img src="${galleryImages[1] || product.image}" alt="user-photo" onclick="openCustomerLightbox(1)" style="width: 64px; height: 64px; object-fit: cover; background: #fff; border-radius: 4px; border: 1px solid #e0e0e0; padding: 2px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" referrerpolicy="no-referrer">
+                            <img src="${galleryImages[2] || product.image}" alt="user-photo" onclick="openCustomerLightbox(2)" style="width: 64px; height: 64px; object-fit: cover; background: #fff; border-radius: 4px; border: 1px solid #e0e0e0; padding: 2px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" referrerpolicy="no-referrer">
+                            <div class="more-images" onclick="openCustomerLightbox(3)" style="width: 64px; height: 64px; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${galleryImages[3] || product.image}'); background-size: cover; background-position: center; color: white; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">+38</div>
+                        </div>
+                    </div>
+
+                    <!-- Individual Reviews -->
+                    <div class="user-reviews">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-rating">5 ★</span>
+                                <span class="review-title">Excellent Quality!</span>
+                            </div>
+                            <p class="review-text">Absolutely love this ${product.name}. The quality is exactly as described and it was delivered within 2 days. Highly recommend!</p>
+                            <div class="review-footer">
+                                <span class="user-name">Sanket Amte</span>
+                                <span class="verified-buyer">✔ Verified Buyer</span>
+                                <span class="review-date">Oct, 2023</span>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-rating">4 ★</span>
+                                <span class="review-title">Value for Money</span>
+                            </div>
+                            <p class="review-text">Good product for the price. The packaging was a bit damaged but the product inside was perfect.</p>
+                            <div class="review-footer">
+                                <span class="user-name">Rahul Sharma</span>
+                                <span class="verified-buyer">✔ Verified Buyer</span>
+                                <span class="review-date">Sept, 2023</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+fetchProductDetails();
+
+
+
+function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let countEl = document.getElementById("cart-count");
+    if (countEl) {
+        countEl.innerHTML = `<i class="fas fa-shopping-cart"></i> Cart (${cart.length})`;
+    }
+}
+
+function toggleWishlist(event, productId, element) {
+    if (event) event.stopPropagation();
+    
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    let productIndex = wishlist.findIndex(item => item.id === productId);
+    
+    if (productIndex !== -1) {
+        wishlist.splice(productIndex, 1);
+        element.style.color = "#c2c2c2";
+    } else {
+        let product = currentProductList.find(p => p.id === productId);
+        if (product) {
+            wishlist.push(product);
+            element.style.color = "#ff4343";
+        }
+    }
+    
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+}
+
+// ============================================================
+// Vertical Product Image Gallery Logic
+// ============================================================
+
+function changeMainImage(src, element) {
+    let mainImg = document.getElementById("main-product-image");
+    if (mainImg) {
+        mainImg.src = src;
+    }
+    
+    // Remove active class from all sibling thumbnails
+    let thumbs = document.querySelectorAll(".thumbnail-item");
+    thumbs.forEach(t => t.classList.remove("active"));
+    
+    // Add active class to selected thumbnail
+    if (element) {
+        element.classList.add("active");
+    }
+}
+
+function getProductImages(product) {
+    let images = [];
+    
+    // Curate distinct high-quality related angles for key products
+    if (product.name.includes("iPhone 14")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500", // Side Profile
+            "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500", // Hand close-up
+            "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=500"  // Elegant phone body
+        ];
+    } else if (product.name.includes("Sony") || product.name.includes("WH-1000")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500", // Headphone close-up
+            "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=500", // Wearing lifestyle
+            "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=500"  // Headset desk layout
+        ];
+    } else if (product.name.includes("Watch")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500", // Strap detail
+            "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500", // Health Tracking screen
+            "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500"  // Smart watch face close-up
+        ];
+    } else if (product.name.includes("Nike")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500", // Top shoe sole view
+            "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=500", // Athletic Action
+            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500"  // Premium Box Showcase
+        ];
+    } else if (product.name.includes("MacBook")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500", // Display close-up
+            "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500", // Port Bezel view
+            "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=500"  // Lifestyle coding
+        ];
+    } else if (product.name.includes("Pixel")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1601784551148-7347497686f4?w=500", // Camera Bar visor
+            "https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=500", // Lock Screen layout
+            "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500"  // Side bezel
+        ];
+    } else if (product.name.includes("Chanel")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500", // Designer Cosmetics
+            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500", // Luxury spray
+            "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500"  // Makeup vanity
+        ];
+    } else if (product.name.includes("Bella Vita")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=500", // Spray detail
+            "https://images.unsplash.com/photo-1588405748373-122b2321bc31?w=500", // Organic backdrop
+            "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=500"  // Premium gift packaging
+        ];
+    } else if (product.name.includes("Polo") || product.name.includes("T-Shirt") || product.name.includes("Shirt")) {
+        images = [
+            product.image,
+            "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500", // Folded premium t-shirts
+            "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500", // Hanging white t-shirt
+            "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"  // Man wearing casual shirt
+        ];
+    } else {
+        // Universal fallbacks based on Category
+        if (product.category === "Mobile") {
+            images = [
+                product.image,
+                "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500",
+                "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500",
+                "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=500"
+            ];
+        } else if (product.category === "Laptop") {
+            images = [
+                product.image,
+                "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500",
+                "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500",
+                "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=500"
+            ];
+        } else if (product.category === "Fashion") {
+            images = [
+                product.image,
+                "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500",
+                "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500",
+                "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500"
+            ];
+        } else {
+            images = [
+                product.image,
+                "https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=500",
+                "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=500",
+                "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=500"
+            ];
+        }
+    }
+    
+    return images;
+}
+
+// ============================================================
+// Customer Images Lightbox logic
+// ============================================================
+
+let currentLightboxIndex = 0;
+let customerLightboxImages = [];
+
+function openCustomerLightbox(index) {
+    let params = new URLSearchParams(window.location.search);
+    let productId = params.get("id");
+    let product = currentProductList.find(item => item.id == productId);
+    if (!product) return;
+
+    customerLightboxImages = getProductImages(product);
+    currentLightboxIndex = index;
+
+    // Create modal if it doesn't exist
+    let modal = document.getElementById("customer-lightbox-modal");
+    if (!modal) {
+        // Inject styles
+        const style = document.createElement("style");
+        style.innerHTML = `
+            .lightbox-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(15, 23, 42, 0.94);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            .lightbox-modal.active {
+                display: flex;
+                opacity: 1;
+            }
+            .lightbox-content {
+                position: relative;
+                width: 100%;
+                max-width: 700px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .lightbox-img-wrapper {
+                width: 100%;
+                height: 60vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #fff;
+                border-radius: 12px;
+                padding: 15px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                box-sizing: border-box;
+            }
+            .lightbox-img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                border-radius: 4px;
+                animation: zoomInLight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            @keyframes zoomInLight {
+                from { transform: scale(0.95); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+            .lightbox-close {
+                position: absolute;
+                top: -50px;
+                right: 20px;
+                color: #fff;
+                font-size: 2.2rem;
+                background: none;
+                border: none;
+                cursor: pointer;
+                transition: transform 0.25s, color 0.25s;
+            }
+            .lightbox-close:hover {
+                transform: scale(1.15) rotate(90deg);
+                color: #ff4343;
+            }
+            .lightbox-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                color: #fff;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                cursor: pointer;
+                transition: all 0.25s;
+                user-select: none;
+            }
+            .lightbox-arrow:hover {
+                background: rgba(255, 255, 255, 0.25);
+                border-color: #fff;
+                transform: translateY(-50%) scale(1.1);
+            }
+            .lightbox-arrow:active {
+                transform: translateY(-50%) scale(0.95);
+            }
+            .lightbox-arrow.left {
+                left: -80px;
+            }
+            .lightbox-arrow.right {
+                right: -80px;
+            }
+            .lightbox-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                margin-top: 20px;
+                color: #fff;
+            }
+            .lightbox-caption {
+                font-size: 1rem;
+                font-weight: 500;
+                font-family: 'Inter', sans-serif;
+            }
+            .lightbox-counter {
+                font-size: 0.9rem;
+                opacity: 0.8;
+                font-weight: 600;
+                background: rgba(255, 255, 255, 0.15);
+                padding: 4px 12px;
+                border-radius: 12px;
+            }
+            @media (max-width: 900px) {
+                .lightbox-arrow.left { left: 10px; }
+                .lightbox-arrow.right { right: 10px; }
+                .lightbox-close { top: 10px; right: 10px; font-size: 1.8rem; z-index: 10001; }
+                .lightbox-img-wrapper { height: 50vh; }
+                .lightbox-content { max-width: 95%; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Inject HTML
+        modal = document.createElement("div");
+        modal.id = "customer-lightbox-modal";
+        modal.className = "lightbox-modal";
+        modal.innerHTML = `
+            <div class="lightbox-content">
+                <button class="lightbox-close" onclick="closeCustomerLightbox()">&times;</button>
+                
+                <button class="lightbox-arrow left" onclick="changeCustomerLightboxSlide(-1)">❮</button>
+                <button class="lightbox-arrow right" onclick="changeCustomerLightboxSlide(1)">❯</button>
+                
+                <div class="lightbox-img-wrapper">
+                    <img id="lightbox-main-img" class="lightbox-img" src="" referrerpolicy="no-referrer">
+                </div>
+                
+                <div class="lightbox-footer">
+                    <span class="lightbox-caption" id="lightbox-main-caption">Customer Photo</span>
+                    <span class="lightbox-counter" id="lightbox-main-counter">1 / 4</span>
+                </div>
+            </div>
+        `;
+        
+        // Close modal when clicking outside content (on the modal backdrop)
+        modal.addEventListener("click", function(e) {
+            if (e.target === modal) {
+                closeCustomerLightbox();
+            }
+        });
+        
+        document.body.appendChild(modal);
+
+        // Add keyboard listener
+        document.addEventListener("keydown", function(e) {
+            let activeModal = document.getElementById("customer-lightbox-modal");
+            if (activeModal && activeModal.classList.contains("active")) {
+                if (e.key === "Escape") closeCustomerLightbox();
+                if (e.key === "ArrowLeft") changeCustomerLightboxSlide(-1);
+                if (e.key === "ArrowRight") changeCustomerLightboxSlide(1);
+            }
+        });
+    }
+
+    updateCustomerLightboxSlide();
+    modal.style.display = "flex";
+    setTimeout(() => {
+        modal.classList.add("active");
+    }, 10);
+}
+
+function closeCustomerLightbox() {
+    let modal = document.getElementById("customer-lightbox-modal");
+    if (modal) {
+        modal.classList.remove("active");
+        setTimeout(() => {
+            modal.style.display = "none";
+        }, 300);
+    }
+}
+
+function changeCustomerLightboxSlide(direction) {
+    if (customerLightboxImages.length === 0) return;
+    currentLightboxIndex = (currentLightboxIndex + direction + customerLightboxImages.length) % customerLightboxImages.length;
+    updateCustomerLightboxSlide();
+}
+
+function updateCustomerLightboxSlide() {
+    let img = document.getElementById("lightbox-main-img");
+    let counter = document.getElementById("lightbox-main-counter");
+    let caption = document.getElementById("lightbox-main-caption");
+    
+    if (img && counter && caption && customerLightboxImages.length > 0) {
+        img.style.animation = 'none';
+        img.offsetHeight;
+        img.style.animation = null;
+        
+        img.src = customerLightboxImages[currentLightboxIndex];
+        counter.innerText = `${currentLightboxIndex + 1} / ${customerLightboxImages.length}`;
+        
+        const captions = [
+            "Customer Review Photo - Full View",
+            "Customer Review Photo - Side Angle",
+            "Customer Review Photo - Quality Close-up",
+            "Customer Review Photo - Product Unboxing"
+        ];
+        caption.innerText = captions[currentLightboxIndex] || "Customer Photo";
+    }
+}
