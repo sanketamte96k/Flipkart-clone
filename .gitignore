@@ -1,18 +1,16 @@
-# Python virtual environment
+# Virtual environment
 venv/
 
 # Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+
+# VS Code / IDE
+.vscode/
 
 # Environment variables
 .env
 
-# IDE settings
-.vscode/
-
-# macOS
+# OS files
 .DS_Store
-
-# Windows
 Thumbs.db
