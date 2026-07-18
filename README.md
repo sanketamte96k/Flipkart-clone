@@ -1,44 +1,90 @@
-# Flipkart Clone
+# 🛒 Flipkart Clone
 
-A fully responsive Flipkart Clone built using HTML, CSS, JavaScript (Frontend), and Flask (Backend).
+A modern Flipkart-inspired e-commerce web application built using **HTML, CSS, JavaScript, and Flask**.
 
-## How to Run the Project
+## 🚀 Features
 
-### Method 1: Easy Start (Windows)
-Simply double-click the `run.bat` file in the project's root folder. This script will automatically:
-1. Verify and install python dependencies in the virtual environment.
-2. Open your default web browser to `http://127.0.0.1:5000/`.
-3. Start the Flask backend server.
+- 🏠 Responsive Homepage
+- 🔍 Product Search
+- ❤️ Wishlist
+- 🛒 Shopping Cart
+- 📦 Checkout
+- 💳 Payment Page
+- 📋 Orders Page
+- 🔐 Login & Signup
+- 👤 User Profile
+- 🔥 Product Categories
+- ⚡ Price Sorting
+- 💪 Fitness Product Collection
+- 🌐 Flask REST API Backend
 
-### Method 2: Manual Start (Command Line)
-If you prefer running it manually from the terminal:
+---
 
-1. Open a terminal in the project directory:
-   ```powershell
-   cd c:/PROJECT/Flipkart-clone
-   ```
-2. Activate the virtual environment:
-   - **On Windows:**
-     ```powershell
-     .\venv\Scripts\activate
-     ```
-   - **On macOS/Linux:**
-     ```bash
-     source venv/bin/activate
-     ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Start the Flask application:
-   ```bash
-   python backend/app.py
-   ```
-5. Open your browser and navigate to:
-   ```
-   http://127.0.0.1:5000/
-   ```
+## 🛠 Tech Stack
 
-## Key Project Structure
-- `backend/app.py`: Flask application that serves the frontend files and provides the `/products` API endpoint.
-- `frontend/`: Contains all HTML, CSS, JavaScript, and image assets for the shopping interface.
+### Frontend
+- HTML5
+- CSS3
+- JavaScript
+
+### Backend
+- Python
+- Flask
+- Flask-CORS
+
+---
+
+## 📂 Project Structure
+
+Flipkart-clone/
+├── backend/
+├── frontend/
+│   ├── css/
+│   ├── images/
+│   ├── js/
+│   ├── index.html
+│   ├── cart.html
+│   ├── checkout.html
+│   ├── orders.html
+│   └── payment.html
+├── requirements.txt
+├── run.bat
+└── README.md
+
+---
+
+## ⚙️ Installation
+
+```bash
+git clone https://github.com/sanketamte96k/Flipkart-clone.git
+
+cd Flipkart-clone
+
+python -m venv venv
+
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
+python backend/app.py
+```
+
+Open `frontend/index.html` using Live Server.
+
+---
+
+## 📌 Future Improvements
+
+- Admin Panel
+- MongoDB Integration
+- JWT Authentication
+- Razorpay Payment
+- Product Reviews
+- Order Tracking
+- Email Notifications
+
+---
+
+## 👨‍💻 Author
+
+Sanket Amte
