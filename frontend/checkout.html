@@ -109,6 +109,20 @@
         document.getElementById("summary-price").innerText = "₹" + total.toLocaleString();
         document.getElementById("checkout-total").innerText = "₹" + total.toLocaleString();
 
+        // Auto-fill and remove mobile number field from view if user is logged in
+        let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if (currentUser) {
+            const nameEl = document.getElementById("name");
+            if (nameEl && !nameEl.value) {
+                nameEl.value = currentUser.name;
+            }
+            const mobileEl = document.getElementById("mobile");
+            if (mobileEl) {
+                mobileEl.value = currentUser.mobile;
+                mobileEl.style.display = "none";
+            }
+        }
+
         function placeOrder() {
             let name = document.getElementById("name").value.trim();
             let mobile = document.getElementById("mobile").value.trim();
@@ -119,7 +133,8 @@
                 return;
             }
 
-            let orderDetails = { name, mobile, address, total };
+            let isMinutesEligible = cart.some(p => p.isMinutesEligible);
+            let orderDetails = { name, mobile, address, total, deliveryMethod: isMinutesEligible ? 'Minutes' : 'Standard' };
             localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
             window.location.href = "payment.html";
         }

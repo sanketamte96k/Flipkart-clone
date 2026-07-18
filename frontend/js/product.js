@@ -188,6 +188,18 @@ function displayProduct(product) {
                     <div class="breadcrumb">Home > ${product.category} > ${product.name}</div>
                     <h1>${product.name}</h1>
                     <div class="rating-badge">${product.rating} (Verified Buyer)</div>
+                    
+                    ${product.isMinutesEligible ? `
+                        <div style="background: rgba(40, 116, 240, 0.08); border: 1px solid var(--brand-primary); padding: 12px 15px; border-radius: 6px; margin: 15px 0; display: flex; align-items: center; gap: 12px; max-width: 450px;">
+                            <div style="background: var(--brand-primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: bold;">
+                                ⚡
+                            </div>
+                            <div>
+                                <h5 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 2px;">⚡ Flipkart Minutes Eligible</h5>
+                                <p style="font-size: 0.78rem; color: #388e3c; font-weight: 600; margin: 0;">Get this item delivered to your address in <strong>5 minutes!</strong></p>
+                            </div>
+                        </div>
+                    ` : ''}
                     <div class="price-container">
                         <span class="current-price">₹${product.price.toLocaleString()}</span>
                         <span class="original-price">₹${(product.price * 1.3).toFixed(0)}</span>

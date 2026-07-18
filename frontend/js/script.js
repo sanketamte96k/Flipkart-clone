@@ -155,6 +155,13 @@ function displayProducts(products) {
             offerBadge = `<div style="position: absolute; top: 12px; left: 0; background: #388e3c; color: white; padding: 4px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 0 4px 4px 0; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">Bank Offer</div>`;
         } else if (product.category === "Fashion") {
             offerBadge = `<div style="position: absolute; top: 12px; left: 0; background: #ff9f00; color: white; padding: 4px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 0 4px 4px 0; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">Min 50% Off</div>`;
+        } else if (product.category === "Fitness") {
+            offerBadge = `<div style="position: absolute; top: 12px; left: 0; background: #388e3c; color: white; padding: 4px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 0 4px 4px 0; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">Fitness Offer</div>`;
+        }
+
+        let minutesBadge = "";
+        if (product.isMinutesEligible) {
+            minutesBadge = `<div style="position: absolute; top: 38px; left: 0; background: #2874f0; color: white; padding: 4px 8px; font-size: 0.65rem; font-weight: 700; border-radius: 0 4px 4px 0; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 4px;"><i class="fas fa-bolt"></i> 5 Min Delivery</div>`;
         }
 
         let originalPrice = Math.floor(product.price * 1.4); // 40% more
@@ -163,6 +170,7 @@ function displayProducts(products) {
 
         card.innerHTML = `
             ${offerBadge}
+            ${minutesBadge}
             <span class="wishlist-icon" style="color: ${heartColor};" onclick="toggleWishlist(event, ${product.id}, this)">
                 ${isWishlisted ? '❤️' : '🤍'}
             </span>
@@ -334,6 +342,11 @@ function signupUser() {
         return;
     }
 
+    if (password === mobile || password.toLowerCase() === name.toLowerCase()) {
+        showToast("Password cannot be same as number or name.", "error");
+        return;
+    }
+
     let users = JSON.parse(localStorage.getItem("users")) || [];
     let existingUser = users.find(u => u.mobile === mobile);
 
@@ -440,7 +453,8 @@ if (searchInput) {
 
         let searchText = this.value.toLowerCase();
         let filteredProducts = allProducts.filter(product =>
-            product.name.toLowerCase().includes(searchText)
+            product.name.toLowerCase().includes(searchText) ||
+            product.category.toLowerCase().includes(searchText)
         );
 
         let suggestions = document.getElementById("suggestions");
@@ -450,9 +464,12 @@ if (searchInput) {
             suggestions.style.display = "block";
             filteredProducts.slice(0, 5).forEach(product => {
                 suggestions.innerHTML += `
-                    <div class="suggestion-item" onclick="selectSuggestion('${product.name}')">
-                        <i class="fas fa-search" style="margin-right: 10px; opacity: 0.5;"></i>
-                        ${product.name}
+                    <div class="suggestion-item" onclick="selectSuggestion('${product.name.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 12px; padding: 8px 15px;">
+                        <img src="${product.image}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 2px; border: 1px solid var(--border-soft);" referrerpolicy="no-referrer">
+                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                            <span style="font-weight: 500; color: var(--text-main);">${product.name}</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">${product.category}</span>
+                        </div>
                     </div>
                 `;
             });

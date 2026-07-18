@@ -55,6 +55,20 @@
 
             <!-- Timeline -->
             <div class="checkout-step" style="padding: 30px 40px; background: white; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                <div id="minutes-countdown-container" style="background: linear-gradient(135deg, #2874f0, #1e59c5); color: white; padding: 15px 20px; border-radius: 6px; margin-bottom: 30px; display: none; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 1.8rem;">⚡</div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; color: white;">FLIPKART MINUTES DELIVERY</h4>
+                            <p style="font-size: 0.78rem; opacity: 0.9; color: white; margin: 0;">Our delivery partner is on the way to you</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div id="countdown-timer" style="font-size: 1.6rem; font-weight: 800; font-family: monospace;">05:00</div>
+                        <span style="font-size: 0.72rem; opacity: 0.85;">MINS LEFT</span>
+                    </div>
+                </div>
+
                 <h3 style="font-size: 1rem; color: #878787; margin-bottom: 30px; text-transform: uppercase;">Order Tracking</h3>
                 <div class="tracking-container">
                     <div class="track-step active" id="step-ordered">
@@ -86,6 +100,14 @@
                         <div class="track-content">
                             <h4>Delivered</h4>
                             <p id="time-delivered">Pending</p>
+                        </div>
+                    </div>
+                    
+                    <div class="track-step" id="step-returned" style="display: none;">
+                        <div class="track-icon"><i class="fas fa-undo"></i></div>
+                        <div class="track-content">
+                            <h4>Return Requested</h4>
+                            <p id="time-returned">Pending</p>
                         </div>
                     </div>
                 </div>
@@ -127,6 +149,35 @@
         if(!order) {
             document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>Order not found!</h2>";
         } else {
+            // Live 5-minute countdown clock simulation if Flipkart Minutes is selected
+            if (order.deliveryMethod === 'Minutes') {
+                const containerEl = document.getElementById("minutes-countdown-container");
+                const timerEl = document.getElementById("countdown-timer");
+                if (containerEl && timerEl) {
+                    containerEl.style.display = "flex";
+                    
+                    let timeLimit = 300; // 5 minutes in seconds
+                    
+                    let interval = setInterval(() => {
+                        timeLimit -= 10;
+                        if (timeLimit <= 0) {
+                            timeLimit = 0;
+                            clearInterval(interval);
+                            timerEl.innerText = "00:00";
+                            containerEl.style.background = "linear-gradient(135deg, #26a541, #1e8233)";
+                            containerEl.querySelector("p").innerText = "Your order has been safely delivered!";
+                            
+                            document.getElementById("step-out").classList.add("line-active");
+                            document.getElementById("step-delivered").classList.add("active");
+                            document.getElementById("time-delivered").innerText = new Date().toLocaleString();
+                        } else {
+                            let mins = Math.floor(timeLimit / 60);
+                            let secs = timeLimit % 60;
+                            timerEl.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                        }
+                    }, 1000);
+                }
+            }
             // Populate Details
             document.getElementById("track-name").innerText = order.name;
             document.getElementById("track-address").innerText = order.address;
@@ -151,23 +202,33 @@
             document.getElementById("time-ordered").innerText = new Date(orderTime).toLocaleString();
 
             // Flipkart tracking demo simulation based on time elapsed
-            if (diffMins >= 1) {
-                // Shipped after 1 minute
+            if (diffMins >= 0.02) {
+                // Shipped after 1.2 seconds
                 document.getElementById("step-ordered").classList.add("line-active");
                 document.getElementById("step-shipped").classList.add("active");
-                document.getElementById("time-shipped").innerText = new Date(orderTime + 60000).toLocaleString();
+                document.getElementById("time-shipped").innerText = new Date(orderTime + 1200).toLocaleString();
             }
-            if (diffMins >= 3) {
-                // Out for delivery after 3 mins
+            if (diffMins >= 0.05) {
+                // Out for delivery after 3 seconds
                 document.getElementById("step-shipped").classList.add("line-active");
                 document.getElementById("step-out").classList.add("active");
-                document.getElementById("time-out").innerText = new Date(orderTime + 180000).toLocaleString();
+                document.getElementById("time-out").innerText = new Date(orderTime + 3000).toLocaleString();
             }
-            if (diffMins >= 5) {
-                // Delivered after 5 mins
+            if (diffMins >= 0.1) {
+                // Delivered after 6 seconds
                 document.getElementById("step-out").classList.add("line-active");
                 document.getElementById("step-delivered").classList.add("active");
-                document.getElementById("time-delivered").innerText = new Date(orderTime + 300000).toLocaleString();
+                document.getElementById("time-delivered").innerText = new Date(orderTime + 6000).toLocaleString();
+            }
+
+            if (order.returnStatus === "Return Requested") {
+                document.getElementById("step-delivered").classList.add("line-active");
+                let retStep = document.getElementById("step-returned");
+                if (retStep) {
+                    retStep.style.display = "flex";
+                    retStep.classList.add("active");
+                    document.getElementById("time-returned").innerText = order.returnDate || new Date().toLocaleString();
+                }
             }
         }
     </script>

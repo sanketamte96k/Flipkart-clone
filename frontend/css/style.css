@@ -315,10 +315,7 @@ body.dark-mode .user-dropdown .logout-btn:hover {
 }
 
 .suggestion-item::before {
-    content: '\f002';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    opacity: 0.3;
+    display: none;
 }
 
 .nav-right { display: flex; gap: 20px; align-items: center; }
@@ -2536,4 +2533,28 @@ body.dark-mode .track-step::after {
 
 body.dark-mode .track-step.line-active::after {
     background: #388e3c !important;
+}
+
+/* Product Details Page Dark Mode Visibility Fixes */
+body.dark-mode .product-header h1 {
+    color: var(--text-main) !important;
+}
+
+body.dark-mode .description-section p {
+    color: var(--text-main) !important;
+}
+
+body.dark-mode .specs-table .spec-value {
+    color: var(--text-main) !important;
+}
+
+body.dark-mode .price-container .current-price {
+    color: var(--text-main) !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+    color: var(--text-main) !important;
 }

@@ -214,6 +214,101 @@ def products():
             "price": 45900,
             "category": "Mobile",
             "image": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500"
+        },
+        {
+            "id": 24,
+            "name": "ON Gold Standard Whey Protein (2kg)",
+            "price": 6499,
+            "category": "Fitness",
+            "image": "/images/fitness/whey_protein.png",
+            "isMinutesEligible": True,
+            "specs": [
+                ["Flavor", "Double Rich Chocolate"],
+                ["Protein per Serving", "24 g"],
+                ["Total Servings", "74"],
+                ["Weight", "2 kg"]
+            ]
+        },
+        {
+            "id": 25,
+            "name": "MuscleBlaze Creatine Monohydrate",
+            "price": 1099,
+            "category": "Fitness",
+            "image": "/images/fitness/creatine.png",
+            "isMinutesEligible": True,
+            "specs": [
+                ["Type", "Micronized Creatine Monohydrate"],
+                ["Weight", "250 g"],
+                ["Servings", "83"],
+                ["Purity", "99.9%"]
+            ]
+        },
+        {
+            "id": 26,
+            "name": "Premium Stainless Steel Gym Shaker",
+            "price": 699,
+            "category": "Fitness",
+            "image": "/images/fitness/gym_shaker.png",
+            "isMinutesEligible": True,
+            "specs": [
+                ["Material", "BPA-Free Stainless Steel"],
+                ["Capacity", "750 ml"],
+                ["Leakproof", "Yes"],
+                ["Mixing Mechanism", "Blender Ball Included"]
+            ]
+        },
+        {
+            "id": 27,
+            "name": "C4 Original Pre-Workout (30 Servings)",
+            "price": 2499,
+            "category": "Fitness",
+            "image": "/images/fitness/preworkout.png",
+            "specs": [
+                ["Flavor", "Fruit Punch"],
+                ["Servings", "30"],
+                ["Caffeine", "150 mg per serving"]
+            ]
+        },
+        {
+            "id": 28,
+            "name": "MuscleBlaze BCAA Pro (450g)",
+            "price": 1799,
+            "category": "Fitness",
+            "image": "/images/fitness/bcaa.png",
+            "isMinutesEligible": True,
+            "specs": [
+                ["Flavor", "Blue Raspberry"],
+                ["BCAA Ratio", "2:1:1 (L-Leucine, L-Isoleucine, L-Valine)"],
+                ["Servings", "30"],
+                ["Weight", "450 g"]
+            ]
+        },
+        {
+            "id": 29,
+            "name": "Resistance Bands Set (5 Levels)",
+            "price": 899,
+            "category": "Fitness",
+            "image": "/images/fitness/resistance_bands.png",
+            "isMinutesEligible": True,
+            "specs": [
+                ["Bands Included", "5 (Extra Light to Extra Heavy)"],
+                ["Material", "Premium Natural Latex"],
+                ["Use", "Home/Gym Workout, Yoga, Stretching"],
+                ["Comes With", "Carry Bag & Guide Book"]
+            ]
+        },
+        {
+            "id": 30,
+            "name": "HealthKart Daily Multivitamin (60 Tabs)",
+            "price": 649,
+            "category": "Fitness",
+            "image": "/images/fitness/multivitamin.png",
+            "specs": [
+                ["Tablets", "60"],
+                ["Vitamins & Minerals", "24 Essential Nutrients"],
+                ["Suitable For", "Men & Women"],
+                ["Form", "Coated Tablets"]
+            ]
         }
     ]
     return jsonify(data)

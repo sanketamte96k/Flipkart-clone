@@ -6,6 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .payment-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            outline: none;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .payment-input:focus {
+            border-color: #2874f0;
+        }
+    </style>
 </head>
 
 <body>
@@ -58,22 +72,136 @@
                 <div class="step-body" style="padding-left: 40px;">
                     <!-- Payment Options -->
                     <div style="border: 1px solid #e0e0e0; border-radius: 2px; overflow: hidden; margin-bottom: 20px;">
-                        <label class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer; background: #f5faff;">
-                            <input type="radio" name="payment" value="UPI" checked style="width: 18px; height: 18px; accent-color: #2874f0;">
+                        <label id="row-UPI" class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer; background: #f5faff;">
+                            <input type="radio" name="payment" value="UPI" checked onchange="selectPaymentMethod(this.value)" style="width: 18px; height: 18px; accent-color: #2874f0;">
                             <div>
                                 <h4 style="font-size: 1rem; color: #212121; font-weight: 500;">UPI</h4>
                                 <p style="font-size: 0.8rem; color: #388e3c; margin-top: 2px;">Offers available</p>
                             </div>
                         </label>
-                        <label class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer;">
-                            <input type="radio" name="payment" value="Card" style="width: 18px; height: 18px; accent-color: #2874f0;">
+                        
+                        <!-- UPI Sub Options -->
+                        <div id="upi-details" style="padding: 15px 20px 20px 53px; border-bottom: 1px solid #e0e0e0; background: #f5faff;">
+                            <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; color: #212121; font-weight: 500;">
+                                    <input type="radio" name="upi-type" value="id" checked style="accent-color: #2874f0;" onchange="toggleUpiType(this.value)">
+                                    UPI ID / Mobile Number
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; color: #212121; font-weight: 500;">
+                                    <input type="radio" name="upi-type" value="qr" style="accent-color: #2874f0;" onchange="toggleUpiType(this.value)">
+                                    Show QR Code
+                                </label>
+                            </div>
+                            
+                            <div id="upi-id-container">
+                                <div style="display: flex; gap: 10px; max-width: 400px;">
+                                    <input type="text" id="upi-id" class="payment-input" placeholder="Enter UPI ID (e.g. user@bank)">
+                                    <button onclick="verifyUpi()" style="background: #2874f0; color: white; border: none; padding: 0 20px; border-radius: 2px; font-weight: 600; cursor: pointer; font-size: 0.85rem; height: 38px;">Verify</button>
+                                </div>
+                                <div id="upi-verify-msg" style="font-size: 0.8rem; margin-top: 6px; display: none;"></div>
+                            </div>
+                            
+                            <div id="upi-qr-container" style="display: none; align-items: center; gap: 20px;">
+                                <div style="background: white; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px; display: inline-block;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 120px; height: 120px; display: block; shape-rendering: crispEdges;">
+                                        <rect width="100" height="100" fill="white"/>
+                                        <rect x="5" y="5" width="25" height="25" fill="black"/>
+                                        <rect x="9" y="9" width="17" height="17" fill="white"/>
+                                        <rect x="13" y="13" width="9" height="9" fill="black"/>
+                                        <rect x="70" y="5" width="25" height="25" fill="black"/>
+                                        <rect x="74" y="9" width="17" height="17" fill="white"/>
+                                        <rect x="78" y="13" width="9" height="9" fill="black"/>
+                                        <rect x="5" y="70" width="25" height="25" fill="black"/>
+                                        <rect x="9" y="74" width="17" height="17" fill="white"/>
+                                        <rect x="13" y="78" width="9" height="9" fill="black"/>
+                                        <rect x="35" y="5" width="5" height="5" fill="black"/>
+                                        <rect x="45" y="5" width="10" height="5" fill="black"/>
+                                        <rect x="60" y="5" width="5" height="5" fill="black"/>
+                                        <rect x="35" y="15" width="5" height="10" fill="black"/>
+                                        <rect x="45" y="15" width="5" height="5" fill="black"/>
+                                        <rect x="55" y="15" width="10" height="5" fill="black"/>
+                                        <rect x="35" y="25" width="15" height="5" fill="black"/>
+                                        <rect x="55" y="25" width="5" height="5" fill="black"/>
+                                        <rect x="65" y="25" width="5" height="5" fill="black"/>
+                                        <rect x="5" y="35" width="10" height="5" fill="black"/>
+                                        <rect x="20" y="35" width="5" height="5" fill="black"/>
+                                        <rect x="30" y="35" width="5" height="10" fill="black"/>
+                                        <rect x="40" y="35" width="10" height="5" fill="black"/>
+                                        <rect x="55" y="35" width="5" height="5" fill="black"/>
+                                        <rect x="65" y="35" width="15" height="5" fill="black"/>
+                                        <rect x="85" y="35" width="10" height="5" fill="black"/>
+                                        <rect x="5" y="45" width="5" height="5" fill="black"/>
+                                        <rect x="15" y="45" width="10" height="10" fill="black"/>
+                                        <rect x="45" y="45" width="5" height="5" fill="black"/>
+                                        <rect x="55" y="45" width="5" height="15" fill="black"/>
+                                        <rect x="65" y="45" width="10" height="5" fill="black"/>
+                                        <rect x="80" y="45" width="5" height="10" fill="black"/>
+                                        <rect x="30" y="55" width="10" height="5" fill="black"/>
+                                        <rect x="45" y="55" width="5" height="10" fill="black"/>
+                                        <rect x="75" y="55" width="5" height="5" fill="black"/>
+                                        <rect x="85" y="55" width="10" height="5" fill="black"/>
+                                        <rect x="5" y="60" width="15" height="5" fill="black"/>
+                                        <rect x="35" y="60" width="5" height="5" fill="black"/>
+                                        <rect x="65" y="60" width="5" height="15" fill="black"/>
+                                        <rect x="75" y="60" width="5" height="5" fill="black"/>
+                                        <rect x="35" y="70" width="10" height="5" fill="black"/>
+                                        <rect x="50" y="70" width="5" height="10" fill="black"/>
+                                        <rect x="60" y="70" width="5" height="5" fill="black"/>
+                                        <rect x="75" y="70" width="10" height="10" fill="black"/>
+                                        <rect x="90" y="70" width="5" height="5" fill="black"/>
+                                        <rect x="35" y="80" width="5" height="10" fill="black"/>
+                                        <rect x="45" y="80" width="10" height="5" fill="black"/>
+                                        <rect x="60" y="80" width="10" height="10" fill="black"/>
+                                        <rect x="85" y="80" width="5" height="5" fill="black"/>
+                                        <rect x="90" y="85" width="5" height="10" fill="black"/>
+                                        <rect x="35" y="90" width="20" height="5" fill="black"/>
+                                        <rect x="60" y="90" width="5" height="5" fill="black"/>
+                                        <rect x="70" y="90" width="10" height="5" fill="black"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p style="font-size: 0.95rem; font-weight: 600; color: #212121;">Scan the QR code using any UPI App</p>
+                                    <p style="font-size: 0.85rem; color: #878787; margin-top: 6px;">Payable amount: <strong id="qr-amount" style="color: #212121;">₹0</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label id="row-Card" class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer;">
+                            <input type="radio" name="payment" value="Card" onchange="selectPaymentMethod(this.value)" style="width: 18px; height: 18px; accent-color: #2874f0;">
                             <div>
                                 <h4 style="font-size: 1rem; color: #212121; font-weight: 500;">Credit / Debit / ATM Card</h4>
                                 <p style="font-size: 0.8rem; color: #878787; margin-top: 2px;">Add and secure your card as per RBI guidelines</p>
                             </div>
                         </label>
-                        <label class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; cursor: pointer;">
-                            <input type="radio" name="payment" value="COD" style="width: 18px; height: 18px; accent-color: #2874f0;">
+                        
+                        <!-- Card Sub Options -->
+                        <div id="card-details" style="padding: 15px 20px 20px 53px; border-bottom: 1px solid #e0e0e0; background: #f5faff; display: none;">
+                            <div style="max-width: 450px;">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; font-size: 0.85rem; color: #878787; margin-bottom: 6px;">Card Number</label>
+                                    <input type="text" id="card-number" class="payment-input" placeholder="Enter 16-digit card number" maxlength="19">
+                                </div>
+                                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                    <div style="flex: 1;">
+                                        <label style="display: block; font-size: 0.85rem; color: #878787; margin-bottom: 6px;">Expiry Date</label>
+                                        <input type="text" id="card-expiry" class="payment-input" placeholder="MM/YY" maxlength="5" style="text-align: center;">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label style="display: block; font-size: 0.85rem; color: #878787; margin-bottom: 6px;">CVV</label>
+                                        <input type="password" id="card-cvv" class="payment-input" placeholder="3-digit CVV" maxlength="3" style="text-align: center;">
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: flex-start; gap: 8px;">
+                                    <input type="checkbox" id="save-card" checked style="margin-top: 3px; accent-color: #2874f0;">
+                                    <label for="save-card" style="font-size: 0.8rem; color: #212121; line-height: 1.4; cursor: pointer;">
+                                        Securely save this card for faster checkout in future.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label id="row-COD" class="payment-option-row" style="display: flex; align-items: center; gap: 15px; padding: 15px 20px; cursor: pointer;">
+                            <input type="radio" name="payment" value="COD" onchange="selectPaymentMethod(this.value)" style="width: 18px; height: 18px; accent-color: #2874f0;">
                             <div>
                                 <h4 style="font-size: 1rem; color: #212121; font-weight: 500;">Cash on Delivery</h4>
                                 <p style="font-size: 0.8rem; color: #878787; margin-top: 2px;">Pay when the product is delivered</p>
@@ -128,26 +256,164 @@
         document.getElementById("summary-price").innerText = "₹" + orderDetails.total.toLocaleString();
         document.getElementById("payment-total-amount").innerText = "₹" + orderDetails.total.toLocaleString();
 
-        function completePayment() {
-            let paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-            let orders = JSON.parse(localStorage.getItem("orders")) || [];
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let isUpiVerified = false;
 
-            let finalOrder = {
-                ...orderDetails,
-                paymentMethod,
-                products: cart,
-                date: new Date().toLocaleString()
-            };
-
-            orders.push(finalOrder);
-            localStorage.setItem("orders", JSON.stringify(orders));
-            localStorage.removeItem("cart");
-
-            showToast("Order Placed Successfully! ✅", "success");
+        function verifyUpi() {
+            let upiId = document.getElementById("upi-id").value.trim();
+            let msgEl = document.getElementById("upi-verify-msg");
+            if (!upiId) {
+                msgEl.innerText = "Please enter a valid UPI ID";
+                msgEl.style.color = "red";
+                msgEl.style.display = "block";
+                isUpiVerified = false;
+                return;
+            }
+            
+            if (!upiId.includes("@") || upiId.length < 3) {
+                msgEl.innerText = "Invalid UPI ID format. e.g. user@bank";
+                msgEl.style.color = "red";
+                msgEl.style.display = "block";
+                isUpiVerified = false;
+                return;
+            }
+            
+            msgEl.innerText = "Verifying...";
+            msgEl.style.color = "#878787";
+            msgEl.style.display = "block";
+            
             setTimeout(() => {
-                window.location.href = "orders.html";
-            }, 1500);
+                msgEl.innerText = "✓ Verified (Active UPI Account)";
+                msgEl.style.color = "#388e3c";
+                isUpiVerified = true;
+            }, 600);
+        }
+
+        function toggleUpiType(type) {
+            if (type === 'id') {
+                document.getElementById('upi-id-container').style.display = 'block';
+                document.getElementById('upi-qr-container').style.display = 'none';
+            } else {
+                document.getElementById('upi-id-container').style.display = 'none';
+                document.getElementById('upi-qr-container').style.display = 'flex';
+            }
+        }
+
+        function selectPaymentMethod(method) {
+            document.getElementById("row-UPI").style.background = (method === 'UPI') ? '#f5faff' : '#ffffff';
+            document.getElementById("row-Card").style.background = (method === 'Card') ? '#f5faff' : '#ffffff';
+            document.getElementById("row-COD").style.background = (method === 'COD') ? '#f5faff' : '#ffffff';
+
+            document.getElementById("upi-details").style.display = (method === 'UPI') ? 'block' : 'none';
+            document.getElementById("card-details").style.display = (method === 'Card') ? 'block' : 'none';
+        }
+
+        function completePayment() {
+            let btn = document.querySelector(".checkout-btn");
+            if (btn.disabled) return;
+
+            let paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+            if (paymentMethod === "UPI") {
+                let upiType = document.querySelector('input[name="upi-type"]:checked').value;
+                if (upiType === "id") {
+                    let upiId = document.getElementById("upi-id").value.trim();
+                    if (!upiId) {
+                        showToast("Please enter your UPI ID or Mobile Number.", "error");
+                        return;
+                    }
+                    if (!upiId.includes("@") || upiId.length < 3) {
+                        showToast("Please enter a valid UPI ID (e.g. user@bank).", "error");
+                        return;
+                    }
+                }
+            } else if (paymentMethod === "Card") {
+                let cardNumber = document.getElementById("card-number").value.replace(/\s+/g, '');
+                let expiry = document.getElementById("card-expiry").value.trim();
+                let cvv = document.getElementById("card-cvv").value.trim();
+
+                if (!cardNumber || cardNumber.length !== 16 || isNaN(cardNumber)) {
+                    showToast("Please enter a valid 16-digit card number.", "error");
+                    return;
+                }
+
+                if (!expiry || expiry.length !== 5 || !expiry.includes("/")) {
+                    showToast("Please enter a valid expiry date (MM/YY).", "error");
+                    return;
+                }
+
+                if (!cvv || cvv.length !== 3 || isNaN(cvv)) {
+                    showToast("Please enter a valid 3-digit CVV number.", "error");
+                    return;
+                }
+            }
+
+            btn.disabled = true;
+            let originalText = btn.innerText;
+            btn.innerText = "PROCESSING PAYMENT...";
+            btn.style.background = "#e0e0e0";
+            btn.style.color = "#878787";
+
+            setTimeout(() => {
+                let orders = JSON.parse(localStorage.getItem("orders")) || [];
+                let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+                let finalOrder = {
+                    ...orderDetails,
+                    paymentMethod,
+                    products: cart,
+                    date: new Date().toLocaleString()
+                };
+
+                orders.push(finalOrder);
+                localStorage.setItem("orders", JSON.stringify(orders));
+                localStorage.removeItem("cart");
+
+                showToast("Order Placed Successfully! ✅", "success");
+                setTimeout(() => {
+                    window.location.href = "orders.html";
+                }, 1500);
+            }, 1200);
+        }
+
+        // Setup Card and UPI inputs formatting
+        const cardInput = document.getElementById("card-number");
+        if (cardInput) {
+            cardInput.addEventListener("input", function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formatted = "";
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) {
+                        formatted += " ";
+                    }
+                    formatted += value[i];
+                }
+                e.target.value = formatted;
+            });
+        }
+
+        const expiryInput = document.getElementById("card-expiry");
+        if (expiryInput) {
+            expiryInput.addEventListener("input", function(e) {
+                let value = e.target.value.replace(/[^0-9]/g, '');
+                if (value.length > 2) {
+                    e.target.value = value.substring(0, 2) + "/" + value.substring(2, 4);
+                } else {
+                    e.target.value = value;
+                }
+            });
+        }
+
+        const cvvInput = document.getElementById("card-cvv");
+        if (cvvInput) {
+            cvvInput.addEventListener("input", function(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+        }
+        
+        // Set amount payable inside QR Code container
+        const qrAmt = document.getElementById("qr-amount");
+        if (qrAmt && orderDetails) {
+            qrAmt.innerText = "₹" + orderDetails.total.toLocaleString();
         }
     </script>
 </body>

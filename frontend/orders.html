@@ -60,6 +60,52 @@
     </main>
 
     <!-- =========================
+         RETURN POLICY & REQUEST MODAL
+    ========================== -->
+    <div id="return-modal" class="pro-modal-overlay">
+        <div class="pro-review-sheet animate-slide-up" style="max-width: 500px;">
+            <div class="pro-modal-top">
+                <h2>Return Policy & Request</h2>
+                <button class="pro-close-btn" onclick="closeReturnModal()"><i class="fa fa-times"></i></button>
+            </div>
+
+            <div class="pro-modal-body" style="padding: 24px; gap: 15px;">
+                <!-- Return Policy Summary -->
+                <div style="background: rgba(251, 100, 27, 0.08); padding: 15px; border-radius: 6px; border-left: 4px solid #fb641b;">
+                    <h4 style="font-size: 0.95rem; color: var(--text-main); margin-bottom: 6px; font-weight: 600;">Flipkart Easy Return Policy</h4>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45;">
+                        Returns are accepted within <strong>10 days</strong> of delivery. The item must be in original condition with all tags, packaging, and accessories intact.
+                    </p>
+                </div>
+
+                <!-- Select Reason for Return -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Reason for Return</label>
+                    <select id="return-reason" style="width: 100%; border: 1px solid var(--border-soft); border-radius: 4px; padding: 10px; background: var(--bg-main); color: var(--text-main); font-family: inherit; font-size: 0.9rem; outline: none;">
+                        <option value="" style="background: var(--bg-main); color: var(--text-main);">Select Reason...</option>
+                        <option value="Damaged/Defective" style="background: var(--bg-main); color: var(--text-main);">Product is damaged or defective</option>
+                        <option value="Not as Described" style="background: var(--bg-main); color: var(--text-main);">Product details/image don't match the item received</option>
+                        <option value="Wrong Item" style="background: var(--bg-main); color: var(--text-main);">Received a completely different item</option>
+                        <option value="Quality issue" style="background: var(--bg-main); color: var(--text-main);">Quality of the product did not meet expectations</option>
+                        <option value="Size/Fit issue" style="background: var(--bg-main); color: var(--text-main);">Size/Fit is not correct</option>
+                    </select>
+                </div>
+
+                <!-- Comments -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Comments / Additional details</label>
+                    <textarea id="return-comments" placeholder="Describe the issue in detail..." style="width: 100%; height: 80px; padding: 10px; border: 1px solid var(--border-soft); border-radius: 4px; outline: none; background: var(--bg-main); color: var(--text-main); font-family: inherit; font-size: 0.9rem; resize: none;"></textarea>
+                </div>
+            </div>
+
+            <div class="pro-modal-footer">
+                <button class="pro-cancel-btn" onclick="closeReturnModal()">Cancel</button>
+                <button class="pro-submit-btn" style="background: #fb641b; color: white;" onclick="submitReturnRequest()">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================
          ULTRA-PRO REVIEW MODAL
     ========================== -->
     <div id="review-modal" class="pro-modal-overlay">
@@ -196,7 +242,28 @@
                 let orderTime = new Date(order.date).getTime();
                 let now = new Date().getTime();
                 let diff = (now - orderTime) / (1000 * 60);
-                let isDelivered = diff >= 5;
+                let isDelivered = diff >= 0.1;
+
+                let statusText = isDelivered ? 'Delivered on Oct 24' : 'Delivery expected by Oct 28';
+                let statusColor = isDelivered ? '#26a541' : '#ff9f00';
+                let subStatusText = `Your item has been ${isDelivered ? 'delivered' : 'shipped'}`;
+                
+                if (order.returnStatus === "Return Requested") {
+                    statusText = "Return Requested";
+                    statusColor = "#ff9f00"; 
+                    subStatusText = "Return verification under progress";
+                }
+
+                let actionButtonsHTML = "";
+                if (isDelivered) {
+                    actionButtonsHTML += `<button style="background: none; border: none; color: #2874f0; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 10px;" onclick="openReviewModal('${order.products[0].name}', '${order.products[0].image}')">★ Rate & Review Product</button>`;
+                    
+                    if (order.returnStatus === "Return Requested") {
+                        actionButtonsHTML += `<span style="font-size: 0.85rem; color: #878787; font-weight: 600; margin-top: 5px; display: inline-flex; align-items: center; gap: 5px;">↺ Return Requested (Pending)</span>`;
+                    } else {
+                        actionButtonsHTML += `<button style="background: none; border: none; color: #ff6161; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 5px;" onclick="openReturnModal(${index})">↺ Return Product</button>`;
+                    }
+                }
 
                 container.innerHTML += `
                     <div class="pro-order-card" style="display: flex; align-items: flex-start; justify-content: space-between; padding: 20px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: box-shadow 0.2s;">
@@ -215,11 +282,11 @@
                         
                         <div style="flex: 1.5; display: flex; flex-direction: column; gap: 10px;">
                             <div style="font-weight: 600; font-size: 0.95rem; color: #212121; display: flex; align-items: center; gap: 8px;">
-                                <div style="width: 10px; height: 10px; border-radius: 50%; background: ${isDelivered ? '#26a541' : '#ff9f00'};"></div>
-                                ${isDelivered ? 'Delivered on Oct 24' : 'Delivery expected by Oct 28'}
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: ${statusColor};"></div>
+                                ${statusText}
                             </div>
-                            <p style="font-size: 0.8rem; color: #212121;">Your item has been ${isDelivered ? 'delivered' : 'shipped'}</p>
-                            ${isDelivered ? `<button style="background: none; border: none; color: #2874f0; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 10px;" onclick="openReviewModal('${order.products[0].name}', '${order.products[0].image}')">★ Rate & Review Product</button>` : ''}
+                            <p style="font-size: 0.8rem; color: #212121;">${subStatusText}</p>
+                            ${actionButtonsHTML}
                         </div>
                     </div>
                 `;
@@ -303,6 +370,48 @@
             }
             showToast("Success! Your review has been submitted.");
             closeReviewModal();
+        }
+
+        let activeReturnOrderIndex = null;
+
+        function openReturnModal(reversedIndex) {
+            activeReturnOrderIndex = reversedIndex;
+            document.getElementById("return-reason").value = "";
+            document.getElementById("return-comments").value = "";
+            document.getElementById("return-modal").style.display = "flex";
+        }
+
+        function closeReturnModal() {
+            document.getElementById("return-modal").style.display = "none";
+            activeReturnOrderIndex = null;
+        }
+
+        function submitReturnRequest() {
+            if (activeReturnOrderIndex === null) return;
+
+            let reason = document.getElementById("return-reason").value;
+            let comments = document.getElementById("return-comments").value.trim();
+
+            if (!reason) {
+                showToast("Please select a reason for the return.", "error");
+                return;
+            }
+
+            let originalIndex = orders.length - 1 - activeReturnOrderIndex;
+            if (orders[originalIndex]) {
+                orders[originalIndex].returnStatus = "Return Requested";
+                orders[originalIndex].returnReason = reason;
+                orders[originalIndex].returnComments = comments;
+                orders[originalIndex].returnDate = new Date().toLocaleString();
+
+                localStorage.setItem("orders", JSON.stringify(orders));
+                
+                showToast("Return Request Submitted Successfully! ↺", "success");
+                closeReturnModal();
+                renderOrders();
+            } else {
+                showToast("Failed to process return request. Order not found.", "error");
+            }
         }
 
 
