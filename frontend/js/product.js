@@ -356,106 +356,233 @@ function changeMainImage(src, element) {
 }
 
 function getProductImages(product) {
-    let images = [];
+    const id = parseInt(product.id);
     
-    // Curate distinct high-quality related angles for key products
-    if (product.name.includes("iPhone 14")) {
-        images = [
+    // Curated high-fidelity unique image galleries per product ID to avoid duplicates.
+    const imageMap = {
+        // iPhone 14 (Blue)
+        1: [
             product.image,
-            "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500", // Side Profile
-            "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500", // Hand close-up
-            "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=500"  // Elegant phone body
-        ];
-    } else if (product.name.includes("Sony") || product.name.includes("WH-1000")) {
-        images = [
+            "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500",
+            "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500",
+            "https://images.unsplash.com/photo-1512054835335-4308509742df?w=500"
+        ],
+        // HP Pavilion Laptop
+        2: [
             product.image,
-            "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500", // Headphone close-up
-            "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=500", // Wearing lifestyle
-            "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=500"  // Headset desk layout
-        ];
-    } else if (product.name.includes("Watch")) {
-        images = [
+            "https://images.unsplash.com/photo-1588702547919-26089e690ecc?w=500",
+            "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500",
+            "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&sig=hp"
+        ],
+        // Nike Running Shoes
+        3: [
             product.image,
-            "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500", // Strap detail
-            "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500", // Health Tracking screen
-            "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500"  // Smart watch face close-up
-        ];
-    } else if (product.name.includes("Nike")) {
-        images = [
+            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500",
+            "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=500",
+            "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500"
+        ],
+        // Samsung Galaxy S23
+        4: [
             product.image,
-            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500", // Top shoe sole view
-            "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=500", // Athletic Action
-            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500"  // Premium Box Showcase
-        ];
-    } else if (product.name.includes("MacBook")) {
-        images = [
+            "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500",
+            "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500",
+            "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=500&sig=samsung"
+        ],
+        // MacBook Air M2
+        5: [
             product.image,
-            "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500", // Display close-up
-            "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500", // Port Bezel view
-            "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=500"  // Lifestyle coding
-        ];
-    } else if (product.name.includes("Pixel")) {
-        images = [
+            "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500",
+            "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=500",
+            "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=500"
+        ],
+        // Google Pixel 7
+        6: [
             product.image,
-            "https://images.unsplash.com/photo-1601784551148-7347497686f4?w=500", // Camera Bar visor
-            "https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=500", // Lock Screen layout
-            "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500"  // Side bezel
-        ];
-    } else if (product.name.includes("Chanel")) {
-        images = [
+            "https://images.unsplash.com/photo-1598327106026-d9521da673d1?w=500",
+            "https://images.unsplash.com/photo-1601784551148-7347497686f4?w=500",
+            "https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=500"
+        ],
+        // OnePlus 11R
+        7: [
             product.image,
-            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500", // Designer Cosmetics
-            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500", // Luxury spray
-            "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500"  // Makeup vanity
-        ];
-    } else if (product.name.includes("Bella Vita")) {
-        images = [
+            "https://images.unsplash.com/photo-1565630916779-e303be97b6f5?w=500",
+            "https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=500",
+            "https://images.unsplash.com/photo-1574757568689-3d8583e4144e?w=500"
+        ],
+        // Dell Vostro 3420
+        8: [
             product.image,
-            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=500", // Spray detail
-            "https://images.unsplash.com/photo-1588405748373-122b2321bc31?w=500", // Organic backdrop
-            "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=500"  // Premium gift packaging
-        ];
-    } else if (product.name.includes("Polo") || product.name.includes("T-Shirt") || product.name.includes("Shirt")) {
-        images = [
+            "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500",
+            "https://images.unsplash.com/photo-1602080858428-5717be6add77?w=500",
+            "https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?w=500"
+        ],
+        // ASUS Vivobook 16X
+        9: [
             product.image,
-            "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500", // Folded premium t-shirts
-            "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500", // Hanging white t-shirt
-            "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"  // Man wearing casual shirt
-        ];
-    } else {
-        // Universal fallbacks based on Category
-        if (product.category === "Mobile") {
-            images = [
-                product.image,
-                "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500",
-                "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500",
-                "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=500"
-            ];
-        } else if (product.category === "Laptop") {
-            images = [
-                product.image,
-                "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500",
-                "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500",
-                "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=500"
-            ];
-        } else if (product.category === "Fashion") {
-            images = [
-                product.image,
-                "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500",
-                "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500",
-                "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500"
-            ];
-        } else {
-            images = [
-                product.image,
-                "https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=500",
-                "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=500",
-                "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=500"
-            ];
-        }
+            "https://images.unsplash.com/photo-1660798030915-b44e549d41d9?w=500",
+            "https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?w=500&sig=asus",
+            "https://images.unsplash.com/photo-1588702547919-26089e690ecc?w=500&sig=asus"
+        ],
+        // Adidas Men's Sneakers
+        10: [
+            product.image,
+            "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500",
+            "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=500",
+            "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=500"
+        ],
+        // Puma Men's T-Shirt
+        11: [
+            product.image,
+            "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500&sig=puma",
+            "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500&sig=puma",
+            "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&sig=puma"
+        ],
+        // Levi's Men's Jeans
+        12: [
+            product.image,
+            "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500",
+            "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500",
+            "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500"
+        ],
+        // Dior Sauvage Perfume
+        13: [
+            product.image,
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&sig=dior",
+            "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500",
+            "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=500&sig=dior"
+        ],
+        // Chanel No.5 Perfume
+        14: [
+            product.image,
+            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500",
+            "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500",
+            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=500"
+        ],
+        // L'Oreal Face Cream
+        15: [
+            product.image,
+            "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=500",
+            "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=500",
+            "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500"
+        ],
+        // Lakme Sunscreen
+        16: [
+            product.image,
+            "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=500",
+            "https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=500&sig=lakme",
+            "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=500&sig=lakme"
+        ],
+        // Bella Vita Perfume Set
+        17: [
+            product.image,
+            "https://images.unsplash.com/photo-1588405748373-122b2321bc31?w=500",
+            "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=500&sig=bellavita",
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&sig=bellavita"
+        ],
+        // Skechers Men's Glide
+        18: [
+            product.image,
+            "https://images.unsplash.com/photo-1539185441755-769473a23570?w=500",
+            "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500",
+            "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=500"
+        ],
+        // Reebok Men's Floatride
+        19: [
+            product.image,
+            "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=500",
+            "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=500",
+            "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?w=500"
+        ],
+        // Allen Solly Men's Shirt
+        20: [
+            product.image,
+            "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500",
+            "https://images.unsplash.com/photo-159833129183-c4f50c736f10?w=500",
+            "https://images.unsplash.com/photo-1620012253295-c05518e993be?w=500"
+        ],
+        // US Polo Assn T-Shirt
+        21: [
+            product.image,
+            "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=500",
+            "https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=500",
+            "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=500"
+        ],
+        // Sony WH-1000XM5
+        22: [
+            product.image,
+            "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500",
+            "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=500",
+            "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=500"
+        ],
+        // Apple Watch Series 8
+        23: [
+            product.image,
+            "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500",
+            "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500",
+            "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500"
+        ],
+        // ON Gold Standard Whey Protein (2kg)
+        24: [
+            product.image,
+            "images/fitness/gym_shaker.png",
+            "images/fitness/creatine.png",
+            "images/fitness/bcaa.png"
+        ],
+        // MuscleBlaze Creatine Monohydrate
+        25: [
+            product.image,
+            "images/fitness/gym_shaker.png",
+            "images/fitness/bcaa.png",
+            "images/fitness/whey_protein.png"
+        ],
+        // Premium Stainless Steel Gym Shaker
+        26: [
+            product.image,
+            "images/fitness/whey_protein.png",
+            "images/fitness/bcaa.png",
+            "images/fitness/preworkout.png"
+        ],
+        // C4 Original Pre-Workout (30 Servings)
+        27: [
+            product.image,
+            "images/fitness/gym_shaker.png",
+            "images/fitness/creatine.png",
+            "images/fitness/multivitamin.png"
+        ],
+        // MuscleBlaze BCAA Pro (450g)
+        28: [
+            product.image,
+            "images/fitness/gym_shaker.png",
+            "images/fitness/creatine.png",
+            "images/fitness/whey_protein.png"
+        ],
+        // Resistance Bands Set (5 Levels)
+        29: [
+            product.image,
+            "images/fitness/gym_shaker.png",
+            "images/fitness/multivitamin.png",
+            "images/fitness/creatine.png"
+        ],
+        // HealthKart Daily Multivitamin (60 Tabs)
+        30: [
+            product.image,
+            "images/fitness/creatine.png",
+            "images/fitness/gym_shaker.png",
+            "images/fitness/bcaa.png"
+        ]
+    };
+    
+    if (imageMap[id]) {
+        return imageMap[id];
     }
     
-    return images;
+    // Fallback if not specifically mapped
+    return [
+        product.image,
+        "https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=500",
+        "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=500",
+        "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=500"
+    ];
 }
 
 // ============================================================

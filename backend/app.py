@@ -178,7 +178,7 @@ def products():
             "name": "Skechers Men's Glide",
             "price": 4500,
             "category": "Fashion",
-            "image": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=500"
+            "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500"
         },
         {
             "id": 19,
@@ -220,7 +220,7 @@ def products():
             "name": "ON Gold Standard Whey Protein (2kg)",
             "price": 6499,
             "category": "Fitness",
-            "image": "/images/fitness/whey_protein.png",
+            "image": "images/fitness/whey_protein.png",
             "isMinutesEligible": True,
             "specs": [
                 ["Flavor", "Double Rich Chocolate"],
@@ -234,7 +234,7 @@ def products():
             "name": "MuscleBlaze Creatine Monohydrate",
             "price": 1099,
             "category": "Fitness",
-            "image": "/images/fitness/creatine.png",
+            "image": "images/fitness/creatine.png",
             "isMinutesEligible": True,
             "specs": [
                 ["Type", "Micronized Creatine Monohydrate"],
@@ -248,7 +248,7 @@ def products():
             "name": "Premium Stainless Steel Gym Shaker",
             "price": 699,
             "category": "Fitness",
-            "image": "/images/fitness/gym_shaker.png",
+            "image": "images/fitness/gym_shaker.png",
             "isMinutesEligible": True,
             "specs": [
                 ["Material", "BPA-Free Stainless Steel"],
@@ -262,7 +262,7 @@ def products():
             "name": "C4 Original Pre-Workout (30 Servings)",
             "price": 2499,
             "category": "Fitness",
-            "image": "/images/fitness/preworkout.png",
+            "image": "images/fitness/preworkout.png",
             "specs": [
                 ["Flavor", "Fruit Punch"],
                 ["Servings", "30"],
@@ -274,7 +274,7 @@ def products():
             "name": "MuscleBlaze BCAA Pro (450g)",
             "price": 1799,
             "category": "Fitness",
-            "image": "/images/fitness/bcaa.png",
+            "image": "images/fitness/bcaa.png",
             "isMinutesEligible": True,
             "specs": [
                 ["Flavor", "Blue Raspberry"],
@@ -288,7 +288,7 @@ def products():
             "name": "Resistance Bands Set (5 Levels)",
             "price": 899,
             "category": "Fitness",
-            "image": "/images/fitness/resistance_bands.png",
+            "image": "images/fitness/resistance_bands.png",
             "isMinutesEligible": True,
             "specs": [
                 ["Bands Included", "5 (Extra Light to Extra Heavy)"],
@@ -302,7 +302,7 @@ def products():
             "name": "HealthKart Daily Multivitamin (60 Tabs)",
             "price": 649,
             "category": "Fitness",
-            "image": "/images/fitness/multivitamin.png",
+            "image": "images/fitness/multivitamin.png",
             "specs": [
                 ["Tablets", "60"],
                 ["Vitamins & Minerals", "24 Essential Nutrients"],
