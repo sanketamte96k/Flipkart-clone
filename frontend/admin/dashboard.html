@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Flipkart Clone</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --brand-primary: #2874f0;
+            --brand-gold: #ff9f00;
+            --brand-gold-dark: #e08c00;
+            --bg-dark: #0f172a;
+            --bg-dark-card: #1e293b;
+            --text-dark-main: #f8fafc;
+            --text-dark-muted: #94a3b8;
+            
+            --bg-light: #f1f5f9;
+            --bg-light-card: #ffffff;
+            --text-light-main: #1e293b;
+            --text-light-muted: #64748b;
+            
+            --border-light: #e2e8f0;
+            --border-dark: #334155;
+            
+            /* Active Theme settings */
+            --bg-main: var(--bg-light);
+            --bg-card: var(--bg-light-card);
+            --text-main: var(--text-light-main);
+            --text-muted: var(--text-light-muted);
+            --border-color: var(--border-light);
+            
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            
+            --transition-speed: 0.3s;
+            --sidebar-width: 260px;
+            --navbar-height: 70px;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Dark Mode variables */
+        body.dark-mode {
+            --bg-main: var(--bg-dark);
+            --bg-card: var(--bg-dark-card);
+            --text-main: var(--text-dark-main);
+            --text-muted: var(--text-dark-muted);
+            --border-color: var(--border-dark);
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        body.dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* ============================================================
+           SIDEBAR STYLE
+           ============================================================ */
+        aside.admin-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-brand {
+            height: var(--navbar-height);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .brand-logo img {
+            height: 28px;
+        }
+
+        .brand-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .brand-text span {
+            color: var(--brand-gold);
+            font-size: 0.85rem;
+            background: rgba(255, 159, 0, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+
+        .menu-item a i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .menu-item.active a {
+            background-color: rgba(40, 116, 240, 0.08);
+            color: var(--brand-primary);
+            font-weight: 600;
+        }
+
+        body.dark-mode .menu-item.active a {
+            background-color: rgba(40, 116, 240, 0.15);
+            color: #60a5fa;
+        }
+
+        .menu-item a:hover {
+            color: var(--text-main);
+            background-color: var(--bg-main);
+        }
+
+        .menu-item a:hover i {
+            transform: translateX(3px);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .logout-btn a {
+            color: var(--danger-color) !important;
+        }
+
+        .logout-btn a:hover {
+            background-color: rgba(239, 68, 68, 0.08) !important;
+        }
+
+        /* ============================================================
+           MAIN CONTAINER & NAVBAR
+           ============================================================ */
+        main.admin-main {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: calc(100% - var(--sidebar-width));
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        header.admin-navbar {
+            height: var(--navbar-height);
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .menu-toggle-btn:hover {
+            background-color: var(--bg-main);
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .search-container {
+            position: relative;
+            width: 320px;
+            max-width: 100%;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px 16px 10px 42px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-container input:focus {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(40, 116, 240, 0.15);
+            background-color: var(--bg-card);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .theme-toggle, .notifications-bell {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            position: relative;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .theme-toggle:hover, .notifications-bell:hover {
+            background-color: var(--bg-main);
+            transform: scale(1.05);
+        }
+
+        .notifications-bell .bell-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger-color);
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 50px;
+            transition: background-color 0.2s ease;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .admin-profile:hover {
+            background-color: var(--bg-main);
+            border-color: var(--border-color);
+        }
+
+        .admin-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--brand-primary);
+        }
+
+        .admin-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .admin-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            width: 200px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 1010;
+            animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .profile-dropdown.active {
+            display: flex;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        .dropdown-item.logout {
+            color: var(--danger-color);
+            border-top: 1px solid var(--border-color);
+            border-radius: 0 0 6px 6px;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: rgba(239, 68, 68, 0.08);
+        }
+
+        /* ============================================================
+           DASHBOARD CONTENT GRID
+           ============================================================ */
+        .content-wrapper {
+            padding: 32px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .kpi-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark-mode .kpi-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(40, 116, 240, 0.05) 0%, transparent 70%);
+            top: -50px;
+            right: -50px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .kpi-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .kpi-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .kpi-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .kpi-trend-up {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .kpi-trend-down {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .kpi-icon-box {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .products-card .kpi-icon-box {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--info-color);
+        }
+        .users-card .kpi-icon-box {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+        .orders-card .kpi-icon-box {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+        .revenue-card .kpi-icon-box {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        /* Split Section: Table and Activity */
+        .dashboard-split-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .card-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-action-btn {
+            font-size: 0.8rem;
+            color: var(--brand-primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s ease;
+            text-decoration: none;
+        }
+
+        .card-action-btn:hover {
+            color: #1a5ec2;
+        }
+
+        /* Recent Orders Table */
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table.admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        table.admin-table th {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table.admin-table td {
+            font-size: 0.88rem;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        table.admin-table tr {
+            transition: background-color 0.2s ease;
+        }
+
+        table.admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table.admin-table tbody tr:hover {
+            background-color: rgba(40, 116, 240, 0.02);
+        }
+
+        body.dark-mode table.admin-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .order-id-label {
+            font-weight: 600;
+            color: var(--brand-primary);
+            text-decoration: none;
+        }
+
+        .customer-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .customer-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #cbd5e1;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-badge.delivered {
+            background-color: rgba(16, 185, 129, 0.12);
+            color: var(--success-color);
+        }
+        .status-badge.delivered::before {
+            background-color: var(--success-color);
+        }
+
+        .status-badge.pending {
+            background-color: rgba(245, 158, 11, 0.12);
+            color: var(--warning-color);
+        }
+        .status-badge.pending::before {
+            background-color: var(--warning-color);
+        }
+
+        .status-badge.cancelled {
+            background-color: rgba(239, 68, 68, 0.12);
+            color: var(--danger-color);
+        }
+        .status-badge.cancelled::before {
+            background-color: var(--danger-color);
+        }
+
+        /* Recent Activity Timeline */
+        .activity-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            bottom: 6px;
+            left: 5px;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+
+        .activity-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: relative;
+        }
+
+        .activity-indicator {
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--bg-card);
+            border: 3px solid var(--brand-primary);
+            z-index: 1;
+            transition: background-color var(--transition-speed) ease;
+        }
+
+        .activity-indicator.success { border-color: var(--success-color); }
+        .activity-indicator.warning { border-color: var(--warning-color); }
+        .activity-indicator.danger { border-color: var(--danger-color); }
+        .activity-indicator.info { border-color: var(--info-color); }
+
+        .activity-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .activity-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .activity-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* ============================================================
+           FOOTER SECTION
+           ============================================================ */
+        footer.admin-footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .footer-content {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* ============================================================
+           RESPONSIVE MEDIA QUERIES
+           ============================================================ */
+        @media (max-width: 1200px) {
+            .dashboard-split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 991px) {
+            aside.admin-sidebar {
+                transform: translateX(-100%);
+            }
+            aside.admin-sidebar.active {
+                transform: translateX(0);
+            }
+            main.admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            .menu-toggle-btn {
+                display: block;
+            }
+            .search-container {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header.admin-navbar {
+                padding: 0 16px;
+            }
+            .content-wrapper {
+                padding: 16px;
+                gap: 16px;
+            }
+            .search-container {
+                display: none; /* Hide search on small mobile to save space */
+            }
+            .admin-name, .admin-role {
+                display: none; /* Hide admin texts on tiny devices */
+            }
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .quick-actions-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+            }
+        }
+
+        /* Quick Actions Section styling */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: left;
+            width: 100%;
+            outline: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.01);
+        }
+
+        .action-btn-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border-color: var(--brand-primary);
+        }
+
+        body.dark-mode .action-btn-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border-color: #60a5fa;
+        }
+
+        .action-icon-wrapper {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .action-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Color Themes for Buttons */
+        .btn-blue .action-icon-wrapper {
+            background-color: rgba(40, 116, 240, 0.1);
+            color: var(--brand-primary);
+        }
+        body.dark-mode .btn-blue .action-icon-wrapper {
+            background-color: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+        }
+
+        .btn-green .action-icon-wrapper {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+        body.dark-mode .btn-green .action-icon-wrapper {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .btn-orange .action-icon-wrapper {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+        body.dark-mode .btn-orange .action-icon-wrapper {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .btn-purple .action-icon-wrapper {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+        body.dark-mode .btn-purple .action-icon-wrapper {
+            background-color: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
+        }
+
+        /* Analytics Grid Section */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================
+         Left Sidebar
+    ========================== -->
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="dashboard.html" class="brand-logo">
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart">
+                <div class="brand-text">Admin <span>Plus</span></div>
+            </a>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item active">
+                <a href="dashboard.html">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="products.html">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="orders.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="users.html">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="settings.html">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <li class="menu-item logout-btn" style="list-style: none;">
+                <a href="../index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </div>
+    </aside>
+
+    <!-- =========================
+         Main View Area
+    ========================== -->
+    <main class="admin-main">
+        <!-- Top Navbar -->
+        <header class="admin-navbar">
+            <div class="nav-left">
+                <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle Navigation Sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Dashboard</h1>
+            </div>
+            
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Search orders, products, logs..." autocomplete="off">
+            </div>
+            
+            <div class="nav-right">
+                <button class="theme-toggle" id="theme-btn" aria-label="Toggle Color Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <button class="notifications-bell" aria-label="View notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="bell-badge"></span>
+                </button>
+                
+                <div class="admin-profile" id="profile-trigger">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Admin User Avatar" class="admin-avatar">
+                    <div class="admin-info">
+                        <span class="admin-name">Sanket Amte</span>
+                        <span class="admin-role">Super Admin</span>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown" id="profile-menu">
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-user-cog"></i> My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Account Settings
+                        </a>
+                        <a href="../index.html" class="dropdown-item logout">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- KPI Cards Grid -->
+            <section class="kpi-grid">
+                <!-- Products KPI -->
+                <div class="kpi-card products-card" onclick="window.location.href='products.html'">
+                    <div class="kpi-left">
+                        <span class="kpi-title">Total Products</span>
+                        <span class="kpi-value" id="kpi-products">128</span>
+                        <div class="kpi-desc">
+                            <span class="kpi-trend-up"><i class="fas fa-arrow-up"></i> +8%</span>
+                            <span>since last week</span>
+                        </div>
+                    </div>
+                    <div class="kpi-icon-box">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+
+                <!-- Users KPI -->
+                <div class="kpi-card users-card" onclick="window.location.href='users.html'">
+                    <div class="kpi-left">
+                        <span class="kpi-title">Total Users</span>
+                        <span class="kpi-value" id="kpi-users">1,250</span>
+                        <div class="kpi-desc">
+                            <span class="kpi-trend-up"><i class="fas fa-arrow-up"></i> +12%</span>
+                            <span>new customer signups</span>
+                        </div>
+                    </div>
+                    <div class="kpi-icon-box">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+
+                <!-- Orders KPI -->
+                <div class="kpi-card orders-card" onclick="window.location.href='orders.html'">
+                    <div class="kpi-left">
+                        <span class="kpi-title">Total Orders</span>
+                        <span class="kpi-value" id="kpi-orders">842</span>
+                        <div class="kpi-desc">
+                            <span class="kpi-trend-up"><i class="fas fa-arrow-up"></i> +5.4%</span>
+                            <span>order request frequency</span>
+                        </div>
+                    </div>
+                    <div class="kpi-icon-box">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+
+                <!-- Revenue KPI -->
+                <div class="kpi-card revenue-card">
+                    <div class="kpi-left">
+                        <span class="kpi-title">Total Revenue</span>
+                        <span class="kpi-value" id="kpi-revenue">₹12.4L</span>
+                        <div class="kpi-desc">
+                            <span class="kpi-trend-up"><i class="fas fa-arrow-up"></i> +18.2%</span>
+                            <span>monthly growth velocity</span>
+                        </div>
+                    </div>
+                    <div class="kpi-icon-box">
+                        <i class="fas fa-indian-rupee-sign"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions Section -->
+            <section class="card-container quick-actions-card">
+                <div class="card-header" style="border-bottom: none; padding-bottom: 0;">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="quick-actions-grid">
+                    <button class="action-btn-card btn-blue" onclick="location.href='products.html'">
+                        <div class="action-icon-wrapper">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <span class="action-title">Add Product</span>
+                    </button>
+                    <button class="action-btn-card btn-green" onclick="location.href='products.html'">
+                        <div class="action-icon-wrapper">
+                            <i class="fas fa-folder-plus"></i>
+                        </div>
+                        <span class="action-title">Add Category</span>
+                    </button>
+                    <button class="action-btn-card btn-orange" onclick="location.href='orders.html'">
+                        <div class="action-icon-wrapper">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <span class="action-title">View Orders</span>
+                    </button>
+                    <button class="action-btn-card btn-purple" onclick="location.href='#'">
+                        <div class="action-icon-wrapper">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <span class="action-title">Generate Report</span>
+                    </button>
+                </div>
+            </section>
+ 
+            <!-- Analytics Section Grid -->
+            <div class="analytics-grid">
+                <!-- Sales Analytics Card -->
+                <section class="card-container sales-analytics-card">
+                    <div class="card-header" style="border-bottom: none; padding-bottom: 0;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <h2>Sales Analytics</h2>
+                            <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">Revenue in the last 7 days</span>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-wrapper" style="position: relative; width: 100%; height: 320px; margin-top: 10px;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Orders Analytics Card -->
+                <section class="card-container orders-analytics-card">
+                    <div class="card-header" style="border-bottom: none; padding-bottom: 0;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <h2>Orders Analytics</h2>
+                            <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">Status breakdown</span>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-wrapper" style="position: relative; width: 100%; height: 320px; margin-top: 10px; display: flex; align-items: center; justify-content: center;">
+                        <canvas id="ordersChart"></canvas>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Split Panel: Orders & Activities -->
+            <div class="dashboard-split-grid">
+                <!-- Recent Orders Table -->
+                <section class="card-container">
+                    <div class="card-header">
+                        <h2>Recent Orders</h2>
+                        <a href="orders.html" class="card-action-btn">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body">
+                                <tr>
+                                    <td><a href="#" class="order-id-label">#OD832412</a></td>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces" class="customer-avatar" alt="Avatar">
+                                            <span>Sanket Amte</span>
+                                        </div>
+                                    </td>
+                                    <td>iPhone 14 (Blue)</td>
+                                    <td>₹69,999</td>
+                                    <td><span class="status-badge delivered">delivered</span></td>
+                                    <td>July 19, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="order-id-label">#OD832413</a></td>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces" class="customer-avatar" alt="Avatar">
+                                            <span>Neha Sharma</span>
+                                        </div>
+                                    </td>
+                                    <td>Dior Sauvage Perfume</td>
+                                    <td>₹9,500</td>
+                                    <td><span class="status-badge pending">pending</span></td>
+                                    <td>July 19, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="order-id-label">#OD832414</a></td>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop&crop=faces" class="customer-avatar" alt="Avatar">
+                                            <span>Rahul Verma</span>
+                                        </div>
+                                    </td>
+                                    <td>Nike Running Shoes</td>
+                                    <td>₹4,999</td>
+                                    <td><span class="status-badge delivered">delivered</span></td>
+                                    <td>July 18, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="order-id-label">#OD832415</a></td>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces" class="customer-avatar" alt="Avatar">
+                                            <span>Amit Patel</span>
+                                        </div>
+                                    </td>
+                                    <td>Dell Vostro 3420</td>
+                                    <td>₹42,990</td>
+                                    <td><span class="status-badge cancelled">cancelled</span></td>
+                                    <td>July 18, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="order-id-label">#OD832416</a></td>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=faces" class="customer-avatar" alt="Avatar">
+                                            <span>Priya Das</span>
+                                        </div>
+                                    </td>
+                                    <td>Apple Watch Series 8</td>
+                                    <td>₹45,900</td>
+                                    <td><span class="status-badge delivered">delivered</span></td>
+                                    <td>July 17, 2026</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Recent Activity Feed -->
+                <section class="card-container">
+                    <div class="card-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    
+                    <div class="activity-timeline">
+                        <!-- Activity 1 -->
+                        <div class="activity-item">
+                            <span class="activity-indicator success"></span>
+                            <span class="activity-time">Just Now</span>
+                            <span class="activity-title">New user registered</span>
+                            <p class="activity-desc">Rohan Malhotra signed up using a verification code.</p>
+                        </div>
+                        
+                        <!-- Activity 2 -->
+                        <div class="activity-item">
+                            <span class="activity-indicator info"></span>
+                            <span class="activity-time">25 mins ago</span>
+                            <span class="activity-title">Product added</span>
+                            <p class="activity-desc">Sony WH-1000XM5 wireless headset catalog item created by Sanket.</p>
+                        </div>
+
+                        <!-- Activity 3 -->
+                        <div class="activity-item">
+                            <span class="activity-indicator warning"></span>
+                            <span class="activity-time">2 hours ago</span>
+                            <span class="activity-title">Order placed</span>
+                            <p class="activity-desc">Order #OD832413 placed for Dior Sauvage Perfume (₹9,500).</p>
+                        </div>
+
+                        <!-- Activity 4 -->
+                        <div class="activity-item">
+                            <span class="activity-indicator success"></span>
+                            <span class="activity-time">4 hours ago</span>
+                            <span class="activity-title">Payment received</span>
+                            <p class="activity-desc">₹69,999 payment confirmation processed for Order #OD832412.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <div class="footer-content">
+                &copy; 2026 Flipkart Clone Admin Dashboard. Engineered for Excellence.
+            </div>
+        </footer>
+    </main>
+
+    <!-- ============================================================
+         JAVASCRIPT LOGIC
+         ============================================================ -->
+    <script>
+        // Theme Toggle Logic
+        const themeBtn = document.getElementById("theme-btn");
+        const bodyEl = document.body;
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem("admin-theme") || "light";
+        if (savedTheme === "dark") {
+            bodyEl.classList.add("dark-mode");
+            themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeBtn.addEventListener("click", () => {
+            const isDark = bodyEl.classList.toggle("dark-mode");
+            localStorage.setItem("admin-theme", isDark ? "dark" : "light");
+            themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+
+        // Sidebar Navigation Mobile Toggle
+        const sidebar = document.getElementById("sidebar");
+        const menuToggle = document.getElementById("menu-toggle");
+
+        menuToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle("active");
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener("click", (e) => {
+            if (window.innerWidth <= 991 && sidebar.classList.contains("active")) {
+                if (!sidebar.contains(e.target) && e.target !== menuToggle && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove("active");
+                }
+            }
+        });
+
+        // Profile Menu Dropdown Toggle
+        const profileTrigger = document.getElementById("profile-trigger");
+        const profileMenu = document.getElementById("profile-menu");
+
+        profileTrigger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle("active");
+        });
+
+        // Close dropdown when clicking elsewhere
+        document.addEventListener("click", () => {
+            profileMenu.classList.remove("active");
+        });
+
+        // Simple table search filter logic
+        const searchInput = document.getElementById("search-input");
+        const tableRows = document.querySelectorAll("#orders-table-body tr");
+
+        searchInput.addEventListener("input", (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            tableRows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(val) ? "" : "none";
+            });
+        });
+
+        // ============================================================
+        // SALES ANALYTICS CHART.JS IMPLEMENTATION
+        // ============================================================
+        const chartCtx = document.getElementById('salesChart').getContext('2d');
+        
+        // Helper to extract theme-specific options
+        function getChartColors() {
+            const isDark = document.body.classList.contains('dark-mode');
+            return {
+                gridColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
+                textColor: isDark ? '#94a3b8' : '#64748b'
+            };
+        }
+
+        // Gradient configuration
+        const lineGradient = chartCtx.createLinearGradient(0, 0, 0, 300);
+        lineGradient.addColorStop(0, 'rgba(40, 116, 240, 0.22)');
+        lineGradient.addColorStop(1, 'rgba(40, 116, 240, 0)');
+
+        let currentColors = getChartColors();
+
+        const chartConfig = {
+            type: 'line',
+            data: {
+                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [15000, 22000, 18000, 30000, 27000, 35000, 40000],
+                    borderColor: '#2874f0',
+                    backgroundColor: lineGradient,
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#2874f0',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointHoverBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        padding: 12,
+                        backgroundColor: 'rgba(15, 23, 42, 0.94)',
+                        titleFont: { size: 13, weight: 'bold', family: 'Inter' },
+                        bodyFont: { size: 13, family: 'Inter' },
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return ' Revenue: ₹' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: currentColors.gridColor
+                        },
+                        ticks: {
+                            color: currentColors.textColor,
+                            font: { family: 'Inter', size: 11, weight: 500 }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: currentColors.gridColor
+                        },
+                        ticks: {
+                            color: currentColors.textColor,
+                            font: { family: 'Inter', size: 11, weight: 500 },
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const salesChart = new Chart(chartCtx, chartConfig);
+
+        // ============================================================
+        // ORDERS ANALYTICS DOUGHNUT CHART IMPLEMENTATION
+        // ============================================================
+        const doughnutCtx = document.getElementById('ordersChart').getContext('2d');
+        
+        function getDoughnutThemeColors() {
+            const isDark = document.body.classList.contains('dark-mode');
+            return {
+                borderColor: isDark ? '#1e293b' : '#ffffff',
+                textColor: isDark ? '#94a3b8' : '#64748b'
+            };
+        }
+
+        let currentDoughnutColors = getDoughnutThemeColors();
+
+        const doughnutConfig = {
+            type: 'doughnut',
+            data: {
+                labels: ['Delivered', 'Pending', 'Cancelled', 'Returned'],
+                datasets: [{
+                    data: [520, 180, 42, 28],
+                    backgroundColor: [
+                        '#10b981', // success
+                        '#f59e0b', // warning
+                        '#ef4444', // danger
+                        '#3b82f6'  // info
+                    ],
+                    hoverBackgroundColor: [
+                        '#059669',
+                        '#d97706',
+                        '#dc2626',
+                        '#2563eb'
+                    ],
+                    borderColor: currentDoughnutColors.borderColor,
+                    borderWidth: 3,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: currentDoughnutColors.textColor,
+                            font: { family: 'Inter', size: 11, weight: 500 },
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        padding: 12,
+                        backgroundColor: 'rgba(15, 23, 42, 0.94)',
+                        titleFont: { size: 13, weight: 'bold', family: 'Inter' },
+                        bodyFont: { size: 13, family: 'Inter' },
+                        callbacks: {
+                            label: function(context) {
+                                return ' ' + context.label + ': ' + context.raw + ' orders';
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const ordersChart = new Chart(doughnutCtx, doughnutConfig);
+
+        // Dynamically toggle chart scales during user layout dark mode interaction
+        themeBtn.addEventListener("click", () => {
+            // Wait brief transition interval before pulling class list state
+            setTimeout(() => {
+                const freshColors = getChartColors();
+                salesChart.options.scales.x.grid.color = freshColors.gridColor;
+                salesChart.options.scales.x.ticks.color = freshColors.textColor;
+                salesChart.options.scales.y.grid.color = freshColors.gridColor;
+                salesChart.options.scales.y.ticks.color = freshColors.textColor;
+                salesChart.update();
+
+                const freshDoughnutColors = getDoughnutThemeColors();
+                ordersChart.options.plugins.legend.labels.color = freshDoughnutColors.textColor;
+                ordersChart.data.datasets[0].borderColor = freshDoughnutColors.borderColor;
+                ordersChart.update();
+            }, 50);
+        });
+
+        // ============================================================
+        // FETCH REAL-TIME BACKEND DATA FOR DASHBOARD
+        // ============================================================
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/admin/dashboard');
+                if (!response.ok) throw new Error('API server response was not ok');
+                const data = await response.json();
+                
+                // 1. Update KPI card values
+                document.getElementById('kpi-products').innerText = data.products;
+                document.getElementById('kpi-users').innerText = data.users.toLocaleString();
+                document.getElementById('kpi-orders').innerText = data.orders.toLocaleString();
+                document.getElementById('kpi-revenue').innerText = '₹' + (data.revenue / 100000).toFixed(1) + 'L';
+                
+                // 2. Update Sales line chart
+                salesChart.data.datasets[0].data = data.sales;
+                salesChart.update();
+                
+                // 3. Update Orders doughnut chart
+                ordersChart.data.datasets[0].data = [
+                    data.orderStatus.delivered,
+                    data.orderStatus.pending,
+                    data.orderStatus.cancelled,
+                    data.orderStatus.returned
+                ];
+                ordersChart.update();
+            } catch (error) {
+                console.warn('Could not load dynamic dashboard statistics. Falling back to default mock data.', error);
+            }
+        }
+        
+        loadDashboardData();
+    </script>
+</body>
+</html>
