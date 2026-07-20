@@ -1,1 +1,554 @@
-<!-- Admin Orders Management -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Management | Flipkart Clone Admin</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="css/orders.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         Left Sidebar
+         ============================================================ -->
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="dashboard.html" class="brand-logo">
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart">
+                <div class="brand-text">Admin <span>Plus</span></div>
+            </a>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="products.html">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a href="orders.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="users.html">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="settings.html">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <li class="menu-item logout-btn" style="list-style: none;">
+                <a href="../index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </div>
+    </aside>
+
+    <!-- ============================================================
+         Main View Area
+         ============================================================ -->
+    <main class="admin-main">
+        <!-- Top Navbar -->
+        <header class="admin-navbar">
+            <div class="nav-left">
+                <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle Navigation Sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Orders Management</h1>
+            </div>
+            
+            <div class="nav-right">
+                <button class="theme-toggle" id="theme-btn" aria-label="Toggle Color Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <button class="notifications-bell" aria-label="View notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="bell-badge"></span>
+                </button>
+                
+                <div class="admin-profile" id="profile-trigger">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Admin User Avatar" class="admin-avatar">
+                    <div class="admin-info">
+                        <span class="admin-name">Sanket Amte</span>
+                        <span class="admin-role">Super Admin</span>
+                    </div>
+                    
+                    <!-- Profile Dropdown Menu -->
+                    <div class="profile-dropdown" id="profile-menu">
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-user-cog"></i> My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Account Settings
+                        </a>
+                        <a href="../index.html" class="dropdown-item logout">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Metrics Summary Cards Grid (12 Cards) -->
+            <section class="metrics-grid">
+                <div class="metrics-card m-blue">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Orders</span>
+                        <span class="metrics-val" id="total-orders-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-shopping-bag"></i></div>
+                </div>
+                <div class="metrics-card m-orange">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Today's Orders</span>
+                        <span class="metrics-val" id="today-orders-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-calendar-day"></i></div>
+                </div>
+                <div class="metrics-card m-gold">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Weekly Revenue</span>
+                        <span class="metrics-val" id="weekly-revenue-cnt">₹0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-calendar-week"></i></div>
+                </div>
+                <div class="metrics-card m-orange">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Pending</span>
+                        <span class="metrics-val" id="pending-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-clock"></i></div>
+                </div>
+                <div class="metrics-card m-indigo">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Confirmed</span>
+                        <span class="metrics-val" id="confirmed-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-check-double"></i></div>
+                </div>
+                <div class="metrics-card m-blue">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Packed</span>
+                        <span class="metrics-val" id="packed-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-box-open"></i></div>
+                </div>
+                <div class="metrics-card m-teal">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Shipped</span>
+                        <span class="metrics-val" id="shipped-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-truck"></i></div>
+                </div>
+                <div class="metrics-card m-indigo">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Out For Delivery</span>
+                        <span class="metrics-val" id="out-for-delivery-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-shipping-fast"></i></div>
+                </div>
+                <div class="metrics-card m-green">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Delivered</span>
+                        <span class="metrics-val" id="delivered-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-check-circle"></i></div>
+                </div>
+                <div class="metrics-card m-red">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Cancelled</span>
+                        <span class="metrics-val" id="cancelled-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-times-circle"></i></div>
+                </div>
+                <div class="metrics-card m-teal">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Avg Order Value</span>
+                        <span class="metrics-val" id="aov-cnt">₹0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-calculator"></i></div>
+                </div>
+                <div class="metrics-card m-gold">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Revenue</span>
+                        <span class="metrics-val" id="revenue-cnt">₹0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-rupee-sign"></i></div>
+                </div>
+            </section>
+
+            <!-- Charts Section (3 columns: Revenue, Volume, Top Products) -->
+            <section class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3>Revenue Trend</h3>
+                        <span class="chart-subtitle">Monthly revenue analytics</span>
+                    </div>
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="orderRevenueChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3>Monthly Orders</h3>
+                        <span class="chart-subtitle">Monthly orders count</span>
+                    </div>
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="orderMonthlyChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card top-products-card">
+                    <div class="chart-card-header">
+                        <h3>Top Selling Products</h3>
+                        <span class="chart-subtitle">Best performing items by quantity</span>
+                    </div>
+                    <div class="top-products-list" id="top-products-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Control Actions Toolbar -->
+            <div class="toolbar-panel">
+                <div class="toolbar-left">
+                    <div class="search-wrapper">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="text" id="o-search-id" placeholder="Search by Order ID..." autocomplete="off">
+                    </div>
+                    
+                    <div class="search-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="o-search-customer" placeholder="Search by Customer..." autocomplete="off">
+                    </div>
+                    
+                    <select id="o-filter-status" class="filter-select">
+                        <option value="All">All Order Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Packed">Packed</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Out For Delivery">Out For Delivery</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    
+                    <select id="o-filter-payment" class="filter-select">
+                        <option value="All">All Payment Statuses</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Unpaid">Unpaid</option>
+                        <option value="Refunded">Refunded</option>
+                    </select>
+
+                    <input type="date" id="o-filter-date" class="filter-select" title="Filter by Order Date">
+                    
+                    <select id="o-sort" class="filter-select">
+                        <option value="date-desc">Newest First</option>
+                        <option value="date-asc">Oldest First</option>
+                        <option value="amount-high">Amount: High to Low</option>
+                        <option value="amount-low">Amount: Low to High</option>
+                    </select>
+
+                    <button type="button" id="btn-clear-filters" class="clear-filters-btn" title="Clear All Filters">
+                        <i class="fas fa-undo"></i> Clear
+                    </button>
+                </div>
+                
+                <div class="toolbar-right" style="display: flex; gap: 8px;">
+                    <button type="button" class="refresh-btn" id="btn-export" title="Export Orders to CSV">
+                        <i class="fas fa-file-export"></i> Export CSV
+                    </button>
+                    <button type="button" class="refresh-btn" id="btn-refresh" title="Refresh Order Catalog">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Orders Table Section -->
+            <section class="table-panel">
+                <div class="table-info-row">
+                    <span id="showing-text">Showing 0 of 0 orders</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Products</th>
+                                <th>Qty</th>
+                                <th>Total Amount</th>
+                                <th>Payment Method</th>
+                                <th>Payment Status</th>
+                                <th>Order Status</th>
+                                <th>Order Date</th>
+                                <th style="text-align: right; padding-right: 28px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Populated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination controls -->
+                <div class="pagination-container" id="pagination-container">
+                    <!-- Populated Dynamically -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <div class="footer-content">
+                &copy; 2026 Flipkart Clone Admin Dashboard. Engineered for Excellence.
+            </div>
+        </footer>
+    </main>
+
+    <!-- ============================================================
+         MODAL: VIEW ORDER DETAILS
+         ============================================================ -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-box" style="max-width: 680px;">
+            <div class="modal-header">
+                <h3>Order Invoice: <span id="detail-order-id" style="color: var(--brand-primary);"></span></h3>
+                <button class="modal-close-btn" id="close-detail-modal">&times;</button>
+            </div>
+            
+            <!-- Dates and Expected Delivery metadata -->
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 20px; flex-wrap: wrap; gap: 8px;">
+                <div>Placed on: <span id="detail-order-date" style="color: var(--text-main); font-weight: 600;"></span></div>
+                <div>Expected Delivery: <span id="detail-expected-delivery" style="color: var(--success-color); font-weight: 700;"></span></div>
+            </div>
+
+            <div class="detail-grid-2">
+                <!-- Customer Details -->
+                <div class="bill-section">
+                    <h4 class="detail-section-title">Customer Details</h4>
+                    <div class="detail-card-info">
+                        <div class="info-item">
+                            <span class="info-label">Name</span>
+                            <span class="info-value" id="detail-cust-name"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="detail-cust-email"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value" id="detail-cust-phone"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="bill-section">
+                    <h4 class="detail-section-title">Shipping Address</h4>
+                    <div class="detail-card-info" style="height: calc(100% - 32px); display: flex; align-items: center;">
+                        <div class="info-item" style="margin-bottom: 0;">
+                            <span class="info-value" id="detail-shipping-address" style="line-height: 1.5; font-weight: 500;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ordered Items list table -->
+            <h4 class="detail-section-title">Ordered Items</h4>
+            <div class="modal-table-container">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Product Description</th>
+                            <th>Unit Price</th>
+                            <th style="text-align: center;">Qty</th>
+                            <th style="text-align: right;">Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detail-items-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Invoice summary calculating GST -->
+            <div class="invoice-summary-block">
+                <div class="summary-calc">
+                    <div class="calc-row">
+                        <span>Subtotal</span>
+                        <span id="detail-subtotal">₹0</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>GST (18%)</span>
+                        <span id="detail-gst">₹0</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>Shipping Charges</span>
+                        <span id="detail-shipping">Free</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>Discount Applied</span>
+                        <span id="detail-discount">₹0</span>
+                    </div>
+                    <div class="calc-row grand-total">
+                        <span>Grand Total</span>
+                        <span id="detail-grand-total">₹0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-grid-2" style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 16px;">
+                <!-- Payment and Delivery Courier Details -->
+                <div class="bill-section">
+                    <h4 class="detail-section-title">Payment & Shipping</h4>
+                    <div class="detail-card-info" style="padding: 16px;">
+                        <div class="info-item">
+                            <span class="info-label">Method</span>
+                            <span class="info-value" id="detail-payment-method" style="font-weight: 600;"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Payment Status</span>
+                            <span class="info-value"><span id="detail-payment-status"></span></span>
+                        </div>
+                        <div class="info-item" style="border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 8px;">
+                            <span class="info-label">Courier</span>
+                            <span class="info-value" id="detail-delivery-partner" style="font-weight: 600; color: var(--text-main);"></span>
+                        </div>
+                        <div class="info-item" style="margin-bottom: 0;">
+                            <span class="info-label">Tracking ID</span>
+                            <span class="info-value" id="detail-tracking-id" style="font-family: monospace; font-weight: 700; color: var(--brand-primary);"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Timeline progressive trace -->
+                <div class="bill-section">
+                    <h4 class="detail-section-title">Order Lifecycle</h4>
+                    <div class="timeline-list" id="detail-timeline-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer-btns" style="margin-top: 20px;">
+                <button type="button" class="modal-btn btn-cancel" id="ok-detail-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: UPDATE ORDER STATUS
+         ============================================================ -->
+    <div class="modal-overlay" id="status-modal">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3>Update Order Status</h3>
+                <button class="modal-close-btn" id="close-status-modal">&times;</button>
+            </div>
+            
+            <form id="status-form">
+                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; margin-bottom: 16px;">
+                    Order ID: <span id="status-order-id" style="color: var(--text-main); font-weight: 700;"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="status-select-input">Select Order Status</label>
+                    <select id="status-select-input" class="form-input" style="cursor: pointer;" required>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Packed">Packed</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Out For Delivery">Out For Delivery</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <!-- Logistics inputs, toggled dynamically when status is 'Shipped' or 'Out For Delivery' or 'Delivered' -->
+                <div id="status-logistics-fields" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 14px; margin-top: 14px;">
+                    <div class="form-group">
+                        <label class="form-label" for="status-delivery-partner">Delivery Courier Partner</label>
+                        <select id="status-delivery-partner" class="form-input" style="cursor: pointer;">
+                            <option value="">Select Partner</option>
+                            <option value="Blue Dart">Blue Dart</option>
+                            <option value="Delhivery Express">Delhivery Express</option>
+                            <option value="Ecom Express">Ecom Express</option>
+                            <option value="DHL Express">DHL Express</option>
+                            <option value="FedEx India">FedEx India</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="status-tracking-id">Tracking Number ID</label>
+                        <input type="text" id="status-tracking-id" class="form-input" placeholder="e.g. #BD83948291">
+                    </div>
+                </div>
+                
+                <div class="modal-footer-btns">
+                    <button type="button" class="modal-btn btn-cancel" id="cancel-status-btn">Cancel</button>
+                    <button type="submit" class="modal-btn btn-submit" id="save-status-btn">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: DELETE CONFIRMATION
+         ============================================================ -->
+    <div class="modal-overlay" id="delete-confirm-modal">
+        <div class="modal-box" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 3rem; color: var(--danger-color); margin-bottom: 16px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Delete Order?</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px;">Are you sure you want to delete this order? This action cannot be undone.</p>
+            
+            <div class="modal-footer-btns" style="justify-content: center; border-top: none; padding-top: 0; margin-top: 0; gap: 16px;">
+                <button type="button" class="modal-btn btn-cancel" id="cancel-delete-btn" style="min-width: 100px;">Cancel</button>
+                <button type="button" class="modal-btn btn-danger" id="confirm-delete-btn" style="min-width: 100px;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Core Controller logic -->
+    <script src="js/orders.js"></script>
+</body>
+</html>
