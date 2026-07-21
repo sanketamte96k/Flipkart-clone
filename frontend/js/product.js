@@ -269,31 +269,44 @@ function displayProduct(product) {
 
                     <!-- Individual Reviews -->
                     <div class="user-reviews">
-                        <div class="review-card">
-                            <div class="review-header">
-                                <span class="review-rating">5 ★</span>
-                                <span class="review-title">Excellent Quality!</span>
-                            </div>
-                            <p class="review-text">Absolutely love this ${product.name}. The quality is exactly as described and it was delivered within 2 days. Highly recommend!</p>
-                            <div class="review-footer">
-                                <span class="user-name">Sanket Amte</span>
-                                <span class="verified-buyer">✔ Verified Buyer</span>
-                                <span class="review-date">Oct, 2023</span>
-                            </div>
-                        </div>
+                        ${(() => {
+                            let list = [
+                                {
+                                    rating: 5,
+                                    title: "Excellent Quality!",
+                                    text: `Absolutely love this ${product.name}. The quality is exactly as described and it was delivered within 2 days. Highly recommend!`,
+                                    user: "Sanket Amte",
+                                    verified: true,
+                                    date: "Oct, 2023"
+                                },
+                                {
+                                    rating: 4,
+                                    title: "Value for Money",
+                                    text: "Good product for the price. The packaging was a bit damaged but the product inside was perfect.",
+                                    user: "Rahul Sharma",
+                                    verified: true,
+                                    date: "Sept, 2023"
+                                }
+                            ];
 
-                        <div class="review-card">
-                            <div class="review-header">
-                                <span class="review-rating">4 ★</span>
-                                <span class="review-title">Value for Money</span>
-                            </div>
-                            <p class="review-text">Good product for the price. The packaging was a bit damaged but the product inside was perfect.</p>
-                            <div class="review-footer">
-                                <span class="user-name">Rahul Sharma</span>
-                                <span class="verified-buyer">✔ Verified Buyer</span>
-                                <span class="review-date">Sept, 2023</span>
-                            </div>
-                        </div>
+                            let savedReviews = JSON.parse(localStorage.getItem("reviews_" + product.id)) || [];
+                            list = [...list, ...savedReviews];
+
+                            return list.map(r => `
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <span class="review-rating">${r.rating} ★</span>
+                                        <span class="review-title">${r.title}</span>
+                                    </div>
+                                    <p class="review-text">${r.text}</p>
+                                    <div class="review-footer">
+                                        <span class="user-name">${r.user}</span>
+                                        ${r.verified ? '<span class="verified-buyer">✔ Verified Buyer</span>' : ''}
+                                        <span class="review-date">${r.date}</span>
+                                    </div>
+                                </div>
+                            `).join("");
+                        })()}
                     </div>
 
                     </div>

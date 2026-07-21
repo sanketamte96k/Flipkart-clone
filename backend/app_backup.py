@@ -1,51 +1,30 @@
 from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 import os
-import urllib.parse
 
 # Initialize Flask with the static folder pointing to the frontend directory
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
 
-# Database Configuration
-db_user = 'root'
-db_password = urllib.parse.quote_plus('abd@123')
-db_host = 'localhost'
-db_name = 'flipkart_clone'
+# =========================
+# Serve Frontend Files
+# =========================
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+@app.route('/')
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
 
-db = SQLAlchemy(app)
+@app.route('/<path:path>')
+def serve_static(path):
+    # This serves all other files (css, js, images, other html)
+    if os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return jsonify({"error": "File not found"}), 404
 
 # =========================
-# Database Model
+# Shared Product Database
 # =========================
-class Product(db.Model):
-    __tablename__ = 'products'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), nullable=False)
-    category = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
-    stock = db.Column(db.Integer, nullable=False)
-    image = db.Column(db.Text, nullable=True)
-    description = db.Column(db.Text, nullable=True)
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "category": self.category,
-            "price": self.price,
-            "stock": self.stock,
-            "image": self.image,
-            "description": self.description
-        }
-
-# Initial Product Data (Used for one-time automatic seeding if DB is empty)
-INITIAL_PRODUCTS = [
+PRODUCTS_DB = [
     # --- MOBILES ---
     {
         "id": 1,
@@ -54,7 +33,13 @@ INITIAL_PRODUCTS = [
         "category": "Mobile",
         "image": "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500",
         "stock": 45,
-        "description": "Super Retina XDR display, advanced dual-camera system, and high battery endurance."
+        "description": "Super Retina XDR display, advanced dual-camera system, and high battery endurance.",
+        "specs": [
+            ["Display", "6.1-inch Super Retina XDR"],
+            ["Processor", "A15 Bionic Chip"],
+            ["Camera", "12MP Main + 12MP Ultra Wide"],
+            ["Battery", "Up to 20 hours video playback"]
+        ]
     },
     {
         "id": 4,
@@ -63,7 +48,13 @@ INITIAL_PRODUCTS = [
         "category": "Mobile",
         "image": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=500",
         "stock": 32,
-        "description": "Dynamic AMOLED 2X display with 120Hz refresh rate and flagship performance."
+        "description": "Dynamic AMOLED 2X display with 120Hz refresh rate and flagship performance.",
+        "specs": [
+            ["Display", "6.1-inch Dynamic AMOLED 2X"],
+            ["Processor", "Snapdragon 8 Gen 2"],
+            ["RAM", "8 GB"],
+            ["Battery", "3900 mAh"]
+        ]
     },
     {
         "id": 6,
@@ -101,7 +92,13 @@ INITIAL_PRODUCTS = [
         "category": "Laptop",
         "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500",
         "stock": 24,
-        "description": "Apple M2 system on chip, quiet fanless design, and Liquid Retina display."
+        "description": "Apple M2 system on chip, quiet fanless design, and Liquid Retina display.",
+        "specs": [
+            ["Processor", "Apple M2 Chip"],
+            ["Memory", "8 GB Unified RAM"],
+            ["Storage", "256 GB SSD"],
+            ["Display", "13.6-inch Liquid Retina"]
+        ]
     },
     {
         "id": 8,
@@ -268,8 +265,15 @@ INITIAL_PRODUCTS = [
         "price": 6499,
         "category": "Fitness",
         "image": "images/fitness/whey_protein.png",
+        "isMinutesEligible": True,
         "stock": 40,
-        "description": "Premium whey protein isolate powder supporting muscle recovery and growth."
+        "description": "Premium whey protein isolate powder supporting muscle recovery and growth.",
+        "specs": [
+            ["Flavor", "Double Rich Chocolate"],
+            ["Protein per Serving", "24 g"],
+            ["Total Servings", "74"],
+            ["Weight", "2 kg"]
+        ]
     },
     {
         "id": 25,
@@ -277,8 +281,15 @@ INITIAL_PRODUCTS = [
         "price": 1099,
         "category": "Fitness",
         "image": "images/fitness/creatine.png",
+        "isMinutesEligible": True,
         "stock": 25,
-        "description": "Pure micronized creatine supporting energy output and training intensity."
+        "description": "Pure micronized creatine supporting energy output and training intensity.",
+        "specs": [
+            ["Type", "Micronized Creatine Monohydrate"],
+            ["Weight", "250 g"],
+            ["Servings", "83"],
+            ["Purity", "99.9%"]
+        ]
     },
     {
         "id": 26,
@@ -286,8 +297,15 @@ INITIAL_PRODUCTS = [
         "price": 699,
         "category": "Fitness",
         "image": "images/fitness/gym_shaker.png",
+        "isMinutesEligible": True,
         "stock": 60,
-        "description": "Leak-proof stainless steel shaker bottle with wire mixing ball."
+        "description": "Leak-proof stainless steel shaker bottle with wire mixing ball.",
+        "specs": [
+            ["Material", "BPA-Free Stainless Steel"],
+            ["Capacity", "750 ml"],
+            ["Leakproof", "Yes"],
+            ["Mixing Mechanism", "Blender Ball Included"]
+        ]
     },
     {
         "id": 27,
@@ -296,7 +314,12 @@ INITIAL_PRODUCTS = [
         "category": "Fitness",
         "image": "images/fitness/preworkout.png",
         "stock": 15,
-        "description": "High energy fitness supplement with beta-alanine and caffeine."
+        "description": "High energy fitness supplement with beta-alanine and caffeine.",
+        "specs": [
+            ["Flavor", "Fruit Punch"],
+            ["Servings", "30"],
+            ["Caffeine", "150 mg per serving"]
+        ]
     },
     {
         "id": 28,
@@ -304,8 +327,15 @@ INITIAL_PRODUCTS = [
         "price": 1799,
         "category": "Fitness",
         "image": "images/fitness/bcaa.png",
+        "isMinutesEligible": True,
         "stock": 30,
-        "description": "Intra-workout drink containing branched-chain amino acids."
+        "description": "Intra-workout drink containing branched-chain amino acids.",
+        "specs": [
+            ["Flavor", "Blue Raspberry"],
+            ["BCAA Ratio", "2:1:1 (L-Leucine, L-Isoleucine, L-Valine)"],
+            ["Servings", "30"],
+            ["Weight", "450 g"]
+        ]
     },
     {
         "id": 29,
@@ -313,8 +343,15 @@ INITIAL_PRODUCTS = [
         "price": 899,
         "category": "Fitness",
         "image": "images/fitness/resistance_bands.png",
+        "isMinutesEligible": True,
         "stock": 50,
-        "description": "5 levels latex loop bands for physical therapy, strength training and yoga."
+        "description": "5 levels latex loop bands for physical therapy, strength training and yoga.",
+        "specs": [
+            ["Bands Included", "5 (Extra Light to Extra Heavy)"],
+            ["Material", "Premium Natural Latex"],
+            ["Use", "Home/Gym Workout, Yoga, Stretching"],
+            ["Comes With", "Carry Bag & Guide Book"]
+        ]
     },
     {
         "id": 30,
@@ -323,41 +360,15 @@ INITIAL_PRODUCTS = [
         "category": "Fitness",
         "image": "images/fitness/multivitamin.png",
         "stock": 80,
-        "description": "Multivitamin supplements with 24 vitamins and minerals."
+        "description": "Multivitamin supplements with 24 vitamins and minerals.",
+        "specs": [
+            ["Tablets", "60"],
+            ["Vitamins & Minerals", "24 Essential Nutrients"],
+            ["Suitable For", "Men & Women"],
+            ["Form", "Coated Tablets"]
+        ]
     }
 ]
-
-# Database Initialization and One-Time Seeding
-with app.app_context():
-    db.create_all()
-    if Product.query.count() == 0:
-        for item in INITIAL_PRODUCTS:
-            product = Product(
-                id=item["id"],
-                name=item["name"],
-                category=item["category"],
-                price=int(item["price"]),
-                stock=int(item["stock"]),
-                image=item.get("image", "images/image1.jpeg"),
-                description=item.get("description", "")
-            )
-            db.session.add(product)
-        db.session.commit()
-
-# =========================
-# Serve Frontend Files
-# =========================
-
-@app.route('/')
-def index():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    # This serves all other files (css, js, images, other html)
-    if os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    return jsonify({"error": "File not found"}), 404
 
 # =========================
 # Public Catalog Routes
@@ -365,16 +376,14 @@ def serve_static(path):
 @app.route('/products')
 @app.route('/api/products')
 def products():
-    all_products = Product.query.all()
-    return jsonify([p.to_dict() for p in all_products])
+    return jsonify(PRODUCTS_DB)
 
 # =========================
 # Admin CRUD Products APIs
 # =========================
 @app.route('/admin/products', methods=['GET'])
 def get_admin_products():
-    all_products = Product.query.all()
-    return jsonify([p.to_dict() for p in all_products])
+    return jsonify(PRODUCTS_DB)
 
 @app.route('/admin/products', methods=['POST'])
 def add_admin_product():
@@ -392,17 +401,18 @@ def add_admin_product():
     if not name or not category or price is None or stock is None:
         return jsonify({"error": "Missing required fields"}), 400
 
-    new_product = Product(
-        name=name,
-        category=category,
-        price=int(price),
-        stock=int(stock),
-        image=image or "images/image1.jpeg",
-        description=description
-    )
-    db.session.add(new_product)
-    db.session.commit()
-    return jsonify(new_product.to_dict()), 201
+    new_id = max([p['id'] for p in PRODUCTS_DB]) + 1 if PRODUCTS_DB else 1
+    new_product = {
+        "id": new_id,
+        "name": name,
+        "category": category,
+        "price": int(price),
+        "stock": int(stock),
+        "image": image or "images/image1.jpeg",
+        "description": description
+    }
+    PRODUCTS_DB.append(new_product)
+    return jsonify(new_product), 201
 
 @app.route('/admin/products/<int:product_id>', methods=['PUT'])
 def update_admin_product(product_id):
@@ -410,35 +420,31 @@ def update_admin_product(product_id):
     if not req_data:
         return jsonify({"error": "Missing payload"}), 400
 
-    product = Product.query.get(product_id)
+    product = next((p for p in PRODUCTS_DB if p['id'] == product_id), None)
     if not product:
         return jsonify({"error": "Product not found"}), 404
 
-    if 'name' in req_data:
-        product.name = req_data['name']
-    if 'category' in req_data:
-        product.category = req_data['category']
+    product['name'] = req_data.get('name', product['name'])
+    product['category'] = req_data.get('category', product['category'])
     if 'price' in req_data:
-        product.price = int(req_data['price'])
+        product['price'] = int(req_data['price'])
     if 'stock' in req_data:
-        product.stock = int(req_data['stock'])
-    if 'image' in req_data:
-        product.image = req_data['image']
-    if 'description' in req_data:
-        product.description = req_data['description']
+        product['stock'] = int(req_data['stock'])
+    product['image'] = req_data.get('image', product['image'])
+    product['description'] = req_data.get('description', product.get('description', ''))
 
-    db.session.commit()
-    return jsonify(product.to_dict()), 200
+    return jsonify(product), 200
 
 @app.route('/admin/products/<int:product_id>', methods=['DELETE'])
 def delete_admin_product(product_id):
-    product = Product.query.get(product_id)
+    global PRODUCTS_DB
+    product = next((p for p in PRODUCTS_DB if p['id'] == product_id), None)
     if not product:
         return jsonify({"error": "Product not found"}), 404
 
-    db.session.delete(product)
-    db.session.commit()
+    PRODUCTS_DB = [p for p in PRODUCTS_DB if p['id'] != product_id]
     return jsonify({"success": True, "message": "Product deleted successfully"}), 200
+
 
 @app.route('/admin/dashboard')
 def admin_dashboard():

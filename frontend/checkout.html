@@ -73,6 +73,10 @@
                     <span>Price (<span id="summary-count">0</span> items)</span>
                     <span id="summary-price">₹0</span>
                 </div>
+                <div class="price-row" id="checkout-discount-row" style="display: none; color: #388e3c; font-weight: 600;">
+                    <span>Coupon Discount</span>
+                    <span>- ₹<span id="checkout-discount-value">0</span></span>
+                </div>
                 <div class="price-row">
                     <span>Delivery Charges</span>
                     <span class="free-text"><del>₹40</del> Free</span>
@@ -97,47 +101,135 @@
     ========================== -->
     <script src="js/script.js"></script>
     <script>
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let checkoutItems = [];
         let total = 0;
+        let couponDiscount = 0;
+        let isMinutesEligible = false;
 
-        document.getElementById("summary-count").innerText = cart.length;
+        async function initCheckout() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get("id");
 
-        cart.forEach(product => {
-            total += product.price * product.quantity;
-        });
-
-        document.getElementById("summary-price").innerText = "₹" + total.toLocaleString();
-        document.getElementById("checkout-total").innerText = "₹" + total.toLocaleString();
-
-        // Auto-fill and remove mobile number field from view if user is logged in
-        let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        if (currentUser) {
-            const nameEl = document.getElementById("name");
-            if (nameEl && !nameEl.value) {
-                nameEl.value = currentUser.name;
+            let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (currentUser) {
+                // Load address book and auto-fill if possible
+                let addresses = JSON.parse(localStorage.getItem("addresses_" + currentUser.mobile)) || [];
+                if (addresses.length > 0) {
+                    let addr = addresses[0];
+                    document.getElementById("name").value = addr.name;
+                    document.getElementById("mobile").value = addr.mobile;
+                    document.getElementById("pincode").value = addr.pincode;
+                    document.getElementById("locality").value = addr.locality;
+                    document.getElementById("address").value = addr.details;
+                } else {
+                    document.getElementById("name").value = currentUser.name;
+                    document.getElementById("mobile").value = currentUser.mobile;
+                }
             }
-            const mobileEl = document.getElementById("mobile");
-            if (mobileEl) {
-                mobileEl.value = currentUser.mobile;
-                mobileEl.style.display = "none";
+
+            if (productId) {
+                // BUY NOW FLOW: checkout only the single selected product
+                try {
+                    let response = await fetch('http://127.0.0.1:5000/products');
+                    let allProducts = await response.json();
+                    let targetProduct = allProducts.find(p => p.id == productId);
+
+                    if (targetProduct) {
+                        checkoutItems = [{ ...targetProduct, quantity: 1 }];
+                        localStorage.setItem("checkoutItems", JSON.stringify(checkoutItems));
+                        localStorage.setItem("checkoutMode", "buynow");
+                        
+                        // Ignore cart coupon for Buy Now
+                        localStorage.removeItem("appliedCoupon");
+                        
+                        calculatePriceSummary();
+                    } else {
+                        showToast("Product not found!", "error");
+                        setTimeout(() => window.location.href = "index.html", 1500);
+                    }
+                } catch (error) {
+                    console.error("Error fetching product for Buy Now:", error);
+                    showToast("Error loading product checkout details.", "error");
+                }
+            } else {
+                // CART FLOW: checkout all items in the user's cart
+                let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                if (cart.length === 0) {
+                    showToast("Your cart is empty!", "info");
+                    setTimeout(() => window.location.href = "index.html", 1000);
+                    return;
+                }
+                
+                checkoutItems = cart;
+                localStorage.setItem("checkoutItems", JSON.stringify(checkoutItems));
+                localStorage.setItem("checkoutMode", "cart");
+                
+                calculatePriceSummary();
             }
+        }
+
+        function calculatePriceSummary() {
+            total = 0;
+            couponDiscount = 0;
+            isMinutesEligible = checkoutItems.some(p => p.isMinutesEligible);
+
+            checkoutItems.forEach(product => {
+                total += product.price * product.quantity;
+            });
+
+            document.getElementById("summary-count").innerText = checkoutItems.length;
+            document.getElementById("summary-price").innerText = "₹" + total.toLocaleString();
+
+            // Load applied coupon if checkout mode is cart
+            const mode = localStorage.getItem("checkoutMode");
+            if (mode === "cart") {
+                let applied = JSON.parse(localStorage.getItem("appliedCoupon"));
+                if (applied) {
+                    couponDiscount = applied.discount;
+                    document.getElementById("checkout-discount-value").innerText = couponDiscount.toLocaleString();
+                    document.getElementById("checkout-discount-row").style.display = "flex";
+                } else {
+                    document.getElementById("checkout-discount-row").style.display = "none";
+                }
+            } else {
+                document.getElementById("checkout-discount-row").style.display = "none";
+            }
+
+            let finalPayable = total - couponDiscount;
+            document.getElementById("checkout-total").innerText = "₹" + finalPayable.toLocaleString();
         }
 
         function placeOrder() {
             let name = document.getElementById("name").value.trim();
             let mobile = document.getElementById("mobile").value.trim();
+            let pincode = document.getElementById("pincode").value.trim();
+            let locality = document.getElementById("locality").value.trim();
             let address = document.getElementById("address").value.trim();
 
-            if (name === "" || mobile === "" || address === "") {
-                showToast("Please fill all address details securely.", "error");
+            if (name === "" || mobile === "" || address === "" || pincode === "" || locality === "") {
+                showToast("Please fill in all address parameters securely.", "error");
                 return;
             }
 
-            let isMinutesEligible = cart.some(p => p.isMinutesEligible);
-            let orderDetails = { name, mobile, address, total, deliveryMethod: isMinutesEligible ? 'Minutes' : 'Standard' };
+            if (mobile.length !== 10 || isNaN(mobile)) {
+                showToast("Please enter a valid 10-digit mobile number.", "error");
+                return;
+            }
+
+            let finalPayable = total - couponDiscount;
+            let orderDetails = { 
+                name, 
+                mobile, 
+                address: `${address}, ${locality} - ${pincode}`, 
+                total: finalPayable, 
+                deliveryMethod: isMinutesEligible ? 'Minutes' : 'Standard' 
+            };
             localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
             window.location.href = "payment.html";
         }
+
+        // Initialize on DOM load
+        document.addEventListener("DOMContentLoaded", initCheckout);
     </script>
 </body>
 </html>

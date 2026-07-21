@@ -387,6 +387,12 @@ function updateUserArea(name) {
     if (userArea) {
         const isDarkMode = document.body.classList.contains('dark-mode');
         
+        let adminItemHTML = "";
+        const lowerName = name.toLowerCase();
+        if (lowerName.includes("sanket") || lowerName.includes("sank")) {
+            adminItemHTML = `<a href="admin/dashboard.html"><i class="fas fa-chart-line"></i> Admin Dashboard</a>`;
+        }
+        
         userArea.innerHTML = `
             <div class="user-greeting" id="user-greeting-btn">
                 <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
@@ -394,6 +400,7 @@ function updateUserArea(name) {
                 <i class="fas fa-chevron-down" style="font-size: 0.7rem; opacity: 0.7;"></i>
                 
                 <div class="user-dropdown" id="user-dropdown-menu">
+                    ${adminItemHTML}
                     <a href="orders.html"><i class="fas fa-box"></i> My Orders</a>
                     <a href="wishlist.html"><i class="fas fa-heart"></i> Wishlist</a>
                     <a href="profile.html"><i class="fas fa-user-cog"></i> Account Settings</a>

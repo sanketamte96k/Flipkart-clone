@@ -202,32 +202,55 @@
             document.getElementById("time-ordered").innerText = new Date(orderTime).toLocaleString();
 
             // Flipkart tracking demo simulation based on time elapsed
-            if (diffMins >= 0.02) {
-                // Shipped after 1.2 seconds
+            if (order.status === "Cancelled") {
                 document.getElementById("step-ordered").classList.add("line-active");
-                document.getElementById("step-shipped").classList.add("active");
-                document.getElementById("time-shipped").innerText = new Date(orderTime + 1200).toLocaleString();
-            }
-            if (diffMins >= 0.05) {
-                // Out for delivery after 3 seconds
-                document.getElementById("step-shipped").classList.add("line-active");
-                document.getElementById("step-out").classList.add("active");
-                document.getElementById("time-out").innerText = new Date(orderTime + 3000).toLocaleString();
-            }
-            if (diffMins >= 0.1) {
-                // Delivered after 6 seconds
-                document.getElementById("step-out").classList.add("line-active");
-                document.getElementById("step-delivered").classList.add("active");
-                document.getElementById("time-delivered").innerText = new Date(orderTime + 6000).toLocaleString();
-            }
+                
+                // Hide standard tracking steps
+                document.getElementById("step-shipped").style.display = "none";
+                document.getElementById("step-out").style.display = "none";
+                document.getElementById("step-delivered").style.display = "none";
+                
+                // Dynamically append Cancelled milestone
+                const trackingContainer = document.querySelector(".tracking-container");
+                if (trackingContainer) {
+                    trackingContainer.innerHTML += `
+                        <div class="track-step active" id="step-cancelled" style="color: #ff4343;">
+                            <div class="track-icon" style="background: #ff4343; border-color: #ff4343; color: white; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%;"><i class="fas fa-times" style="font-size: 0.90rem;"></i></div>
+                            <div class="track-content" style="margin-left: 20px;">
+                                <h4 style="color: #ff4343; font-weight: 600; font-size: 0.95rem;">Cancelled</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">This order was successfully cancelled</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                if (diffMins >= 0.02) {
+                    // Shipped after 1.2 seconds
+                    document.getElementById("step-ordered").classList.add("line-active");
+                    document.getElementById("step-shipped").classList.add("active");
+                    document.getElementById("time-shipped").innerText = new Date(orderTime + 1200).toLocaleString();
+                }
+                if (diffMins >= 0.05) {
+                    // Out for delivery after 3 seconds
+                    document.getElementById("step-shipped").classList.add("line-active");
+                    document.getElementById("step-out").classList.add("active");
+                    document.getElementById("time-out").innerText = new Date(orderTime + 3000).toLocaleString();
+                }
+                if (diffMins >= 0.1) {
+                    // Delivered after 6 seconds
+                    document.getElementById("step-out").classList.add("line-active");
+                    document.getElementById("step-delivered").classList.add("active");
+                    document.getElementById("time-delivered").innerText = new Date(orderTime + 6000).toLocaleString();
+                }
 
-            if (order.returnStatus === "Return Requested") {
-                document.getElementById("step-delivered").classList.add("line-active");
-                let retStep = document.getElementById("step-returned");
-                if (retStep) {
-                    retStep.style.display = "flex";
-                    retStep.classList.add("active");
-                    document.getElementById("time-returned").innerText = order.returnDate || new Date().toLocaleString();
+                if (order.returnStatus === "Return Requested") {
+                    document.getElementById("step-delivered").classList.add("line-active");
+                    let retStep = document.getElementById("step-returned");
+                    if (retStep) {
+                        retStep.style.display = "flex";
+                        retStep.classList.add("active");
+                        document.getElementById("time-returned").innerText = order.returnDate || new Date().toLocaleString();
+                    }
                 }
             }
         }

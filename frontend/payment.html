@@ -252,7 +252,7 @@
             window.location.href = "checkout.html";
         }
 
-        document.getElementById("summary-count").innerText = JSON.parse(localStorage.getItem("cart"))?.length || 1;
+        document.getElementById("summary-count").innerText = JSON.parse(localStorage.getItem("checkoutItems"))?.length || 1;
         document.getElementById("summary-price").innerText = "₹" + orderDetails.total.toLocaleString();
         document.getElementById("payment-total-amount").innerText = "₹" + orderDetails.total.toLocaleString();
 
@@ -355,18 +355,56 @@
 
             setTimeout(() => {
                 let orders = JSON.parse(localStorage.getItem("orders")) || [];
-                let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                let checkoutItems = JSON.parse(localStorage.getItem("checkoutItems")) || [];
+                let mode = localStorage.getItem("checkoutMode") || "cart";
 
                 let finalOrder = {
                     ...orderDetails,
                     paymentMethod,
-                    products: cart,
+                    products: checkoutItems,
                     date: new Date().toLocaleString()
                 };
 
                 orders.push(finalOrder);
                 localStorage.setItem("orders", JSON.stringify(orders));
-                localStorage.removeItem("cart");
+                
+                // Clear state based on checkout mode
+                if (mode === "cart") {
+                    localStorage.removeItem("cart");
+                    localStorage.removeItem("appliedCoupon");
+                }
+                localStorage.removeItem("checkoutItems");
+                localStorage.removeItem("checkoutMode");
+
+                // SuperCoins Reward Logic
+                let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+                if (currentUser) {
+                    let coinsEarned = Math.floor(orderDetails.total * 0.05); // 5% cashback in SuperCoins
+                    if (coinsEarned > 0) {
+                        currentUser.superCoins = (currentUser.superCoins || 100) + coinsEarned;
+                        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+                        // Update in users database
+                        let users = JSON.parse(localStorage.getItem("users")) || [];
+                        let uIndex = users.findIndex(u => u.mobile === currentUser.mobile);
+                        if (uIndex !== -1) {
+                            users[uIndex].superCoins = currentUser.superCoins;
+                            localStorage.setItem("users", JSON.stringify(users));
+                        }
+
+                        // Add transaction record to history
+                        let history = JSON.parse(localStorage.getItem("supercoins_history_" + currentUser.mobile)) || [
+                            { title: "Welcome Sign Up Bonus", date: "2026-07-01 10:00", amount: 100, type: "credit" }
+                        ];
+                        history.push({
+                            title: `Earned on Order Placement`,
+                            date: new Date().toLocaleString(),
+                            amount: coinsEarned,
+                            type: "credit"
+                        });
+                        localStorage.setItem("supercoins_history_" + currentUser.mobile, JSON.stringify(history));
+                    }
+                }
 
                 showToast("Order Placed Successfully! ✅", "success");
                 setTimeout(() => {

@@ -248,21 +248,30 @@
                 let statusColor = isDelivered ? '#26a541' : '#ff9f00';
                 let subStatusText = `Your item has been ${isDelivered ? 'delivered' : 'shipped'}`;
                 
-                if (order.returnStatus === "Return Requested") {
+                if (order.status === "Cancelled") {
+                    statusText = "Cancelled";
+                    statusColor = "#ff4343";
+                    subStatusText = "This order was cancelled successfully.";
+                    isDelivered = false;
+                } else if (order.returnStatus === "Return Requested") {
                     statusText = "Return Requested";
                     statusColor = "#ff9f00"; 
                     subStatusText = "Return verification under progress";
                 }
 
                 let actionButtonsHTML = "";
-                if (isDelivered) {
-                    actionButtonsHTML += `<button style="background: none; border: none; color: #2874f0; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 10px;" onclick="openReviewModal('${order.products[0].name}', '${order.products[0].image}')">★ Rate & Review Product</button>`;
+                if (order.status === "Cancelled") {
+                    actionButtonsHTML = "";
+                } else if (isDelivered) {
+                    actionButtonsHTML += `<button style="background: none; border: none; color: #2874f0; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 10px;" onclick="openReviewModal(${order.products[0].id}, '${order.products[0].name.replace(/'/g, "\\'")}', '${order.products[0].image}')">★ Rate & Review Product</button>`;
                     
                     if (order.returnStatus === "Return Requested") {
                         actionButtonsHTML += `<span style="font-size: 0.85rem; color: #878787; font-weight: 600; margin-top: 5px; display: inline-flex; align-items: center; gap: 5px;">↺ Return Requested (Pending)</span>`;
                     } else {
                         actionButtonsHTML += `<button style="background: none; border: none; color: #ff6161; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 5px;" onclick="openReturnModal(${index})">↺ Return Product</button>`;
                     }
+                } else {
+                    actionButtonsHTML += `<button style="background: none; border: none; color: #ff4343; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 10px;" onclick="cancelOrder(${index})"><i class="fas fa-times-circle"></i> Cancel Order</button>`;
                 }
 
                 container.innerHTML += `
@@ -293,7 +302,10 @@
             });
         }
 
-        function openReviewModal(name, img) {
+        let selectedProductId = null;
+
+        function openReviewModal(id, name, img) {
+            selectedProductId = id;
             document.getElementById("review-product-name").innerText = name;
             document.getElementById("review-modal-img").src = img;
             document.getElementById("review-modal").style.display = "flex";
@@ -365,10 +377,28 @@
 
         function submitReview() {
             if (!selectedRating) {
-                showToast("Please select a rating to continue");
+                showToast("Please select a rating to continue", "error");
                 return;
             }
-            showToast("Success! Your review has been submitted.");
+            
+            const reviewText = document.getElementById("review-text-input").value.trim();
+            let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            let reviewerName = currentUser ? currentUser.name : "Verified Customer";
+            
+            let reviewObj = {
+                rating: selectedRating,
+                title: selectedRating >= 4 ? "Excellent Quality" : "Value for Money",
+                text: reviewText || "Excellent product, exactly as described. Extremely satisfied with this purchase!",
+                user: reviewerName,
+                verified: true,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+            };
+
+            let reviews = JSON.parse(localStorage.getItem("reviews_" + selectedProductId)) || [];
+            reviews.push(reviewObj);
+            localStorage.setItem("reviews_" + selectedProductId, JSON.stringify(reviews));
+
+            showToast("Success! Your review has been submitted.", "success");
             closeReviewModal();
         }
 
@@ -414,7 +444,43 @@
             }
         }
 
+        function cancelOrder(reversedIndex) {
+            if (confirm("Are you sure you want to cancel this order?")) {
+                let originalIndex = orders.length - 1 - reversedIndex;
+                if (orders[originalIndex]) {
+                    orders[originalIndex].status = "Cancelled";
+                    
+                    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+                    if (currentUser) {
+                        let coinsEarned = Math.floor(orders[originalIndex].total * 0.05);
+                        if (coinsEarned > 0) {
+                            currentUser.superCoins = Math.max(0, (currentUser.superCoins || 100) - coinsEarned);
+                            localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
+                            let users = JSON.parse(localStorage.getItem("users")) || [];
+                            let uIndex = users.findIndex(u => u.mobile === currentUser.mobile);
+                            if (uIndex !== -1) {
+                                users[uIndex].superCoins = currentUser.superCoins;
+                                localStorage.setItem("users", JSON.stringify(users));
+                            }
+
+                            let history = JSON.parse(localStorage.getItem("supercoins_history_" + currentUser.mobile)) || [];
+                            history.push({
+                                title: `Deducted on Order Cancellation`,
+                                date: new Date().toLocaleString(),
+                                amount: coinsEarned,
+                                type: "debit"
+                            });
+                            localStorage.setItem("supercoins_history_" + currentUser.mobile, JSON.stringify(history));
+                        }
+                    }
+
+                    localStorage.setItem("orders", JSON.stringify(orders));
+                    showToast("Order Cancelled Successfully", "info");
+                    renderOrders();
+                }
+            }
+        }
 
         renderOrders();
     </script>
