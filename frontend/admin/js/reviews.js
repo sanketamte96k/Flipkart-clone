@@ -371,6 +371,37 @@ function initReviewsManager() {
     initFilters();
     initCSVExport();
     updateDashboard();
+    fetchAdminReviews();
+
+    async function fetchAdminReviews() {
+        try {
+            const response = await fetch('/api/admin/reviews');
+            if (response.ok) {
+                const apiReviews = await response.json();
+                if (apiReviews && apiReviews.length > 0) {
+                    reviewsList = apiReviews.map(r => ({
+                        id: `REV${r.id}`,
+                        rawId: r.id,
+                        productName: r.product_name || `Product #${r.product_id}`,
+                        productImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop",
+                        productCategory: "General",
+                        customerName: r.user_name || `Customer #${r.user_id}`,
+                        customerEmail: `user${r.user_id}@example.com`,
+                        rating: r.rating,
+                        title: `${r.rating} Star Review`,
+                        text: r.review_text,
+                        images: [],
+                        date: r.created_at ? r.created_at.split("T")[0] : new Date().toISOString().split("T")[0],
+                        status: "Approved",
+                        moderationHistory: []
+                    }));
+                    updateDashboard();
+                }
+            }
+        } catch (e) {
+            console.error("Error fetching admin reviews:", e);
+        }
+    }
 
     /* ============================================================
        METRICS
@@ -918,6 +949,14 @@ function initReviewsManager() {
                 const tr = document.getElementById(`row-review-${selectedReviewId}`);
                 const r = reviewsList.find(item => item.id === selectedReviewId);
                 const label = r ? r.id : "Review";
+
+                if (r && r.rawId) {
+                    try {
+                        fetch(`/api/reviews/${r.rawId}`, { method: 'DELETE' });
+                    } catch(err) {
+                        console.error("API error deleting review:", err);
+                    }
+                }
 
                 if (tr) {
                     tr.style.opacity = 0;

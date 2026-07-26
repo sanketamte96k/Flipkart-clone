@@ -1,0 +1,647 @@
+/* ============================================================
+   PREMIUM FLIPKART AUTHENTICATION STYLES (LOGIN & REGISTER)
+============================================================ */
+
+.auth-page-wrapper {
+    min-height: calc(100vh - 160px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    padding: 40px 15px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Modal Backdrop (Glassmorphism) */
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.68);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.auth-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Auth Card Container */
+.auth-container {
+    display: flex;
+    width: 880px;
+    max-width: 100%;
+    min-height: 560px;
+    background: #ffffff;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 0 auto;
+    position: relative;
+    animation: authCardScale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authCardScale {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Close Button (For Modal) */
+.modal-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: none;
+    color: #64748b;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    z-index: 10;
+}
+
+.modal-close-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    transform: rotate(90deg);
+}
+
+/* Left Branding Side (Flipkart Blue Theme) */
+.auth-left {
+    flex: 0 0 38%;
+    background: linear-gradient(145deg, #2874f0 0%, #0d47a1 100%);
+    color: #ffffff;
+    padding: 44px 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-left::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 180px;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-left::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 220px;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-left-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.auth-left-brand img {
+    height: 24px;
+}
+
+.auth-left-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+}
+
+.auth-left-content p {
+    font-size: 14px;
+    color: #e2e8f0;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+.auth-left-highlights {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.highlight-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #f8fafc;
+    font-weight: 500;
+}
+
+.highlight-item i {
+    color: #ffd700;
+    font-size: 15px;
+}
+
+.auth-left-illustration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.auth-hero-icon {
+    font-size: 90px;
+    color: rgba(255, 255, 255, 0.22);
+    animation: floatHero 4s ease-in-out infinite;
+}
+
+@keyframes floatHero {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Right Form Section */
+.auth-right {
+    flex: 1;
+    padding: 38px 40px;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    position: relative;
+}
+
+/* Tab Switcher */
+.auth-tabs {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    z-index: 2;
+    text-align: center;
+}
+
+.auth-tab.active {
+    color: #2874f0;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Forms Wrapper */
+.auth-forms-container {
+    position: relative;
+    flex: 1;
+}
+
+.auth-form-panel {
+    display: none;
+    animation: panelFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-form-panel.active {
+    display: block;
+}
+
+@keyframes panelFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Floating Label Form Controls */
+.floating-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 15px;
+    transition: color 0.25s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.float-input {
+    width: 100%;
+    padding: 14px 42px 14px 42px;
+    font-size: 14px;
+    color: #1e293b;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    outline: none;
+    background: #ffffff;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.float-input:focus {
+    border-color: #2874f0;
+    box-shadow: 0 0 0 4px rgba(40, 116, 240, 0.12);
+}
+
+.float-input:focus ~ .input-icon {
+    color: #2874f0;
+}
+
+.floating-label {
+    position: absolute;
+    left: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+    transition: 0.2s ease all;
+    background: transparent;
+    padding: 0 4px;
+}
+
+.float-input:focus ~ .floating-label,
+.float-input:not(:placeholder-shown) ~ .floating-label {
+    top: 0;
+    left: 36px;
+    font-size: 11px;
+    color: #2874f0;
+    font-weight: 600;
+    background: #ffffff;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 15px;
+    transition: color 0.2s ease;
+    z-index: 3;
+    padding: 4px;
+}
+
+.toggle-password-btn:hover {
+    color: #2874f0;
+}
+
+/* Field Inline Errors */
+.field-error-msg {
+    display: none;
+    font-size: 12px;
+    color: #ef4444;
+    margin-top: 5px;
+    padding-left: 2px;
+    font-weight: 500;
+}
+
+.field-error-msg.active {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Password Strength Meter */
+.password-strength-container {
+    margin-top: -10px;
+    margin-bottom: 18px;
+    padding: 0 2px;
+}
+
+.strength-bars {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.strength-bar-segment {
+    flex: 1;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.strength-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Extras Row (Remember Me & Forgot Password) */
+.auth-extras-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #2874f0;
+    cursor: pointer;
+}
+
+.forgot-password-link {
+    color: #2874f0;
+    text-decoration: none;
+    font-weight: 600;
+    transition: text-decoration 0.2s;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+/* Terms Text */
+.terms-text {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+.terms-text a {
+    color: #2874f0;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-text a:hover {
+    text-decoration: underline;
+}
+
+/* Ripple Button Effect */
+.ripple-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: rippleAnim 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes rippleAnim {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Buttons */
+.auth-btn {
+    width: 100%;
+    height: 46px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.auth-btn-primary {
+    background: linear-gradient(135deg, #fb641b 0%, #ff5722 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 14px rgba(251, 100, 27, 0.35);
+}
+
+.auth-btn-primary:hover {
+    background: linear-gradient(135deg, #e65100 0%, #f4511e 100%);
+    box-shadow: 0 6px 20px rgba(251, 100, 27, 0.45);
+    transform: translateY(-1px);
+}
+
+.auth-btn-primary:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 18px 0;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.auth-divider span {
+    padding: 0 12px;
+}
+
+.auth-btn-google {
+    background: #ffffff;
+    color: #334155;
+    border: 1.5px solid #cbd5e1;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.auth-btn-google:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.auth-btn-secondary {
+    background: transparent;
+    color: #2874f0;
+    border: 1.5px solid #2874f0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.auth-btn-secondary:hover {
+    background: rgba(40, 116, 240, 0.06);
+}
+
+/* Shake Animation for Invalid Submit */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+
+.shake-form {
+    animation: shake 0.4s ease;
+}
+
+/* Toast Notifications Container */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast-item {
+    pointer-events: auto;
+    min-width: 280px;
+    max-width: 400px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s ease;
+}
+
+.toast-item.toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.toast-item.toast-success i {
+    color: #10b981;
+    font-size: 1.1rem;
+}
+
+.toast-item.toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast-item.toast-error i {
+    color: #ef4444;
+    font-size: 1.1rem;
+}
+
+.toast-item.toast-info {
+    border-left: 4px solid #3b82f6;
+}
+
+.toast-item.toast-info i {
+    color: #3b82f6;
+    font-size: 1.1rem;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 820px) {
+    .auth-container {
+        flex-direction: column;
+        width: 100%;
+        min-height: auto;
+    }
+
+    .auth-left {
+        flex: none;
+        padding: 28px 24px;
+    }
+
+    .auth-left-illustration {
+        display: none;
+    }
+
+    .auth-right {
+        padding: 28px 20px;
+    }
+}

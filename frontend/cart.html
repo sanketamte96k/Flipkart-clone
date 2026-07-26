@@ -10,7 +10,9 @@
 
     <title>My Cart | Flipkart Clone</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -42,6 +44,9 @@
 
             <button onclick="window.location.href='orders.html'" class="nav-btn">
                 <i class="fas fa-box"></i> Orders
+            </button>
+            <button id="wishlist-count" class="nav-btn" onclick="window.location.href='wishlist.html'">
+                <i class="fas fa-heart"></i> Wishlist
             </button>
             <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
                 <i class="fas fa-shopping-cart cart-icon"></i> Cart
@@ -149,6 +154,8 @@
 
 
     <!-- Cart JavaScript -->
+    <script src="js/login.js"></script>
+    <script src="js/register.js"></script>
     <script src="js/script.js"></script>
     <script src="js/cart.js"></script>
 

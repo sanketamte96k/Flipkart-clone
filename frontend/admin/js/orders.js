@@ -741,6 +741,55 @@ function initOrdersManager() {
     
     // Core Initial Render
     updateDashboard();
+    fetchAdminOrders();
+
+    async function fetchAdminOrders() {
+        try {
+            const response = await fetch('/api/admin/orders');
+            if (response.ok) {
+                const apiOrders = await response.json();
+                if (apiOrders && apiOrders.length > 0) {
+                    ordersList = apiOrders.map(o => ({
+                        id: `OD${o.id}`,
+                        rawId: o.id,
+                        customer: {
+                            name: o.user_name || `Customer #${o.user_id}`,
+                            email: o.user_email || `user${o.user_id}@example.com`,
+                            phone: "+91 98765 43210",
+                            address: {
+                                line: o.shipping_address,
+                                city: "",
+                                state: "",
+                                zip: "",
+                                country: "India"
+                            }
+                        },
+                        items: (o.items || []).map(item => ({
+                            id: item.product_id,
+                            name: item.product ? item.product.name : `Product #${item.product_id}`,
+                            price: item.price,
+                            quantity: item.quantity,
+                            image: item.product ? item.product.image : "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100"
+                        })),
+                        shippingCharge: 0,
+                        discount: 0,
+                        paymentMethod: o.payment_method || "COD",
+                        paymentStatus: o.payment_status || "Pending",
+                        orderStatus: o.status || "Pending",
+                        deliveryPartner: "",
+                        trackingId: "",
+                        date: o.created_at || new Date().toISOString(),
+                        timeline: [
+                            { status: o.status || "Pending", time: o.created_at || "Just now", desc: "Order details confirmed." }
+                        ]
+                    }));
+                    updateDashboard();
+                }
+            }
+        } catch (e) {
+            console.error("Error loading admin orders:", e);
+        }
+    }
 
     /* ============================================================
        METRICS CALCULATION
@@ -1698,6 +1747,18 @@ function initOrdersManager() {
 
             // Update status in list
             order.orderStatus = nextStatus;
+
+            if (order.rawId) {
+                try {
+                    fetch(`/api/admin/orders/${order.rawId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: nextStatus })
+                    });
+                } catch(e) {
+                    console.error("API error updating order status:", e);
+                }
+            }
 
             // Create new timeline object
             const notes = {

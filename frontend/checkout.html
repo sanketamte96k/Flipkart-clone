@@ -1,18 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
+    <title>Checkout | Flipkart Clone</title>
     <link rel="stylesheet" href="css/style.css">
-</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .checkout-page-wrapper {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
 
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkout-card {
+            background: #ffffff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .checkout-card-header {
+            background: #2874f0;
+            color: #ffffff;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkout-card-header span.step-num {
+            background: #ffffff;
+            color: #2874f0;
+            width: 22px;
+            height: 22px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .checkout-card-body {
+            padding: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group-half {
+            flex: 1;
+        }
+
+        .checkout-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .checkout-input:focus {
+            border-color: #2874f0;
+        }
+
+        .payment-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .payment-option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .payment-option-item:hover, .payment-option-item.active {
+            border-color: #2874f0;
+            background: #f7fafe;
+        }
+
+        .payment-option-item input[type="radio"] {
+            accent-color: #2874f0;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .payment-option-title {
+            font-weight: 600;
+            color: #212121;
+            font-size: 14px;
+        }
+
+        .payment-option-sub {
+            font-size: 12px;
+            color: #878787;
+        }
+
+        .summary-item-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .summary-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .summary-item-details {
+            flex: 1;
+        }
+
+        .summary-item-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #212121;
+        }
+
+        .summary-item-price {
+            font-size: 14px;
+            color: #212121;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .place-order-btn {
+            background: #fb641b;
+            color: #ffffff;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 2px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+
+        .place-order-btn:hover {
+            background: #e65100;
+        }
+
+        .place-order-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .customer-badge {
+            background: #f1f3f6;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #212121;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
 <body>
-    <!-- =========================
-         NAVBAR
-    ========================== -->
-    <nav>
+
+    <!-- Top Ticker -->
+    <div class="top-ticker">
+        <div class="ticker-content">
+            ✨ BIG BILLION DAYS ARE LIVE! | 10% Instant Discount on SBI Cards | FREE Delivery on your order! ✨
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav id="main-nav">
         <div class="logo" onclick="window.location.href='index.html'">
             <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart" class="brand-img">
             <div class="logo-sub">
@@ -20,216 +215,298 @@
                 <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/plus_aef861.png" alt="plus-icon" class="plus-icon">
             </div>
         </div>
-        <h2>Checkout</h2>
+
+        <div class="nav-right">
+            <button onclick="window.location.href='index.html'" class="nav-btn">
+                <i class="fas fa-home"></i> Home
+            </button>
+            <button class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
+                <i class="fas fa-shopping-cart cart-icon"></i> Cart
+            </button>
+        </div>
     </nav>
 
-    <!-- =========================
-         CHECKOUT CONTAINER
-    ========================== -->
-    <div class="cart-container">
-        <!-- LEFT: Address Form -->
-        <div class="cart-left">
-            <div class="checkout-step active" style="padding: 24px;">
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                    <span style="background: #2874f0; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">1</span>
-                    <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">DELIVERY ADDRESS</h3>
-                </div>
-                <div class="step-body" style="padding-left: 40px;">
-                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                        <input type="text" id="name" placeholder="Name" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
-                        <input type="text" id="mobile" placeholder="10-digit mobile number" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
+    <!-- Main Checkout Container -->
+    <main class="checkout-page-wrapper">
+        <div class="checkout-grid">
+            <!-- Left Side: Order Steps -->
+            <div class="checkout-left">
+                
+                <!-- Step 1: Customer Details -->
+                <div class="checkout-card">
+                    <div class="checkout-card-header">
+                        <span class="step-num">1</span> LOGIN / CUSTOMER DETAILS
                     </div>
-                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                        <input type="text" id="pincode" placeholder="Pincode" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
-                        <input type="text" id="locality" placeholder="Locality" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none;">
+                    <div class="checkout-card-body">
+                        <div class="customer-badge" id="customer-badge-info">
+                            <div>
+                                <strong>Logged in as:</strong> <span id="customer-name">Loading...</span> (<span id="customer-email">...</span>)
+                            </div>
+                            <i class="fas fa-check-circle" style="color: #388e3c; font-size: 18px;"></i>
+                        </div>
                     </div>
-                    <textarea id="address" placeholder="Address (Area and Street)" style="width: 100%; height: 80px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 2px; outline: none; margin-bottom: 20px; font-family: inherit;"></textarea>
-                    
-                    <button class="checkout-btn" onclick="placeOrder()" style="padding: 16px 40px;">DELIVER HERE</button>
                 </div>
-            </div>
-            
-            <div class="checkout-step" style="padding: 16px 24px; background: white; border-top: 1px solid #f0f0f0;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span style="background: #f0f0f0; color: #212121; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">2</span>
-                    <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">ORDER SUMMARY</h3>
+
+                <!-- Step 2: Shipping Address -->
+                <div class="checkout-card">
+                    <div class="checkout-card-header">
+                        <span class="step-num">2</span> DELIVERY ADDRESS
+                    </div>
+                    <div class="checkout-card-body">
+                        <form id="address-form" onsubmit="return false;">
+                            <div class="form-row">
+                                <div class="form-group-half">
+                                    <input type="text" id="ship-name" class="checkout-input" placeholder="Full Name *" required>
+                                </div>
+                                <div class="form-group-half">
+                                    <input type="tel" id="ship-mobile" class="checkout-input" placeholder="10-digit Mobile Number *" required maxlength="10">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group-half">
+                                    <input type="text" id="ship-pincode" class="checkout-input" placeholder="Pincode (e.g. 110001) *" required maxlength="6">
+                                </div>
+                                <div class="form-group-half">
+                                    <input type="text" id="ship-locality" class="checkout-input" placeholder="Locality / Landmark *" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group-half">
+                                    <input type="text" id="ship-city" class="checkout-input" placeholder="City / District *" required>
+                                </div>
+                                <div class="form-group-half">
+                                    <input type="text" id="ship-state" class="checkout-input" placeholder="State *" required>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <textarea id="ship-address" class="checkout-input" style="height: 70px; resize: vertical;" placeholder="Street Address, Flat / House No., Building Name *" required></textarea>
+                            </div>
+                        </form>
+                    </div>
                 </div>
+
+                <!-- Step 3: Order Summary -->
+                <div class="checkout-card">
+                    <div class="checkout-card-header">
+                        <span class="step-num">3</span> ORDER SUMMARY
+                    </div>
+                    <div class="checkout-card-body">
+                        <div id="checkout-summary-items">
+                            <p style="color: #878787;">Loading cart items...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment Method -->
+                <div class="checkout-card">
+                    <div class="checkout-card-header">
+                        <span class="step-num">4</span> PAYMENT OPTIONS
+                    </div>
+                    <div class="checkout-card-body">
+                        <div class="payment-options-list">
+                            <label class="payment-option-item active" onclick="selectPayment('COD', this)">
+                                <input type="radio" name="payment_method" value="COD" checked>
+                                <div>
+                                    <div class="payment-option-title">Cash on Delivery (COD)</div>
+                                    <div class="payment-option-sub">Pay cash when product is delivered</div>
+                                </div>
+                            </label>
+
+                            <label class="payment-option-item" onclick="selectPayment('UPI', this)">
+                                <input type="radio" name="payment_method" value="UPI">
+                                <div>
+                                    <div class="payment-option-title">UPI / Google Pay / PhonePe</div>
+                                    <div class="payment-option-sub">Instant payment via any UPI app</div>
+                                </div>
+                            </label>
+
+                            <label class="payment-option-item" onclick="selectPayment('CARD', this)">
+                                <input type="radio" name="payment_method" value="CARD">
+                                <div>
+                                    <div class="payment-option-title">Credit / Debit Card</div>
+                                    <div class="payment-option-sub">Visa, MasterCard, RuPay, Maestro</div>
+                                </div>
+                            </label>
+
+                            <label class="payment-option-item" onclick="selectPayment('NETBANKING', this)">
+                                <input type="radio" name="payment_method" value="NETBANKING">
+                                <div>
+                                    <div class="payment-option-title">Net Banking</div>
+                                    <div class="payment-option-sub">All Indian major banks supported</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <button type="button" id="place-order-btn" class="place-order-btn" onclick="submitPlaceOrder()">
+                            PLACE ORDER
+                        </button>
+                    </div>
+                </div>
+
             </div>
-            
-            <div class="checkout-step" style="padding: 16px 24px; background: white; border-top: 1px solid #f0f0f0;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span style="background: #f0f0f0; color: #212121; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; border-radius: 2px;">3</span>
-                    <h3 style="color: #878787; font-size: 1rem; text-transform: uppercase;">PAYMENT OPTIONS</h3>
+
+            <!-- Right Side: Price Summary -->
+            <div class="checkout-right">
+                <div class="checkout-card" style="position: sticky; top: 80px;">
+                    <div class="checkout-card-header" style="background: #ffffff; color: #878787; border-bottom: 1px solid #f0f0f0;">
+                        PRICE DETAILS
+                    </div>
+                    <div class="checkout-card-body">
+                        <div class="price-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px;">
+                            <span>Price (<span id="price-item-count">0</span> items)</span>
+                            <span id="price-subtotal">₹0</span>
+                        </div>
+                        <div class="price-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px;">
+                            <span>Delivery Charges</span>
+                            <span style="color: #388e3c; font-weight: 600;"><del style="color: #878787;">₹40</del> FREE</span>
+                        </div>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px dashed #e0e0e0;">
+                        <div class="price-row" style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; color: #212121;">
+                            <span>Grand Total</span>
+                            <span id="price-grand-total">₹0</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- RIGHT: Price Details -->
-        <div class="cart-right">
-            <div class="price-details-card">
-                <h3>PRICE DETAILS</h3>
-                <hr style="border: none; border-top: 1px solid #f0f0f0; margin-bottom: 20px;">
-                <div class="price-row">
-                    <span>Price (<span id="summary-count">0</span> items)</span>
-                    <span id="summary-price">₹0</span>
-                </div>
-                <div class="price-row" id="checkout-discount-row" style="display: none; color: #388e3c; font-weight: 600;">
-                    <span>Coupon Discount</span>
-                    <span>- ₹<span id="checkout-discount-value">0</span></span>
-                </div>
-                <div class="price-row">
-                    <span>Delivery Charges</span>
-                    <span class="free-text"><del>₹40</del> Free</span>
-                </div>
-                <hr style="margin: 15px 0; border: none; border-top: 1px dashed #e0e0e0;">
-                <div class="price-row total-row">
-                    <span>Amount Payable</span>
-                    <span id="checkout-total">₹0</span>
-                </div>
-            </div>
-            <div class="safety-banner">
-                <i class="fas fa-shield-alt" style="color: #878787;"></i> Safe and Secure Payments. Easy returns. 100% Authentic products.
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
+    <!-- Alert / Toast Container -->
     <div id="toast"></div>
 
-    <!-- =========================
-         JAVASCRIPT
-    ========================== -->
+    <!-- JavaScript -->
     <script src="js/script.js"></script>
     <script>
-        let checkoutItems = [];
-        let total = 0;
-        let couponDiscount = 0;
-        let isMinutesEligible = false;
+        let currentUser = null;
+        let cartItems = [];
+        let selectedPaymentMethod = 'COD';
 
-        async function initCheckout() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get("id");
-
-            let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-            if (currentUser) {
-                // Load address book and auto-fill if possible
-                let addresses = JSON.parse(localStorage.getItem("addresses_" + currentUser.mobile)) || [];
-                if (addresses.length > 0) {
-                    let addr = addresses[0];
-                    document.getElementById("name").value = addr.name;
-                    document.getElementById("mobile").value = addr.mobile;
-                    document.getElementById("pincode").value = addr.pincode;
-                    document.getElementById("locality").value = addr.locality;
-                    document.getElementById("address").value = addr.details;
-                } else {
-                    document.getElementById("name").value = currentUser.name;
-                    document.getElementById("mobile").value = currentUser.mobile;
-                }
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Read logged-in user from localStorage
+            try {
+                const userData = localStorage.getItem("user");
+                if (userData) currentUser = JSON.parse(userData);
+            } catch (e) {
+                currentUser = null;
             }
 
-            if (productId) {
-                // BUY NOW FLOW: checkout only the single selected product
-                try {
-                    let response = await fetch('http://127.0.0.1:5000/products');
-                    let allProducts = await response.json();
-                    let targetProduct = allProducts.find(p => p.id == productId);
+            if (!currentUser) {
+                window.location.href = "login.html";
+                return;
+            }
 
-                    if (targetProduct) {
-                        checkoutItems = [{ ...targetProduct, quantity: 1 }];
-                        localStorage.setItem("checkoutItems", JSON.stringify(checkoutItems));
-                        localStorage.setItem("checkoutMode", "buynow");
-                        
-                        // Ignore cart coupon for Buy Now
-                        localStorage.removeItem("appliedCoupon");
-                        
-                        calculatePriceSummary();
-                    } else {
-                        showToast("Product not found!", "error");
-                        setTimeout(() => window.location.href = "index.html", 1500);
-                    }
-                } catch (error) {
-                    console.error("Error fetching product for Buy Now:", error);
-                    showToast("Error loading product checkout details.", "error");
-                }
-            } else {
-                // CART FLOW: checkout all items in the user's cart
-                let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                if (cart.length === 0) {
-                    showToast("Your cart is empty!", "info");
-                    setTimeout(() => window.location.href = "index.html", 1000);
+            // Fill customer info
+            document.getElementById("customer-name").innerText = currentUser.name || "Customer";
+            document.getElementById("customer-email").innerText = currentUser.email || "";
+            document.getElementById("ship-name").value = currentUser.name || "";
+
+            // Load Cart Items from API
+            await loadCheckoutCart();
+        });
+
+        async function loadCheckoutCart() {
+            try {
+                const response = await fetch(`/api/cart/${currentUser.id}`);
+                if (!response.ok) throw new Error("Failed to fetch cart");
+
+                cartItems = await response.json();
+                
+                if (!cartItems || cartItems.length === 0) {
+                    if (typeof showWarning === 'function') showWarning("Your cart is empty!");
+                    window.location.href = "cart.html";
                     return;
                 }
-                
-                checkoutItems = cart;
-                localStorage.setItem("checkoutItems", JSON.stringify(checkoutItems));
-                localStorage.setItem("checkoutMode", "cart");
-                
-                calculatePriceSummary();
+
+                renderCheckoutSummary(cartItems);
+            } catch (err) {
+                console.error("Error loading checkout cart:", err);
             }
         }
 
-        function calculatePriceSummary() {
-            total = 0;
-            couponDiscount = 0;
-            isMinutesEligible = checkoutItems.some(p => p.isMinutesEligible);
+        function renderCheckoutSummary(items) {
+            const summaryContainer = document.getElementById("checkout-summary-items");
+            summaryContainer.innerHTML = "";
 
-            checkoutItems.forEach(product => {
-                total += product.price * product.quantity;
+            let subtotal = 0;
+
+            items.forEach(item => {
+                const p = item.product || { name: "Product", price: 0, image: "" };
+                const itemTotal = p.price * item.quantity;
+                subtotal += itemTotal;
+
+                summaryContainer.innerHTML += `
+                    <div class="summary-item-row">
+                        <img src="${p.image}" alt="${p.name}" class="summary-item-img">
+                        <div class="summary-item-details">
+                            <div class="summary-item-title">${p.name}</div>
+                            <div style="font-size: 13px; color: #878787;">Qty: ${item.quantity} × ₹${p.price.toLocaleString()}</div>
+                            <div class="summary-item-price">₹${itemTotal.toLocaleString()}</div>
+                        </div>
+                    </div>
+                `;
             });
 
-            document.getElementById("summary-count").innerText = checkoutItems.length;
-            document.getElementById("summary-price").innerText = "₹" + total.toLocaleString();
+            document.getElementById("price-item-count").innerText = items.length;
+            document.getElementById("price-subtotal").innerText = "₹" + subtotal.toLocaleString();
+            document.getElementById("price-grand-total").innerText = "₹" + subtotal.toLocaleString();
+        }
 
-            // Load applied coupon if checkout mode is cart
-            const mode = localStorage.getItem("checkoutMode");
-            if (mode === "cart") {
-                let applied = JSON.parse(localStorage.getItem("appliedCoupon"));
-                if (applied) {
-                    couponDiscount = applied.discount;
-                    document.getElementById("checkout-discount-value").innerText = couponDiscount.toLocaleString();
-                    document.getElementById("checkout-discount-row").style.display = "flex";
+        function selectPayment(method, element) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll(".payment-option-item").forEach(el => el.classList.remove("active"));
+            element.classList.add("active");
+            const radio = element.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+        }
+
+        async function submitPlaceOrder() {
+            const name = document.getElementById("ship-name").value.trim();
+            const mobile = document.getElementById("ship-mobile").value.trim();
+            const pincode = document.getElementById("ship-pincode").value.trim();
+            const locality = document.getElementById("ship-locality").value.trim();
+            const city = document.getElementById("ship-city").value.trim();
+            const state = document.getElementById("ship-state").value.trim();
+            const addressDetails = document.getElementById("ship-address").value.trim();
+
+            if (!name || !mobile || !pincode || !locality || !city || !state || !addressDetails) {
+                if (typeof showWarning === 'function') showWarning("Please fill in all required shipping address fields.");
+                return;
+            }
+
+            const fullAddress = `${name}, Mob: ${mobile}, ${addressDetails}, ${locality}, ${city}, ${state} - ${pincode}`;
+
+            const btn = document.getElementById("place-order-btn");
+            btn.disabled = true;
+            btn.innerText = "PROCESSING ORDER...";
+
+            try {
+                const response = await fetch('/api/orders/place', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: currentUser.id,
+                        payment_method: selectedPaymentMethod,
+                        shipping_address: fullAddress
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Redirect to order-success.html
+                    window.location.href = `order-success.html?order_id=${data.order_id}`;
                 } else {
-                    document.getElementById("checkout-discount-row").style.display = "none";
+                    if (typeof showError === 'function') showError(data.message || data.error || "Failed to place order.");
+                    btn.disabled = false;
+                    btn.innerText = "PLACE ORDER";
                 }
-            } else {
-                document.getElementById("checkout-discount-row").style.display = "none";
+            } catch (err) {
+                console.error("Order placement error:", err);
+                if (typeof showError === 'function') showError("An error occurred while placing your order.");
+                btn.disabled = false;
+                btn.innerText = "PLACE ORDER";
             }
-
-            let finalPayable = total - couponDiscount;
-            document.getElementById("checkout-total").innerText = "₹" + finalPayable.toLocaleString();
         }
-
-        function placeOrder() {
-            let name = document.getElementById("name").value.trim();
-            let mobile = document.getElementById("mobile").value.trim();
-            let pincode = document.getElementById("pincode").value.trim();
-            let locality = document.getElementById("locality").value.trim();
-            let address = document.getElementById("address").value.trim();
-
-            if (name === "" || mobile === "" || address === "" || pincode === "" || locality === "") {
-                showToast("Please fill in all address parameters securely.", "error");
-                return;
-            }
-
-            if (mobile.length !== 10 || isNaN(mobile)) {
-                showToast("Please enter a valid 10-digit mobile number.", "error");
-                return;
-            }
-
-            let finalPayable = total - couponDiscount;
-            let orderDetails = { 
-                name, 
-                mobile, 
-                address: `${address}, ${locality} - ${pincode}`, 
-                total: finalPayable, 
-                deliveryMethod: isMinutesEligible ? 'Minutes' : 'Standard' 
-            };
-            localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
-            window.location.href = "payment.html";
-        }
-
-        // Initialize on DOM load
-        document.addEventListener("DOMContentLoaded", initCheckout);
     </script>
 </body>
 </html>

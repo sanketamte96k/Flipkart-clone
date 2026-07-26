@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: flipkart_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: flipkart_clone
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    container_name: flipkart_flask_app
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: backend/app.py
+      FLASK_ENV: production
+      SECRET_KEY: flipkart_super_secret_key_2026
+      DATABASE_URL: mysql+pymysql://root:password@db:3306/flipkart_clone
+      RAZORPAY_KEY_ID: rzp_test_your_key_id
+      RAZORPAY_KEY_SECRET: your_razorpay_secret
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:

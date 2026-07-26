@@ -6,7 +6,9 @@
     <title>My Profile | Flipkart Clone</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -281,6 +283,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/login.js"></script>
+    <script src="js/register.js"></script>
     <script src="js/script.js"></script>
     <script>
         // Check if user is logged in. If not, redirect to index.html immediately
@@ -289,7 +293,7 @@
         function checkUserAuth() {
             userObj = JSON.parse(localStorage.getItem("currentUser"));
             if (!userObj) {
-                alert("Please log in to access your profile account settings!");
+                if (typeof showWarning === 'function') showWarning("Please log in to access your profile account settings!");
                 window.location.href = "index.html";
                 return false;
             }
