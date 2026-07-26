@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management | Flipkart Clone Admin</title>
+    <!-- Authentication Check -->
+    <script src="js/auth.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="css/inventory.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         Left Sidebar
+         ============================================================ -->
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="dashboard.html" class="brand-logo">
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart">
+                <div class="brand-text">Admin <span>Plus</span></div>
+            </a>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item"><a href="dashboard.html"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li class="menu-item"><a href="products.html"><i class="fas fa-box"></i><span>Products</span></a></li>
+            <li class="menu-item"><a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Orders</span></a></li>
+            <li class="menu-item"><a href="users.html"><i class="fas fa-users"></i><span>Users</span></a></li>
+            <li class="menu-item active"><a href="inventory.html"><i class="fas fa-warehouse"></i><span>Inventory</span></a></li>
+            <li class="menu-item"><a href="coupons.html"><i class="fas fa-ticket-alt"></i><span>Coupons</span></a></li>
+            <li class="menu-item"><a href="reviews.html"><i class="fas fa-star-half-alt"></i><span>Reviews</span></a></li>
+            <li class="menu-item"><a href="reports.html"><i class="fas fa-chart-pie"></i><span>Reports & Analytics</span></a></li>
+            <li class="menu-item"><a href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <li class="menu-item logout-btn" style="list-style: none;">
+                <a href="../index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </div>
+    </aside>
+
+    <!-- ============================================================
+         Main View Area
+         ============================================================ -->
+    <main class="admin-main">
+        <!-- Top Navbar -->
+        <header class="admin-navbar">
+            <div class="nav-left">
+                <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle Sidebar Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Inventory Management</h1>
+            </div>
+            
+            <div class="nav-right">
+                <button class="theme-toggle" id="theme-btn" aria-label="Toggle Color Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <button class="notifications-bell" aria-label="View notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="bell-badge"></span>
+                </button>
+                
+                <div class="admin-profile" id="profile-trigger">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Admin Avatar" class="admin-avatar">
+                    <div class="admin-info">
+                        <span class="admin-name">Sanket Amte</span>
+                        <span class="admin-role">Super Admin</span>
+                    </div>
+                    
+                    <!-- Profile Dropdown Menu -->
+                    <div class="profile-dropdown" id="profile-menu">
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-user-cog"></i> My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Account Settings
+                        </a>
+                        <a href="../index.html" class="dropdown-item logout">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Metrics Summary Cards Grid (5 cards) -->
+            <section class="metrics-grid">
+                <div class="metrics-card m-blue">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Products</span>
+                        <span class="metrics-val" id="total-products-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-box"></i></div>
+                </div>
+                <div class="metrics-card m-green">
+                    <div class="metrics-left">
+                        <span class="metrics-title">In Stock</span>
+                        <span class="metrics-val" id="in-stock-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-check-circle"></i></div>
+                </div>
+                <div class="metrics-card m-orange">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Low Stock</span>
+                        <span class="metrics-val" id="low-stock-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                </div>
+                <div class="metrics-card m-red">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Out of Stock</span>
+                        <span class="metrics-val" id="out-of-stock-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-times-circle"></i></div>
+                </div>
+                <div class="metrics-card m-gold">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Inventory Value</span>
+                        <span class="metrics-val" id="inventory-value-cnt">₹0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-rupee-sign"></i></div>
+                </div>
+            </section>
+
+            <!-- Control Actions Toolbar -->
+            <div class="toolbar-panel">
+                <div class="toolbar-left">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="inv-search-name" placeholder="Search by Product Name..." autocomplete="off">
+                    </div>
+                    
+                    <div class="search-wrapper">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="text" id="inv-search-sku" placeholder="Search by SKU..." autocomplete="off">
+                    </div>
+                    
+                    <select id="inv-filter-category" class="filter-select">
+                        <option value="All">All Categories</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Home & Kitchen">Home & Kitchen</option>
+                        <option value="Beauty">Beauty</option>
+                    </select>
+                    
+                    <select id="inv-filter-status" class="filter-select">
+                        <option value="All">All Stock Statuses</option>
+                        <option value="In Stock">In Stock</option>
+                        <option value="Low Stock">Low Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                    </select>
+
+                    <select id="inv-filter-supplier" class="filter-select">
+                        <option value="All">All Suppliers</option>
+                        <option value="Sony India">Sony India</option>
+                        <option value="HP Corp">HP Corp</option>
+                        <option value="Samsung India">Samsung India</option>
+                        <option value="Levis Retail">Levis Retail</option>
+                        <option value="Philips Direct">Philips Direct</option>
+                        <option value="L'Oreal Distrib">L'Oreal Distrib</option>
+                    </select>
+                    
+                    <select id="inv-sort" class="filter-select">
+                        <option value="stock-asc">Stock: Low to High</option>
+                        <option value="stock-desc">Stock: High to Low</option>
+                        <option value="value-desc">Value: High to Low</option>
+                        <option value="name-asc">Product Name: A-Z</option>
+                        <option value="name-desc">Product Name: Z-A</option>
+                    </select>
+
+                    <button type="button" id="btn-clear-filters" class="clear-filters-btn" title="Clear Filters">
+                        <i class="fas fa-undo"></i> Clear
+                    </button>
+                </div>
+                
+                <div class="toolbar-right" style="display: flex; gap: 8px;">
+                    <button type="button" class="refresh-btn" id="btn-export" title="Export Inventory to CSV">
+                        <i class="fas fa-file-export"></i> Export CSV
+                    </button>
+                    <button type="button" class="refresh-btn" id="btn-refresh" title="Refresh Inventory List">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Inventory Table Section -->
+            <section class="table-panel">
+                <div class="table-info-row">
+                    <span id="showing-text">Showing 0 of 0 products</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Product Details</th>
+                                <th>SKU</th>
+                                <th>Category</th>
+                                <th style="text-align: center;">Current</th>
+                                <th style="text-align: center;">Reserved</th>
+                                <th style="text-align: center;">Available</th>
+                                <th>Unit Price</th>
+                                <th>Inv Value</th>
+                                <th style="text-align: center;">Reorder</th>
+                                <th>Status</th>
+                                <th>Last Updated</th>
+                                <th style="text-align: right; padding-right: 28px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body">
+                            <!-- Populated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination controls -->
+                <div class="pagination-container" id="pagination-container">
+                    <!-- Populated Dynamically -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <div class="footer-content">
+                &copy; 2026 Flipkart Clone Admin Dashboard. Engineered for Excellence.
+            </div>
+        </footer>
+    </main>
+
+    <!-- ============================================================
+         MODAL: UPDATE STOCK LEVEL
+         ============================================================ -->
+    <div class="modal-overlay" id="update-stock-modal">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3>Update Stock Level</h3>
+                <button class="modal-close-btn" id="close-update-modal">&times;</button>
+            </div>
+            
+            <form id="update-stock-form">
+                <input type="hidden" id="update-prod-id">
+                
+                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; margin-bottom: 16px;">
+                    Product SKU: <span id="update-prod-sku" style="color: var(--brand-primary); font-weight: 700;"></span><br>
+                    Product Name: <span id="update-prod-name" style="color: var(--text-main); font-weight: 600;"></span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="adjust-action">Adjustment Type</label>
+                        <select id="adjust-action" class="form-input" style="cursor: pointer;" required>
+                            <option value="add">Add Stock (+)</option>
+                            <option value="remove">Remove Stock (-)</option>
+                            <option value="set">Set Stock Level (=)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="adjust-qty">Quantity</label>
+                        <input type="number" id="adjust-qty" class="form-input" min="1" required placeholder="e.g. 10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="adjust-reason">Reason for Adjustment</label>
+                    <select id="adjust-reason" class="form-input" style="cursor: pointer;" required>
+                        <option value="Restock">Restock (New Shipment)</option>
+                        <option value="Inventory Audit">Inventory Audit Correction</option>
+                        <option value="Damaged">Damaged Goods</option>
+                        <option value="Theft">Stolen/Lost Stock</option>
+                        <option value="Return">Customer Return</option>
+                        <option value="Promotion">Promotional Allocation</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="adjust-notes">Transaction Notes</label>
+                    <textarea id="adjust-notes" class="form-input" rows="3" placeholder="Add optional tracking details..."></textarea>
+                </div>
+                
+                <div class="modal-footer-btns">
+                    <button type="button" class="modal-btn btn-cancel" id="cancel-update-btn">Cancel</button>
+                    <button type="submit" class="modal-btn btn-submit" id="save-update-btn">Apply Adjustment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: STOCK LEDGER TRANSACTION HISTORY
+         ============================================================ -->
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-box" style="max-width: 680px;">
+            <div class="modal-header">
+                <h3>Stock Transaction Ledger</h3>
+                <button class="modal-close-btn" id="close-history-modal">&times;</button>
+            </div>
+
+            <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; margin-bottom: 20px;">
+                Product SKU: <span id="history-prod-sku" style="color: var(--brand-primary); font-weight: 700;"></span><br>
+                Product Name: <span id="history-prod-name" style="color: var(--text-main); font-weight: 600;"></span>
+            </div>
+
+            <h4 class="detail-section-title">Stock Modification History</h4>
+            <div class="modal-table-container" style="max-height: 350px; overflow-y: auto;">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th style="text-align: center;">Change</th>
+                            <th style="text-align: center;">Prev Stock</th>
+                            <th style="text-align: center;">New Stock</th>
+                            <th>Updated By</th>
+                            <th>Reason</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer-btns" style="margin-top: 20px;">
+                <button type="button" class="modal-btn btn-cancel" id="ok-history-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: DELETE PRODUCT CONFIRMATION
+         ============================================================ -->
+    <div class="modal-overlay" id="delete-confirm-modal">
+        <div class="modal-box" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 3rem; color: var(--danger-color); margin-bottom: 16px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Remove Product?</h3>
+            <p id="delete-modal-desc" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px;"></p>
+            
+            <div class="modal-footer-btns" style="justify-content: center; border-top: none; padding-top: 0; margin-top: 0; gap: 16px;">
+                <button type="button" class="modal-btn btn-cancel" id="cancel-delete-btn" style="min-width: 100px;">Cancel</button>
+                <button type="button" class="modal-btn btn-danger" id="confirm-delete-btn" style="min-width: 100px;">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Logic Controller Script -->
+    <script src="js/inventory.js"></script>
+</body>
+</html>

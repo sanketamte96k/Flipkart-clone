@@ -10,7 +10,9 @@
 
     <title>My Cart | Flipkart Clone</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -43,6 +45,9 @@
             <button onclick="window.location.href='orders.html'" class="nav-btn">
                 <i class="fas fa-box"></i> Orders
             </button>
+            <button id="wishlist-count" class="nav-btn" onclick="window.location.href='wishlist.html'">
+                <i class="fas fa-heart"></i> Wishlist
+            </button>
             <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
                 <i class="fas fa-shopping-cart cart-icon"></i> Cart
             </button>
@@ -73,6 +78,50 @@
 
         <!-- Right Side: Price Details -->
         <div class="cart-right">
+            <!-- Coupons Promo Section -->
+            <div class="price-details-card" style="margin-bottom: 15px; padding: 18px 24px;">
+                <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-ticket-alt" style="color: #ff9f00;"></i> Apply Coupons
+                </h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                    <input type="text" id="coupon-code-input" placeholder="Enter Coupon Code" style="flex: 1; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px; outline: none; font-size: 0.85rem; text-transform: uppercase;">
+                    <button onclick="applyCoupon()" style="background: var(--brand-primary); color: white; border: none; padding: 0 16px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.85rem; height: 38px;">Apply</button>
+                </div>
+                <div id="applied-coupon-info" style="display: none; align-items: center; justify-content: space-between; background: rgba(56, 142, 60, 0.08); border: 1px dashed #388e3c; padding: 8px 12px; border-radius: 4px; margin-bottom: 10px; font-size: 0.82rem; color: #388e3c; font-weight: 600;">
+                    <span>✓ Applied: <span id="active-coupon-code"></span></span>
+                    <button onclick="removeCoupon()" style="background: none; border: none; color: #d32f2f; cursor: pointer; font-weight: bold; font-size: 0.85rem; padding: 0; outline: none;">Remove</button>
+                </div>
+                <div id="coupon-message" style="font-size: 0.78rem; display: none; font-weight: 600; margin-bottom: 8px;"></div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">
+                    <span style="cursor: pointer; color: var(--brand-primary); font-weight: 600;" onclick="toggleCouponsList()">View Available Coupons</span>
+                </div>
+                <div id="available-coupons-drawer" style="display: none; margin-top: 12px; border-top: 1px solid #f0f0f0; padding-top: 12px; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong style="color: var(--brand-primary); font-family: monospace;">WELCOME100</strong>
+                                <span style="color: #388e3c; font-weight: 700; font-size: 0.75rem; cursor: pointer;" onclick="quickApplyCoupon('WELCOME100')">APPLY</span>
+                            </div>
+                            <p style="color: var(--text-muted); font-size: 0.72rem; margin: 0;">Get flat ₹100 off on order above ₹499</p>
+                        </div>
+                        <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong style="color: var(--brand-primary); font-family: monospace;">FLIPKART10</strong>
+                                <span style="color: #388e3c; font-weight: 700; font-size: 0.75rem; cursor: pointer;" onclick="quickApplyCoupon('FLIPKART10')">APPLY</span>
+                            </div>
+                            <p style="color: var(--text-muted); font-size: 0.72rem; margin: 0;">10% off on Laptops/Mobiles above ₹9,999</p>
+                        </div>
+                        <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong style="color: var(--brand-primary); font-family: monospace;">BEAUTY150</strong>
+                                <span style="color: #388e3c; font-weight: 700; font-size: 0.75rem; cursor: pointer;" onclick="quickApplyCoupon('BEAUTY150')">APPLY</span>
+                            </div>
+                            <p style="color: var(--text-muted); font-size: 0.72rem; margin: 0;">Flat ₹150 off on Beauty products above ₹899</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="price-details-card">
                 <h3>PRICE DETAILS</h3>
                 <hr style="border: none; border-top: 1px solid #f0f0f0; margin-bottom: 20px;">
@@ -105,6 +154,8 @@
 
 
     <!-- Cart JavaScript -->
+    <script src="js/login.js"></script>
+    <script src="js/register.js"></script>
     <script src="js/script.js"></script>
     <script src="js/cart.js"></script>
 

@@ -1,1 +1,530 @@
-<!-- Admin Settings -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Flipkart Clone Admin</title>
+    <!-- Authentication Check -->
+    <script src="js/auth.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="dashboard.html" class="brand-logo">
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart">
+                <div class="brand-text">Admin <span>Plus</span></div>
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item"><a href="dashboard.html"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li class="menu-item"><a href="products.html"><i class="fas fa-box"></i><span>Products</span></a></li>
+            <li class="menu-item"><a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Orders</span></a></li>
+            <li class="menu-item"><a href="users.html"><i class="fas fa-users"></i><span>Users</span></a></li>
+            <li class="menu-item"><a href="inventory.html"><i class="fas fa-warehouse"></i><span>Inventory</span></a></li>
+            <li class="menu-item"><a href="coupons.html"><i class="fas fa-ticket-alt"></i><span>Coupons</span></a></li>
+            <li class="menu-item"><a href="reviews.html"><i class="fas fa-star-half-alt"></i><span>Reviews</span></a></li>
+            <li class="menu-item"><a href="reports.html"><i class="fas fa-chart-pie"></i><span>Reports</span></a></li>
+            <li class="menu-item active"><a href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <li class="menu-item logout-btn" style="list-style:none;">
+                <a href="../index.html"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            </li>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+        <header class="admin-navbar">
+            <div class="nav-left">
+                <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle Sidebar"><i class="fas fa-bars"></i></button>
+                <h1 class="page-title">Settings</h1>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" id="theme-btn" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+                <button class="notifications-bell" aria-label="Notifications"><i class="fas fa-bell"></i><span class="bell-badge"></span></button>
+                <div class="admin-profile" id="profile-trigger">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Admin" class="admin-avatar">
+                    <div class="admin-info"><span class="admin-name">Sanket Amte</span><span class="admin-role">Super Admin</span></div>
+                    <div class="profile-dropdown" id="profile-menu">
+                        <a href="settings.html" class="dropdown-item"><i class="fas fa-user-cog"></i> My Profile</a>
+                        <a href="settings.html" class="dropdown-item"><i class="fas fa-cog"></i> Account Settings</a>
+                        <a href="../index.html" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Settings Navigation Tabs -->
+            <div class="settings-tabs" id="settings-tabs">
+                <button class="tab-btn active" data-tab="general"><i class="fas fa-store"></i><span>General</span></button>
+                <button class="tab-btn" data-tab="appearance"><i class="fas fa-palette"></i><span>Appearance</span></button>
+                <button class="tab-btn" data-tab="payment"><i class="fas fa-credit-card"></i><span>Payment</span></button>
+                <button class="tab-btn" data-tab="shipping"><i class="fas fa-truck"></i><span>Shipping</span></button>
+                <button class="tab-btn" data-tab="notifications"><i class="fas fa-bell"></i><span>Notifications</span></button>
+                <button class="tab-btn" data-tab="security"><i class="fas fa-shield-alt"></i><span>Security</span></button>
+                <button class="tab-btn" data-tab="backup"><i class="fas fa-database"></i><span>Backup</span></button>
+                <button class="tab-btn" data-tab="system"><i class="fas fa-server"></i><span>System</span></button>
+            </div>
+
+            <!-- ============================================================
+                 TAB 1: GENERAL SETTINGS
+                 ============================================================ -->
+            <section class="settings-panel active" id="panel-general">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-store"></i> General Settings</h2>
+                        <p class="panel-desc">Configure your store's basic information and preferences.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="store-name">Store Name <span class="req">*</span></label>
+                        <input type="text" id="store-name" class="form-input" value="Flipkart Clone Store" placeholder="Enter store name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="store-email">Store Email <span class="req">*</span></label>
+                        <input type="email" id="store-email" class="form-input" value="admin@flipkartclone.com" placeholder="admin@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="support-phone">Support Phone</label>
+                        <input type="tel" id="support-phone" class="form-input" value="+91 98765 43210" placeholder="+91 XXXXX XXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="timezone">Time Zone</label>
+                        <select id="timezone" class="form-input">
+                            <option value="Asia/Kolkata" selected>Asia/Kolkata (IST, UTC+5:30)</option>
+                            <option value="America/New_York">America/New_York (EST, UTC-5)</option>
+                            <option value="Europe/London">Europe/London (GMT, UTC+0)</option>
+                            <option value="Asia/Dubai">Asia/Dubai (GST, UTC+4)</option>
+                            <option value="Asia/Singapore">Asia/Singapore (SGT, UTC+8)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="currency">Currency</label>
+                        <select id="currency" class="form-input">
+                            <option value="INR" selected>₹ Indian Rupee (INR)</option>
+                            <option value="USD">$ US Dollar (USD)</option>
+                            <option value="EUR">€ Euro (EUR)</option>
+                            <option value="GBP">£ British Pound (GBP)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="language">Language</label>
+                        <select id="language" class="form-input">
+                            <option value="en" selected>English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="mr">Marathi</option>
+                            <option value="ta">Tamil</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label" for="business-address">Business Address</label>
+                        <textarea id="business-address" class="form-input" rows="3" placeholder="Enter full business address">Pune, Maharashtra, India - 411001</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Store Logo</label>
+                        <div class="logo-upload-area" id="logo-upload-area">
+                            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Store Logo" class="logo-preview" id="logo-preview">
+                            <div class="logo-upload-text">
+                                <span class="upload-label">Click to upload or drag & drop</span>
+                                <span class="upload-hint">PNG, JPG up to 2MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="save-btn" id="save-general"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TAB 2: APPEARANCE
+                 ============================================================ -->
+            <section class="settings-panel" id="panel-appearance">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-palette"></i> Appearance Settings</h2>
+                        <p class="panel-desc">Customize the look and feel of your admin panel.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Theme Mode</label>
+                        <div class="toggle-card-row">
+                            <div class="toggle-card active" id="theme-light-card" data-theme="light">
+                                <i class="fas fa-sun"></i>
+                                <span>Light Mode</span>
+                            </div>
+                            <div class="toggle-card" id="theme-dark-card" data-theme="dark">
+                                <i class="fas fa-moon"></i>
+                                <span>Dark Mode</span>
+                            </div>
+                            <div class="toggle-card" id="theme-auto-card" data-theme="auto">
+                                <i class="fas fa-desktop"></i>
+                                <span>System</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="primary-color">Primary Color</label>
+                        <div class="color-picker-row">
+                            <div class="color-swatch active" data-color="#2874f0" style="background:#2874f0;" title="Flipkart Blue"></div>
+                            <div class="color-swatch" data-color="#8b5cf6" style="background:#8b5cf6;" title="Purple"></div>
+                            <div class="color-swatch" data-color="#10b981" style="background:#10b981;" title="Emerald"></div>
+                            <div class="color-swatch" data-color="#ef4444" style="background:#ef4444;" title="Red"></div>
+                            <div class="color-swatch" data-color="#f59e0b" style="background:#f59e0b;" title="Amber"></div>
+                            <div class="color-swatch" data-color="#ec4899" style="background:#ec4899;" title="Pink"></div>
+                            <input type="color" id="primary-color" class="color-input-hidden" value="#2874f0" title="Custom Color">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Compact Mode</label>
+                        <div class="switch-row">
+                            <label class="switch">
+                                <input type="checkbox" id="compact-mode">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-label">Reduce spacing and padding for denser layouts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="save-btn" id="save-appearance"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TAB 3: PAYMENT SETTINGS
+                 ============================================================ -->
+            <section class="settings-panel" id="panel-payment">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-credit-card"></i> Payment Settings</h2>
+                        <p class="panel-desc">Manage payment gateways, methods, and tax configuration.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Payment Methods</label>
+                        <div class="payment-toggles-grid">
+                            <div class="payment-toggle-card">
+                                <div class="ptc-left">
+                                    <div class="ptc-icon" style="background:rgba(16,185,129,0.1); color:#10b981;"><i class="fas fa-money-bill-wave"></i></div>
+                                    <div class="ptc-info">
+                                        <span class="ptc-name">Cash on Delivery</span>
+                                        <span class="ptc-desc">Accept COD payments</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="toggle-cod" checked><span class="slider"></span></label>
+                            </div>
+                            <div class="payment-toggle-card">
+                                <div class="ptc-left">
+                                    <div class="ptc-icon" style="background:rgba(59,130,246,0.1); color:#3b82f6;"><i class="fas fa-bolt"></i></div>
+                                    <div class="ptc-info">
+                                        <span class="ptc-name">Razorpay</span>
+                                        <span class="ptc-desc">Indian payment gateway</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="toggle-razorpay" checked><span class="slider"></span></label>
+                            </div>
+                            <div class="payment-toggle-card">
+                                <div class="ptc-left">
+                                    <div class="ptc-icon" style="background:rgba(99,102,241,0.1); color:#6366f1;"><i class="fab fa-stripe-s"></i></div>
+                                    <div class="ptc-info">
+                                        <span class="ptc-name">Stripe</span>
+                                        <span class="ptc-desc">International payments</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="toggle-stripe"><span class="slider"></span></label>
+                            </div>
+                            <div class="payment-toggle-card">
+                                <div class="ptc-left">
+                                    <div class="ptc-icon" style="background:rgba(139,92,246,0.1); color:#8b5cf6;"><i class="fas fa-qrcode"></i></div>
+                                    <div class="ptc-info">
+                                        <span class="ptc-name">UPI</span>
+                                        <span class="ptc-desc">Google Pay, PhonePe, Paytm</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="toggle-upi" checked><span class="slider"></span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tax-percentage">Tax / GST Percentage (%)</label>
+                        <input type="number" id="tax-percentage" class="form-input" value="18" min="0" max="50" step="0.5">
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="save-btn" id="save-payment"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TAB 4: SHIPPING SETTINGS
+                 ============================================================ -->
+            <section class="settings-panel" id="panel-shipping">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-truck"></i> Shipping Settings</h2>
+                        <p class="panel-desc">Configure delivery charges, thresholds, and return policies.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="free-shipping-threshold">Free Shipping Threshold (₹)</label>
+                        <input type="number" id="free-shipping-threshold" class="form-input" value="499" min="0">
+                        <span class="form-hint">Orders above this amount get free shipping</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="default-shipping">Default Shipping Charge (₹)</label>
+                        <input type="number" id="default-shipping" class="form-input" value="49" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="delivery-eta">Delivery ETA (Days)</label>
+                        <input type="text" id="delivery-eta" class="form-input" value="3-7 business days">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="return-window">Return Window (Days)</label>
+                        <input type="number" id="return-window" class="form-input" value="10" min="0" max="90">
+                        <span class="form-hint">Number of days customers can return products</span>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="save-btn" id="save-shipping"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TAB 5: NOTIFICATION SETTINGS
+                 ============================================================ -->
+            <section class="settings-panel" id="panel-notifications">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-bell"></i> Notification Settings</h2>
+                        <p class="panel-desc">Control how and when you receive notifications.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group full-width">
+                        <div class="notification-toggles-list">
+                            <div class="notif-toggle-row">
+                                <div class="notif-info">
+                                    <i class="fas fa-envelope notif-icon" style="color:#3b82f6;"></i>
+                                    <div>
+                                        <span class="notif-name">Email Notifications</span>
+                                        <span class="notif-desc">Receive order updates, alerts, and reports via email</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="notif-email" checked><span class="slider"></span></label>
+                            </div>
+                            <div class="notif-toggle-row">
+                                <div class="notif-info">
+                                    <i class="fas fa-sms notif-icon" style="color:#10b981;"></i>
+                                    <div>
+                                        <span class="notif-name">SMS Notifications</span>
+                                        <span class="notif-desc">Get critical alerts via text messages</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="notif-sms"><span class="slider"></span></label>
+                            </div>
+                            <div class="notif-toggle-row">
+                                <div class="notif-info">
+                                    <i class="fas fa-mobile-alt notif-icon" style="color:#8b5cf6;"></i>
+                                    <div>
+                                        <span class="notif-name">Push Notifications</span>
+                                        <span class="notif-desc">Browser push notifications for real-time updates</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="notif-push" checked><span class="slider"></span></label>
+                            </div>
+                            <div class="notif-toggle-row">
+                                <div class="notif-info">
+                                    <i class="fas fa-exclamation-triangle notif-icon" style="color:#f59e0b;"></i>
+                                    <div>
+                                        <span class="notif-name">Low Stock Alerts</span>
+                                        <span class="notif-desc">Get notified when product stock falls below reorder level</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="notif-low-stock" checked><span class="slider"></span></label>
+                            </div>
+                            <div class="notif-toggle-row">
+                                <div class="notif-info">
+                                    <i class="fas fa-shopping-bag notif-icon" style="color:#ec4899;"></i>
+                                    <div>
+                                        <span class="notif-name">New Order Alerts</span>
+                                        <span class="notif-desc">Instant notification when a new order is placed</span>
+                                    </div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="notif-new-order" checked><span class="slider"></span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="save-btn" id="save-notifications"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TAB 6: SECURITY SETTINGS
+                 ============================================================ -->
+            <section class="settings-panel" id="panel-security">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-shield-alt"></i> Security Settings</h2>
+                        <p class="panel-desc">Manage passwords, authentication, and session security.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Change Password</label>
+                        <div class="password-change-grid">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label-sm">Current Password</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="current-password" class="form-input" placeholder="Enter current password">
+                                    <button type="button" class="pw-toggle-btn" data-target="current-password"><i class="fas fa-eye"></i></button>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label-sm">New Password</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="new-password" class="form-input" placeholder="Enter new password">
+                                    <button type="button" class="pw-toggle-btn" data-target="new-password"><i class="fas fa-eye"></i></button>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label-sm">Confirm New Password</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="confirm-password" class="form-input" placeholder="Confirm new password">
+                                    <button type="button" class="pw-toggle-btn" data-target="confirm-password"><i class="fas fa-eye"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="save-btn" id="btn-change-password" style="margin-top:16px; width: fit-content;"><i class="fas fa-key"></i> Update Password</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Two-Factor Authentication</label>
+                        <div class="switch-row">
+                            <label class="switch"><input type="checkbox" id="tfa-toggle"><span class="slider"></span></label>
+                            <span class="switch-label">Add an extra layer of security to your account</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="session-timeout">Session Timeout (Minutes)</label>
+                        <input type="number" id="session-timeout" class="form-input" value="30" min="5" max="480">
+                        <span class="form-hint">Auto logout after inactivity period</span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Recent Login Activity</label>
+                        <div class="login-activity-table-wrap">
+                            <table class="activity-table">
+                                <thead>
+                                    <tr>
+                                        <th>Device</th>
+                                        <th>IP Address</th>
+                                        <th>Location</th>
+                                        <th>Date & Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="login-activity-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="save-btn" id="save-security"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TAB 7: BACKUP & RESTORE
+                 ============================================================ -->
+            <section class="settings-panel" id="panel-backup">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-database"></i> Backup & Restore</h2>
+                        <p class="panel-desc">Manage data backups, exports, and imports.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group full-width">
+                        <div class="backup-actions-grid">
+                            <div class="backup-action-card">
+                                <div class="bac-icon" style="background:rgba(16,185,129,0.1); color:#10b981;"><i class="fas fa-cloud-download-alt"></i></div>
+                                <h4 class="bac-title">Export Data</h4>
+                                <p class="bac-desc">Download all store data including products, orders, customers, and settings as a JSON file.</p>
+                                <button type="button" class="bac-btn" id="btn-export-data"><i class="fas fa-download"></i> Export Now</button>
+                            </div>
+                            <div class="backup-action-card">
+                                <div class="bac-icon" style="background:rgba(59,130,246,0.1); color:#3b82f6;"><i class="fas fa-cloud-upload-alt"></i></div>
+                                <h4 class="bac-title">Import Data</h4>
+                                <p class="bac-desc">Restore store data from a previously exported JSON backup file.</p>
+                                <button type="button" class="bac-btn" id="btn-import-data"><i class="fas fa-upload"></i> Import Now</button>
+                            </div>
+                            <div class="backup-action-card">
+                                <div class="bac-icon" style="background:rgba(245,158,11,0.1); color:#f59e0b;"><i class="fas fa-save"></i></div>
+                                <h4 class="bac-title">Create Backup</h4>
+                                <p class="bac-desc">Create a full system backup including database, media files, and configuration.</p>
+                                <button type="button" class="bac-btn" id="btn-backup-now"><i class="fas fa-hdd"></i> Backup Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Recent Backups</label>
+                        <div class="backup-history-list" id="backup-history-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 TAB 8: SYSTEM INFORMATION
+                 ============================================================ -->
+            <section class="settings-panel" id="panel-system">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title"><i class="fas fa-server"></i> System Information</h2>
+                        <p class="panel-desc">View application details, server status, and system health.</p>
+                    </div>
+                </div>
+                <div class="settings-form-grid">
+                    <div class="form-group full-width">
+                        <div class="system-info-grid" id="system-info-grid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">System Health</label>
+                        <div class="health-meters-grid" id="health-meters-grid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="admin-footer">
+            <div class="footer-content">&copy; 2026 Flipkart Clone Admin Dashboard. Engineered for Excellence.</div>
+        </footer>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+    <script src="js/settings.js"></script>
+</body>
+</html>

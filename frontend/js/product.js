@@ -7,57 +7,163 @@ let container = document.getElementById("product-details");
 let currentProductList = [];
 
 async function fetchProductDetails() {
+    container = document.getElementById("product-details");
+    if (!container) return;
+
+    let params = new URLSearchParams(window.location.search);
+    let productId = params.get("id");
+
+    if (!productId) {
+        container.innerHTML = `
+            <div style="padding: 60px 20px; text-align: center;">
+                <h2 style="font-size: 1.5rem; color: #212121; margin-bottom: 10px;">Product Not Found</h2>
+                <p style="color: #878787; margin-bottom: 20px;">No product ID was specified in the URL.</p>
+                <button onclick="window.location.href='index.html'" style="background: #2874f0; color: white; border: none; padding: 10px 24px; font-weight: 600; border-radius: 4px; cursor: pointer;">Back to Shop</button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div style="padding: 60px 20px; text-align: center;">
+            <p style="color: #878787; font-size: 1.1rem;"><i class="fas fa-spinner fa-spin"></i> Loading product details...</p>
+        </div>
+    `;
+
+    let product = null;
+    let fetchErrorType = null;
+
     try {
-        let response = await fetch('http://127.0.0.1:5000/products');
-        currentProductList = await response.json();
-
-        let params = new URLSearchParams(window.location.search);
-        let productId = params.get("id");
-
-        let product = currentProductList.find(item => item.id == productId);
-
-        if (!product) {
-            container.innerHTML = `<h1 style="padding:40px;">Product Not Found</h1>`;
-            return;
+        let response;
+        try {
+            response = await fetch(`/api/products/${productId}`);
+        } catch (netErr) {
+            console.error("Network error fetching product:", netErr);
+            fetchErrorType = 'network';
         }
 
-        displayProduct(product);
+        if (response) {
+            if (response.status === 404) {
+                fetchErrorType = '404';
+            } else if (response.status >= 500) {
+                fetchErrorType = '500';
+            } else if (!response.ok) {
+                fetchErrorType = 'http_error';
+            } else {
+                try {
+                    product = await response.json();
+                } catch (jsonErr) {
+                    console.error("Invalid JSON response:", jsonErr);
+                    fetchErrorType = 'invalid_json';
+                }
+            }
+        }
+
+        if (!product && !fetchErrorType) {
+            // Fallback: try fetching from /api/products list
+            try {
+                let listResponse = await fetch('/api/products');
+                if (listResponse.ok) {
+                    let listData = await listResponse.json();
+                    if (Array.isArray(listData)) {
+                        currentProductList = listData;
+                        product = currentProductList.find(item => item.id == productId);
+                    }
+                }
+            } catch (fallbackErr) {
+                console.warn("Fallback product list fetch failed:", fallbackErr);
+            }
+        }
     } catch (error) {
         console.error('Error fetching product details:', error);
-        container.innerHTML = `<h1 style="padding:40px;">Error loading product details</h1>`;
     }
+
+    if (product) {
+        if (!currentProductList.some(item => item.id == product.id)) {
+            currentProductList.push(product);
+        }
+        try {
+            displayProduct(product);
+        } catch (displayErr) {
+            console.error("Error executing displayProduct:", displayErr);
+            container.innerHTML = `
+                <div style="padding: 60px 20px; text-align: center;">
+                    <h2 style="font-size: 1.5rem; color: #d32f2f; margin-bottom: 10px;">Display Error</h2>
+                    <p style="color: #878787; margin-bottom: 20px;">An error occurred while displaying the product details.</p>
+                    <button onclick="window.location.href='index.html'" style="background: #2874f0; color: white; border: none; padding: 10px 24px; font-weight: 600; border-radius: 4px; cursor: pointer;">Back to Shop</button>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    let title = "Product Not Found";
+    let message = "The product you are looking for does not exist or has been removed.";
+
+    if (fetchErrorType === '404') {
+        title = "Product Not Found (404)";
+        message = "The requested product ID does not exist.";
+    } else if (fetchErrorType === '500') {
+        title = "Server Error (500)";
+        message = "The server encountered an internal error. Please try again later.";
+    } else if (fetchErrorType === 'network') {
+        title = "Network Error";
+        message = "Unable to connect to the server. Please check your network connection.";
+    } else if (fetchErrorType === 'invalid_json') {
+        title = "Invalid Server Response";
+        message = "The server returned invalid data for this product.";
+    }
+
+    container.innerHTML = `
+        <div style="padding: 60px 20px; text-align: center;">
+            <h2 style="font-size: 1.5rem; color: #d32f2f; margin-bottom: 10px;">${title}</h2>
+            <p style="color: #878787; margin-bottom: 20px;">${message}</p>
+            <button onclick="fetchProductDetails()" style="background: #2874f0; color: white; border: none; padding: 10px 24px; font-weight: 600; border-radius: 4px; cursor: pointer; margin-right: 10px;">Retry Loading</button>
+            <button onclick="window.location.href='index.html'" style="background: #757575; color: white; border: none; padding: 10px 24px; font-weight: 600; border-radius: 4px; cursor: pointer;">Back to Shop</button>
+        </div>
+    `;
 }
 
 function displayProduct(product) {
+    if (!product) return;
+
+    // Ensure product is in currentProductList
+    if (!currentProductList.some(item => item.id == product.id)) {
+        currentProductList.push(product);
+    }
+
     // Set default rating if missing
     product.rating = product.rating || "4.5 ★";
 
+    let name = product.name || "Product";
+    let category = product.category || "General";
+
     // 1. Dynamic Bank Offers based on name and category
-    if (product.name.includes("Watch")) {
+    if (name.includes("Watch")) {
         product.offers = [
             "Bank Offer 10% off on Axis Bank Credit Cards, up to ₹1,250",
             "Special Price Get extra ₹1,500 off on exchange of old smartwatches",
             "Partner Offer Sign up for Flipkart Pay Later and get ₹500 Gift Voucher"
         ];
-    } else if (product.name.includes("Sony") || product.name.includes("WH-1000")) {
+    } else if (name.includes("Sony") || name.includes("WH-1000")) {
         product.offers = [
             "Bank Offer 10% off on HDFC Bank Credit Cards, up to ₹2,000",
             "Partner Offer Get 3 Months Spotify Premium Subscription Free",
             "No Cost EMI available on major credit cards"
         ];
-    } else if (product.category === "Mobile") {
+    } else if (category === "Mobile") {
         product.offers = [
             "Bank Offer 10% off on HDFC Bank Credit Card EMI Transactions, up to ₹1,500",
             "Special Price Get extra ₹3,000 off (price inclusive of cashback/coupon)",
             "Buy this Product and Get Extra ₹500 Off on Next Purchase"
         ];
-    } else if (product.category === "Laptop") {
+    } else if (category === "Laptop") {
         product.offers = [
             "Bank Offer 10% off on SBI Credit Card, up to ₹1,750",
             "Exchange Offer: Up to ₹15,000 off on exchange",
             "No cost EMI starting from ₹3,333/month"
         ];
-    } else if (product.category === "Fashion") {
+    } else if (category === "Fashion") {
         product.offers = [
             "Bank Offer 5% Cashback on Flipkart Axis Bank Card",
             "Special Price Get extra 10% off on select apparel & footwear",
@@ -73,7 +179,7 @@ function displayProduct(product) {
 
     // 2. Respect existing backend specs if provided, else dynamically generate realistic ones
     if (!product.specs || product.specs.length === 0) {
-        if (product.name.includes("Watch")) {
+        if (name.includes("Watch")) {
             product.specs = [
                 ["Brand", "Apple"],
                 ["Model Name", "Watch Series 8 GPS"],
@@ -82,7 +188,7 @@ function displayProduct(product) {
                 ["Battery Life", "Up to 18 hours"],
                 ["Water Resistant", "Yes, WR50 (50 meters)"]
             ];
-        } else if (product.name.includes("Sony") || product.name.includes("WH-1000")) {
+        } else if (name.includes("Sony") || name.includes("WH-1000")) {
             product.specs = [
                 ["Brand", "Sony"],
                 ["Model Name", "WH-1000XM5 Wireless Headphones"],
@@ -91,34 +197,33 @@ function displayProduct(product) {
                 ["Battery Life", "Up to 30 Hours (ANC ON)"],
                 ["Noise Cancelling", "Yes, Industry Leading Dual Noise Canceling"]
             ];
-        } else if (product.category === "Mobile") {
-            // High-fidelity fallback for mobiles
-            const ram = product.name.includes("Pixel") ? "8 GB" : "12 GB";
+        } else if (category === "Mobile") {
+            const ram = name.includes("Pixel") ? "8 GB" : "12 GB";
             const storage = "128 GB";
-            const processor = product.name.includes("Pixel") ? "Google Tensor G2" : "Snapdragon 8+ Gen 1";
+            const processor = name.includes("Pixel") ? "Google Tensor G2" : "Snapdragon 8+ Gen 1";
             product.specs = [
-                ["Model Name", product.name],
+                ["Model Name", name],
                 ["Display Size", "16.51 cm (6.5 inch) OLED"],
                 ["Processor", processor],
                 ["RAM / Storage", `${ram} / ${storage}`],
                 ["Battery", "4500 mAh"]
             ];
-        } else if (product.category === "Laptop") {
+        } else if (category === "Laptop") {
             const ram = "8 GB";
             const storage = "512 GB SSD";
-            const cpu = product.name.includes("Vivobook") ? "AMD Ryzen 5" : "Intel Core i5 12th Gen";
+            const cpu = name.includes("Vivobook") ? "AMD Ryzen 5" : "Intel Core i5 12th Gen";
             product.specs = [
-                ["Model Name", product.name],
+                ["Model Name", name],
                 ["Processor", cpu],
                 ["RAM / Storage", `${ram} / ${storage}`],
                 ["Operating System", "Windows 11 Home"],
                 ["Screen Size", "39.62 cm (15.6 inch) FHD Display"]
             ];
-        } else if (product.category === "Fashion") {
-            const material = product.name.includes("Shoes") || product.name.includes("Sneakers") ? "Mesh & Premium Leather" : "100% Premium Cotton";
-            const type = product.name.includes("Shoes") || product.name.includes("Sneakers") ? "Sports & Lifestyle" : "Casual Apparel";
-            let brand = product.name.split(" ")[0];
-            if (product.name.startsWith("US Polo")) brand = "US Polo Assn";
+        } else if (category === "Fashion") {
+            const material = name.includes("Shoes") || name.includes("Sneakers") ? "Mesh & Premium Leather" : "100% Premium Cotton";
+            const type = name.includes("Shoes") || name.includes("Sneakers") ? "Sports & Lifestyle" : "Casual Apparel";
+            let brand = name.split(" ")[0];
+            if (name.startsWith("US Polo")) brand = "US Polo Assn";
             product.specs = [
                 ["Brand", brand],
                 ["Material", material],
@@ -126,30 +231,36 @@ function displayProduct(product) {
                 ["Fit / Size", "Standard Fit"],
                 ["Ideal For", "Men"]
             ];
-        } else if (product.category === "Beauty") {
-            const type = product.name.includes("Perfume") ? "Eau de Parfum" : "Skincare Gel";
-            const size = product.name.includes("Perfume") ? "100 ml" : "50 g";
+        } else if (category === "Beauty") {
+            const type = name.includes("Perfume") ? "Eau de Parfum" : "Skincare Gel";
+            const size = name.includes("Perfume") ? "100 ml" : "50 g";
             product.specs = [
-                ["Brand", product.name.split(" ")[0]],
+                ["Brand", name.split(" ")[0]],
                 ["Product Type", type],
                 ["Volume / Size", size],
-                ["Fragrance Family", product.name.includes("Sauvage") ? "Fresh & Woody" : "Floral & Fresh"],
+                ["Fragrance Family", name.includes("Sauvage") ? "Fresh & Woody" : "Floral & Fresh"],
                 ["Skin Type", "All Skin Types"]
             ];
         } else {
             product.specs = [
-                ["Brand", product.name.split(" ")[0]],
+                ["Brand", name.split(" ")[0]],
                 ["Warranty", "1 Year Brand Warranty"],
                 ["In the Box", "1 Unit, Charging Cable, User Manual"]
             ];
         }
     }
 
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    let isWishlisted = wishlist.find(item => item.id === product.id);
+    let wishlist = [];
+    try {
+        wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    } catch (e) {
+        wishlist = [];
+    }
+    let isWishlisted = wishlist.find(item => item.id == product.id);
     let heartColor = isWishlisted ? "#ff4343" : "#c2c2c2";
 
-    let galleryImages = getProductImages(product);
+    let galleryImages = (typeof getProductImages === 'function') ? getProductImages(product) : [product.image];
+    let priceVal = Number(product.price) || 0;
 
     container.innerHTML = `
         <div class="product-page-container">
@@ -173,7 +284,7 @@ function displayProduct(product) {
                 </div>
                 
                 <div class="product-action-buttons">
-                    <button class="add-to-cart-btn" onclick='addToCart(${JSON.stringify(product)})'>
+                    <button class="add-to-cart-btn" onclick="if(typeof addToCart==='function') addToCart(${product.id});">
                         <i class="fas fa-shopping-cart"></i> ADD TO CART
                     </button>
                     <button class="buy-now-btn" onclick="window.location.href='checkout.html?id=${product.id}'">
@@ -184,9 +295,11 @@ function displayProduct(product) {
 
             <div class="product-right-section">
                 <div class="product-header">
-                    <span class="wishlist-btn" style="color: ${heartColor};" onclick="toggleWishlist(event, ${product.id}, this)">♥</span>
-                    <div class="breadcrumb">Home > ${product.category} > ${product.name}</div>
-                    <h1>${product.name}</h1>
+                    <span class="wishlist-btn ${typeof isInWishlist === 'function' && isInWishlist(product.id) ? 'active' : ''}" data-wishlist-id="${product.id}" onclick="if(typeof toggleWishlist==='function') toggleWishlist(event, ${product.id}, this)">
+                        <i class="${typeof isInWishlist === 'function' && isInWishlist(product.id) ? 'fas' : 'far'} fa-heart" style="color: ${typeof isInWishlist === 'function' && isInWishlist(product.id) ? '#ff4343' : '#878787'}; font-size: 1.4rem;"></i>
+                    </span>
+                    <div class="breadcrumb">Home > ${category} > ${name}</div>
+                    <h1>${name}</h1>
                     <div class="rating-badge">${product.rating} (Verified Buyer)</div>
                     
                     ${product.isMinutesEligible ? `
@@ -201,8 +314,8 @@ function displayProduct(product) {
                         </div>
                     ` : ''}
                     <div class="price-container">
-                        <span class="current-price">₹${product.price.toLocaleString()}</span>
-                        <span class="original-price">₹${(product.price * 1.3).toFixed(0)}</span>
+                        <span class="current-price">₹${priceVal.toLocaleString()}</span>
+                        <span class="original-price">₹${(priceVal * 1.3).toFixed(0)}</span>
                         <span class="discount-percent">30% off</span>
                     </div>
                 </div>
@@ -210,7 +323,7 @@ function displayProduct(product) {
                 <div class="offers-section">
                     <h3>Available Offers</h3>
                     <ul>
-                        ${product.offers.map(offer => `
+                        ${(product.offers || []).map(offer => `
                             <li>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#388e3c" style="margin-top: 2px;">
                                     <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 8.25c-.97 0-1.75-.78-1.75-1.75s.78-1.75 1.75-1.75 1.75.78 1.75 1.75-.78 1.75-1.75 1.75z"/>
@@ -224,7 +337,7 @@ function displayProduct(product) {
                 <div class="specs-section">
                     <h3>Specifications</h3>
                     <table class="specs-table">
-                        ${product.specs.map(spec => `
+                        ${(product.specs || []).map(spec => `
                             <tr>
                                 <td class="spec-label">${spec[0]}</td>
                                 <td class="spec-value">${spec[1]}</td>
@@ -236,79 +349,160 @@ function displayProduct(product) {
                 <div class="description-section">
                     <h3>Description</h3>
                     <p>
-                        Experience the ultimate in quality and performance with the <b>${product.name}</b>. 
-                        This top-rated product from our ${product.category} collection combines sleek design with 
+                        Experience the ultimate in quality and performance with the <b>${name}</b>. 
+                        This top-rated product from our ${category} collection combines sleek design with 
                         powerful features to enhance your lifestyle. Includes premium materials and 
                         industry-leading performance benchmarks.
                     </p>
                 </div>
 
                 <!-- Customer Reviews Section -->
-                <div class="reviews-section">
-                    <div class="reviews-header">
-                        <h3>Ratings & Reviews</h3>
-                        <div class="rating-summary">
-                            <div class="big-rating">${product.rating}</div>
-                            <div class="rating-info">
-                                <div>2,456 Ratings &</div>
-                                <div>412 Reviews</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Customer Images -->
-                    <div class="customer-images">
-                        <h4>Images from Customers</h4>
-                        <div class="image-gallery" style="display: flex; gap: 10px; margin-top: 15px;">
-                            <img src="${galleryImages[0] || product.image}" alt="user-photo" onclick="openCustomerLightbox(0)" style="width: 64px; height: 64px; object-fit: cover; background: #fff; border-radius: 4px; border: 1px solid #e0e0e0; padding: 2px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" referrerpolicy="no-referrer">
-                            <img src="${galleryImages[1] || product.image}" alt="user-photo" onclick="openCustomerLightbox(1)" style="width: 64px; height: 64px; object-fit: cover; background: #fff; border-radius: 4px; border: 1px solid #e0e0e0; padding: 2px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" referrerpolicy="no-referrer">
-                            <img src="${galleryImages[2] || product.image}" alt="user-photo" onclick="openCustomerLightbox(2)" style="width: 64px; height: 64px; object-fit: cover; background: #fff; border-radius: 4px; border: 1px solid #e0e0e0; padding: 2px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" referrerpolicy="no-referrer">
-                            <div class="more-images" onclick="openCustomerLightbox(3)" style="width: 64px; height: 64px; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${galleryImages[3] || product.image}'); background-size: cover; background-position: center; color: white; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">+38</div>
-                        </div>
-                    </div>
-
-                    <!-- Individual Reviews -->
-                    <div class="user-reviews">
-                        <div class="review-card">
-                            <div class="review-header">
-                                <span class="review-rating">5 ★</span>
-                                <span class="review-title">Excellent Quality!</span>
-                            </div>
-                            <p class="review-text">Absolutely love this ${product.name}. The quality is exactly as described and it was delivered within 2 days. Highly recommend!</p>
-                            <div class="review-footer">
-                                <span class="user-name">Sanket Amte</span>
-                                <span class="verified-buyer">✔ Verified Buyer</span>
-                                <span class="review-date">Oct, 2023</span>
-                            </div>
-                        </div>
-
-                        <div class="review-card">
-                            <div class="review-header">
-                                <span class="review-rating">4 ★</span>
-                                <span class="review-title">Value for Money</span>
-                            </div>
-                            <p class="review-text">Good product for the price. The packaging was a bit damaged but the product inside was perfect.</p>
-                            <div class="review-footer">
-                                <span class="user-name">Rahul Sharma</span>
-                                <span class="verified-buyer">✔ Verified Buyer</span>
-                                <span class="review-date">Sept, 2023</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    </div>
+                <div class="reviews-section" id="api-reviews-section">
+                    <p style="color: #878787;">Loading ratings and reviews...</p>
                 </div>
             </div>
         </div>
     `;
+
+    // Safely load product reviews without crashing displayProduct
+    try {
+        if (typeof loadProductReviews === 'function') {
+            loadProductReviews(product.id).catch(err => {
+                console.error("loadProductReviews call error:", err);
+                let revSec = document.getElementById("api-reviews-section");
+                if (revSec) revSec.innerHTML = "<h3>Ratings & Reviews</h3><p style='color: #878787; margin-top: 10px;'>No reviews available.</p>";
+            });
+        } else {
+            let revSec = document.getElementById("api-reviews-section");
+            if (revSec) revSec.innerHTML = "<h3>Ratings & Reviews</h3><p style='color: #878787; margin-top: 10px;'>No reviews available.</p>";
+        }
+    } catch (e) {
+        console.error("Error executing loadProductReviews safeguard:", e);
+        let revSec = document.getElementById("api-reviews-section");
+        if (revSec) revSec.innerHTML = "<h3>Ratings & Reviews</h3><p style='color: #878787; margin-top: 10px;'>No reviews available.</p>";
+    }
+}
+
+async function loadProductReviews(productId) {
+    let reviewsContainer = document.getElementById("api-reviews-section");
+    if (!reviewsContainer) return;
+
+    try {
+        if (!productId) {
+            reviewsContainer.innerHTML = `
+                <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700; margin-bottom: 10px;">Ratings & Reviews</h3>
+                <p style="color: #878787; margin-top: 10px;">No reviews available.</p>
+            `;
+            return;
+        }
+
+        let response;
+        try {
+            response = await fetch(`/api/reviews/${productId}`);
+        } catch (fetchErr) {
+            console.error("Network error fetching reviews:", fetchErr);
+            reviewsContainer.innerHTML = `
+                <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700; margin-bottom: 10px;">Ratings & Reviews</h3>
+                <p style="color: #878787; margin-top: 10px;">No reviews available.</p>
+            `;
+            return;
+        }
+
+        if (!response.ok) {
+            reviewsContainer.innerHTML = `
+                <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700; margin-bottom: 10px;">Ratings & Reviews</h3>
+                <p style="color: #878787; margin-top: 10px;">No reviews available.</p>
+            `;
+            return;
+        }
+
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonErr) {
+            console.error("Invalid JSON response for reviews:", jsonErr);
+            reviewsContainer.innerHTML = `
+                <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700; margin-bottom: 10px;">Ratings & Reviews</h3>
+                <p style="color: #878787; margin-top: 10px;">No reviews available.</p>
+            `;
+            return;
+        }
+
+        let avgRating = data.average_rating !== undefined ? data.average_rating : 0;
+        let totalReviews = data.total_reviews !== undefined ? data.total_reviews : 0;
+        let reviewsList = Array.isArray(data.reviews) ? data.reviews : [];
+
+        if (totalReviews === 0 || reviewsList.length === 0) {
+            reviewsContainer.innerHTML = `
+                <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700; margin-bottom: 10px;">Ratings & Reviews</h3>
+                <p style="color: #878787; margin-top: 10px;">No customer reviews yet.</p>
+            `;
+            return;
+        }
+
+        // Render Flipkart-style customer reviews section
+        let reviewsHtml = reviewsList.map(r => {
+            let ratingVal = Number(r.rating) || 5;
+            let dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+            let badgeBg = (ratingVal >= 3) ? '#388e3c' : (ratingVal == 2 ? '#ff9f00' : '#d32f2f');
+            let reviewTitle = r.review_text ? (r.review_text.length > 50 ? r.review_text.substring(0, 50) + '...' : r.review_text) : 'Customer Review';
+
+            return `
+                <div class="review-card" style="border-bottom: 1px solid #f0f0f0; padding: 16px 0;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span style="background: ${badgeBg}; color: white; font-size: 0.8rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;">
+                            ${ratingVal} ★
+                        </span>
+                        <span style="font-weight: 600; color: #212121; font-size: 0.95rem;">${reviewTitle}</span>
+                    </div>
+                    <p style="color: #212121; font-size: 0.9rem; margin-bottom: 10px; line-height: 1.4;">${r.review_text || ''}</p>
+                    <div style="font-size: 0.78rem; color: #878787; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span style="font-weight: 600; color: #878787;">${r.user_name || 'Anonymous'}</span>
+                        <span style="font-weight: 600; color: #388e3c; display: inline-flex; align-items: center; gap: 3px;">
+                            <i class="fas fa-check-circle" style="font-size: 0.85rem;"></i> Certified Buyer
+                        </span>
+                        ${dateStr ? `<span>${dateStr}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+        reviewsContainer.innerHTML = `
+            <div style="margin-top: 25px; border-top: 1px solid #f0f0f0; padding-top: 20px;">
+                <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700; margin-bottom: 15px;">Ratings & Reviews</h3>
+                <div style="display: flex; align-items: center; gap: 20px; padding: 16px 20px; background: #fafafa; border: 1px solid #f0f0f0; border-radius: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <div style="text-align: center; border-right: 1px solid #e0e0e0; padding-right: 25px;">
+                        <div style="font-size: 2.2rem; font-weight: 700; color: #212121; line-height: 1;">${avgRating} <span style="font-size: 1.5rem; color: #388e3c;">★</span></div>
+                        <div style="font-size: 0.8rem; color: #878787; font-weight: 500; margin-top: 6px;">${totalReviews} Ratings & ${reviewsList.length} Reviews</div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <p style="font-size: 0.85rem; color: #212121; font-weight: 600; margin-bottom: 4px;">Customer Feedback</p>
+                        <p style="font-size: 0.8rem; color: #878787; margin: 0;">Verified buyers who purchased this product on Flipkart</p>
+                    </div>
+                </div>
+                <div class="reviews-list">
+                    ${reviewsHtml}
+                </div>
+            </div>
+        `;
+    } catch (err) {
+        console.error("Unhandled error in loadProductReviews:", err);
+        reviewsContainer.innerHTML = `
+            <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700; margin-bottom: 10px;">Ratings & Reviews</h3>
+            <p style="color: #878787; margin-top: 10px;">No reviews available.</p>
+        `;
+    }
 }
 
 fetchProductDetails();
 
-
-
 function updateCartCount() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cart = [];
+    try {
+        cart = JSON.parse(localStorage.getItem("cart")) || [];
+    } catch (e) {
+        cart = [];
+    }
     let countEl = document.getElementById("cart-count");
     if (countEl) {
         countEl.innerHTML = `<i class="fas fa-shopping-cart"></i> Cart (${cart.length})`;
@@ -318,21 +512,35 @@ function updateCartCount() {
 function toggleWishlist(event, productId, element) {
     if (event) event.stopPropagation();
     
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    let productIndex = wishlist.findIndex(item => item.id === productId);
+    let wishlist = [];
+    try {
+        wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    } catch (e) {
+        wishlist = [];
+    }
+
+    let productIndex = wishlist.findIndex(item => item.id == productId);
     
     if (productIndex !== -1) {
         wishlist.splice(productIndex, 1);
-        element.style.color = "#c2c2c2";
+        if (element) element.style.color = "#c2c2c2";
     } else {
-        let product = currentProductList.find(p => p.id === productId);
+        let product = currentProductList.find(p => p.id == productId);
         if (product) {
             wishlist.push(product);
-            element.style.color = "#ff4343";
+            if (element) element.style.color = "#ff4343";
         }
     }
     
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    try {
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    } catch (e) {
+        console.error("Error writing wishlist to localStorage:", e);
+    }
+
+    if (typeof updateWishlistCount === 'function') {
+        updateWishlistCount();
+    }
 }
 
 // ============================================================
@@ -356,6 +564,7 @@ function changeMainImage(src, element) {
 }
 
 function getProductImages(product) {
+    if (!product || !product.id) return [product ? product.image : ""];
     const id = parseInt(product.id);
     
     // Curated high-fidelity unique image galleries per product ID to avoid duplicates.

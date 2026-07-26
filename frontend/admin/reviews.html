@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews & Ratings Management | Flipkart Clone Admin</title>
+    <!-- Authentication Check -->
+    <script src="js/auth.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="css/reviews.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         Left Sidebar
+         ============================================================ -->
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="dashboard.html" class="brand-logo">
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart">
+                <div class="brand-text">Admin <span>Plus</span></div>
+            </a>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="products.html">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="orders.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="users.html">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="inventory.html">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Inventory</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="coupons.html">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Coupons</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a href="reviews.html">
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>Reviews</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="settings.html">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <li class="menu-item logout-btn" style="list-style: none;">
+                <a href="../index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </div>
+    </aside>
+
+    <!-- ============================================================
+         Main View Area
+         ============================================================ -->
+    <main class="admin-main">
+        <!-- Top Navbar -->
+        <header class="admin-navbar">
+            <div class="nav-left">
+                <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle Sidebar Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Reviews & Ratings</h1>
+            </div>
+            
+            <div class="nav-right">
+                <button class="theme-toggle" id="theme-btn" aria-label="Toggle Color Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <button class="notifications-bell" aria-label="View notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="bell-badge"></span>
+                </button>
+                
+                <div class="admin-profile" id="profile-trigger">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Admin Avatar" class="admin-avatar">
+                    <div class="admin-info">
+                        <span class="admin-name">Sanket Amte</span>
+                        <span class="admin-role">Super Admin</span>
+                    </div>
+                    
+                    <div class="profile-dropdown" id="profile-menu">
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-user-cog"></i> My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Account Settings
+                        </a>
+                        <a href="../index.html" class="dropdown-item logout">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Metrics Summary Cards Grid (5 cards) -->
+            <section class="metrics-grid">
+                <div class="metrics-card m-blue">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Reviews</span>
+                        <span class="metrics-val" id="total-reviews-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-comments"></i></div>
+                </div>
+                <div class="metrics-card m-orange">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Pending</span>
+                        <span class="metrics-val" id="pending-reviews-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-clock"></i></div>
+                </div>
+                <div class="metrics-card m-green">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Approved</span>
+                        <span class="metrics-val" id="approved-reviews-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-check-circle"></i></div>
+                </div>
+                <div class="metrics-card m-red">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Rejected</span>
+                        <span class="metrics-val" id="rejected-reviews-cnt">0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-times-circle"></i></div>
+                </div>
+                <div class="metrics-card m-gold">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Avg Rating</span>
+                        <span class="metrics-val" id="avg-rating-cnt">0.0 <i class="fas fa-star" style="font-size: 0.85rem; color: var(--brand-gold);"></i></span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-star"></i></div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="analytics-row">
+                <div class="analytics-card">
+                    <h3 class="analytics-card-title"><i class="fas fa-chart-bar"></i> Rating Distribution</h3>
+                    <div class="rating-distribution-container" id="rating-dist-container">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <h3 class="analytics-card-title"><i class="fas fa-chart-line"></i> Average Rating Trend</h3>
+                    <canvas id="rating-trend-chart" height="200"></canvas>
+                </div>
+                <div class="analytics-card">
+                    <h3 class="analytics-card-title"><i class="fas fa-fire"></i> Most Reviewed Products</h3>
+                    <div id="most-reviewed-list" class="top-list-container">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Control Actions Toolbar -->
+            <div class="toolbar-panel">
+                <div class="toolbar-left">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="r-search-product" placeholder="Search by Product..." autocomplete="off">
+                    </div>
+                    
+                    <div class="search-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="r-search-customer" placeholder="Search by Customer..." autocomplete="off">
+                    </div>
+                    
+                    <select id="r-filter-rating" class="filter-select">
+                        <option value="All">All Ratings</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                    
+                    <select id="r-filter-status" class="filter-select">
+                        <option value="All">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+
+                    <input type="date" id="r-filter-date" class="filter-select" title="Filter by Review Date">
+                    
+                    <select id="r-sort" class="filter-select">
+                        <option value="date-desc">Date: Newest First</option>
+                        <option value="date-asc">Date: Oldest First</option>
+                        <option value="rating-high">Rating: High to Low</option>
+                        <option value="rating-low">Rating: Low to High</option>
+                    </select>
+
+                    <button type="button" id="btn-clear-filters" class="clear-filters-btn" title="Clear Filters">
+                        <i class="fas fa-undo"></i> Clear
+                    </button>
+                </div>
+                
+                <div class="toolbar-right" style="display: flex; gap: 8px;">
+                    <button type="button" class="refresh-btn" id="btn-export" title="Export Reviews to CSV">
+                        <i class="fas fa-file-export"></i> Export CSV
+                    </button>
+                    <button type="button" class="refresh-btn" id="btn-refresh" title="Refresh Reviews List">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reviews Table Section -->
+            <section class="table-panel">
+                <div class="table-info-row">
+                    <span id="showing-text">Showing 0 of 0 reviews</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Review ID</th>
+                                <th>Product</th>
+                                <th>Customer</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th style="text-align: right; padding-right: 28px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviews-table-body">
+                            <!-- Populated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination controls -->
+                <div class="pagination-container" id="pagination-container">
+                    <!-- Populated Dynamically -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <div class="footer-content">
+                &copy; 2026 Flipkart Clone Admin Dashboard. Engineered for Excellence.
+            </div>
+        </footer>
+    </main>
+
+    <!-- ============================================================
+         MODAL: VIEW REVIEW DETAILS
+         ============================================================ -->
+    <div class="modal-overlay" id="view-review-modal">
+        <div class="modal-box" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Review Details</h3>
+                <button class="modal-close-btn" id="close-view-modal">&times;</button>
+            </div>
+
+            <!-- Product Info -->
+            <div class="review-detail-product-row">
+                <img id="detail-product-img" src="" alt="" class="detail-product-img">
+                <div>
+                    <h4 id="detail-product-name" class="detail-product-name"></h4>
+                    <span id="detail-product-category" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;"></span>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <h4 class="detail-section-title">Customer Information</h4>
+            <div class="detail-info-grid">
+                <div class="info-item">
+                    <span class="info-label">Name</span>
+                    <span class="info-value" id="detail-customer-name"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="detail-customer-email"></span>
+                </div>
+            </div>
+
+            <!-- Star Rating -->
+            <h4 class="detail-section-title">Rating & Review</h4>
+            <div class="detail-rating-row">
+                <div class="star-display" id="detail-star-display"></div>
+                <span id="detail-rating-number" class="detail-rating-number"></span>
+            </div>
+
+            <!-- Review Title & Text -->
+            <div class="review-text-block">
+                <h5 id="detail-review-title" class="review-title-text"></h5>
+                <p id="detail-review-text" class="review-body-text"></p>
+            </div>
+
+            <!-- Uploaded Images -->
+            <div id="detail-images-section" style="display: none;">
+                <h4 class="detail-section-title">Uploaded Images</h4>
+                <div id="detail-images-grid" class="review-images-grid"></div>
+            </div>
+
+            <!-- Review Date & Status -->
+            <h4 class="detail-section-title">Status & Moderation</h4>
+            <div class="detail-info-grid">
+                <div class="info-item">
+                    <span class="info-label">Review Date</span>
+                    <span class="info-value" id="detail-review-date"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value" id="detail-review-status"></span>
+                </div>
+            </div>
+
+            <!-- Moderation History -->
+            <div id="detail-moderation-section" style="display: none;">
+                <h4 class="detail-section-title">Moderation History</h4>
+                <div id="detail-moderation-log" class="moderation-log-container"></div>
+            </div>
+
+            <div class="modal-footer-btns" style="margin-top: 20px;">
+                <button type="button" class="modal-btn btn-cancel" id="ok-view-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: APPROVE / REJECT REVIEW
+         ============================================================ -->
+    <div class="modal-overlay" id="moderation-modal">
+        <div class="modal-box" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 id="moderation-modal-title">Approve Review</h3>
+                <button class="modal-close-btn" id="close-moderation-modal">&times;</button>
+            </div>
+            
+            <div id="moderation-modal-icon" style="text-align: center; font-size: 2.8rem; margin-bottom: 16px;"></div>
+            <p id="moderation-modal-desc" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; text-align: center; margin-bottom: 20px;"></p>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="moderator-note">Moderator Note (Optional)</label>
+                <textarea id="moderator-note" class="form-input" rows="3" placeholder="Add a reason or internal note..."></textarea>
+            </div>
+            
+            <input type="hidden" id="moderation-review-id">
+            <input type="hidden" id="moderation-action">
+
+            <div class="modal-footer-btns">
+                <button type="button" class="modal-btn btn-cancel" id="cancel-moderation-btn">Cancel</button>
+                <button type="button" class="modal-btn btn-submit" id="confirm-moderation-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: DELETE REVIEW CONFIRMATION
+         ============================================================ -->
+    <div class="modal-overlay" id="delete-confirm-modal">
+        <div class="modal-box" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 3rem; color: var(--danger-color); margin-bottom: 16px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Delete Review?</h3>
+            <p id="delete-modal-desc" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px;"></p>
+            
+            <div class="modal-footer-btns" style="justify-content: center; border-top: none; padding-top: 0; margin-top: 0; gap: 16px;">
+                <button type="button" class="modal-btn btn-cancel" id="cancel-delete-btn" style="min-width: 100px;">Cancel</button>
+                <button type="button" class="modal-btn btn-danger" id="confirm-delete-btn" style="min-width: 100px;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Logic Controller Script -->
+    <script src="js/reviews.js"></script>
+</body>
+</html>

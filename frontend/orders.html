@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders | Flipkart Clone</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body class="orders-body-bg">
@@ -38,6 +40,9 @@
 
             <button onclick="window.location.href='orders.html'" class="nav-btn">
                 <i class="fas fa-box"></i> Orders
+            </button>
+            <button id="wishlist-count" class="nav-btn" onclick="window.location.href='wishlist.html'">
+                <i class="fas fa-heart"></i> Wishlist
             </button>
             <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
                 <i class="fas fa-shopping-cart cart-icon"></i> Cart
@@ -210,26 +215,62 @@
 
     <div id="toast"></div>
 
+    <script src="js/login.js"></script>
+    <script src="js/register.js"></script>
     <script src="js/script.js"></script>
     <script>
-        let orders = JSON.parse(localStorage.getItem("orders")) || [];
-        let selectedRating = 0;
-        const ratingMap = {
-            1: { text: "Terrible", color: "#ff6161" },
-            2: { text: "Poor", color: "#ff9f00" },
-            3: { text: "Fair", color: "#ff9f00" },
-            4: { text: "Good", color: "#388e3c" },
-            5: { text: "Excellent", color: "#388e3c" }
-        };
+        let currentUser = null;
+        let ordersList = [];
 
-        function renderOrders() {
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const userData = localStorage.getItem("user");
+                if (userData) currentUser = JSON.parse(userData);
+            } catch (e) {
+                currentUser = null;
+            }
+
+            if (!currentUser) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            await loadUserOrders();
+        });
+
+        async function loadUserOrders() {
             const container = document.getElementById("orders-container");
+            if (!container) return;
+
+            container.innerHTML = Array(3).fill(`
+                <div class="skeleton-card" style="height: 140px; margin-bottom: 15px;">
+                    <div class="skeleton skeleton-title" style="width: 40%;"></div>
+                    <div class="skeleton skeleton-price" style="width: 25%;"></div>
+                </div>
+            `).join("");
+
+            try {
+                const response = await fetch(`/api/orders/${currentUser.id}`);
+                if (!response.ok) throw new Error("Failed to load orders");
+
+                ordersList = await response.json();
+                renderOrders(ordersList);
+            } catch (err) {
+                console.error("Error fetching orders:", err);
+                container.innerHTML = `<div style="padding: 20px; text-align: center; color: red;">Failed to load orders.</div>`;
+            }
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById("orders-container");
+            if (!container) return;
+
             container.innerHTML = "";
 
-            if (orders.length === 0) {
+            if (!orders || orders.length === 0) {
                 container.innerHTML = `
                     <div class="pro-empty-state">
-                        <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/myorders-empty_83141f.png">
+                        <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/myorders-empty_83141f.png" alt="No Orders Found">
                         <h2>No orders found</h2>
                         <p>Looks like you haven't placed any orders yet.</p>
                         <button onclick="location.href='index.html'">Start Shopping</button>
@@ -238,62 +279,72 @@
                 return;
             }
 
-            orders.slice().reverse().forEach((order, index) => {
-                let orderTime = new Date(order.date).getTime();
-                let now = new Date().getTime();
-                let diff = (now - orderTime) / (1000 * 60);
-                let isDelivered = diff >= 0.1;
+            orders.forEach((order) => {
+                const statusColors = {
+                    "Pending": "#ff9f00",
+                    "Confirmed": "#2874f0",
+                    "Packed": "#388e3c",
+                    "Shipped": "#388e3c",
+                    "Delivered": "#26a541",
+                    "Cancelled": "#ff4343"
+                };
+                const statusColor = statusColors[order.status] || "#2874f0";
 
-                let statusText = isDelivered ? 'Delivered on Oct 24' : 'Delivery expected by Oct 28';
-                let statusColor = isDelivered ? '#26a541' : '#ff9f00';
-                let subStatusText = `Your item has been ${isDelivered ? 'delivered' : 'shipped'}`;
-                
-                if (order.returnStatus === "Return Requested") {
-                    statusText = "Return Requested";
-                    statusColor = "#ff9f00"; 
-                    subStatusText = "Return verification under progress";
-                }
+                const orderDateStr = order.created_at ? new Date(order.created_at).toLocaleDateString("en-IN", {
+                    day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+                }) : "Recently";
 
-                let actionButtonsHTML = "";
-                if (isDelivered) {
-                    actionButtonsHTML += `<button style="background: none; border: none; color: #2874f0; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 10px;" onclick="openReviewModal('${order.products[0].name}', '${order.products[0].image}')">★ Rate & Review Product</button>`;
-                    
-                    if (order.returnStatus === "Return Requested") {
-                        actionButtonsHTML += `<span style="font-size: 0.85rem; color: #878787; font-weight: 600; margin-top: 5px; display: inline-flex; align-items: center; gap: 5px;">↺ Return Requested (Pending)</span>`;
-                    } else {
-                        actionButtonsHTML += `<button style="background: none; border: none; color: #ff6161; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-size: 0.9rem; margin-top: 5px;" onclick="openReturnModal(${index})">↺ Return Product</button>`;
-                    }
+                let itemsHTML = "";
+                if (order.items && order.items.length > 0) {
+                    order.items.forEach(item => {
+                        const product = item.product || { name: "Product", image: "images/image1.jpeg" };
+                        itemsHTML += `
+                            <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 10px;">
+                                <img src="${product.image}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?w=500'" style="width: 60px; height: 60px; object-fit: contain; border-radius: 4px; border: 1px solid #f0f0f0;">
+                                <div>
+                                    <h4 style="font-size: 0.95rem; color: #212121; margin-bottom: 3px;">${product.name}</h4>
+                                    <p style="font-size: 0.85rem; color: #878787;">Qty: ${item.quantity} × ₹${item.price.toLocaleString()}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
                 }
 
                 container.innerHTML += `
-                    <div class="pro-order-card" style="display: flex; align-items: flex-start; justify-content: space-between; padding: 20px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: box-shadow 0.2s;">
-                        <div style="display: flex; gap: 20px; flex: 2; cursor: pointer;" onclick="window.location.href='track.html?id=${index}'">
-                            <img src="${order.products[0].image}" style="width: 80px; height: 80px; object-fit: contain;">
+                    <div class="pro-order-card" style="padding: 20px; background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 15px;">
                             <div>
-                                <h3 style="font-size: 1rem; color: #212121; margin-bottom: 5px; font-weight: 500;">${order.products[0].name}</h3>
-                                <p style="font-size: 0.85rem; color: #878787;">Color: Standard</p>
-                                <p style="font-size: 0.85rem; color: #878787;">Seller: RetailNet</p>
+                                <span style="font-weight: 700; color: #212121; font-size: 0.95rem;">Order #${order.id}</span>
+                                <span style="font-size: 0.85rem; color: #878787; margin-left: 12px;">Placed on ${orderDateStr}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: ${statusColor};">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; display: inline-block;"></span>
+                                ${order.status}
                             </div>
                         </div>
-                        
-                        <div style="flex: 1; font-weight: 600; font-size: 1.1rem; color: #212121;">
-                            ₹${order.total.toLocaleString()}
-                        </div>
-                        
-                        <div style="flex: 1.5; display: flex; flex-direction: column; gap: 10px;">
-                            <div style="font-weight: 600; font-size: 0.95rem; color: #212121; display: flex; align-items: center; gap: 8px;">
-                                <div style="width: 10px; height: 10px; border-radius: 50%; background: ${statusColor};"></div>
-                                ${statusText}
+
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                            <div style="flex: 2; min-width: 250px;">
+                                ${itemsHTML}
                             </div>
-                            <p style="font-size: 0.8rem; color: #212121;">${subStatusText}</p>
-                            ${actionButtonsHTML}
+
+                            <div style="flex: 1; min-width: 200px; border-left: 1px solid #f0f0f0; padding-left: 20px;">
+                                <p style="font-size: 0.85rem; color: #878787; margin-bottom: 4px;">Payment: <strong>${order.payment_method} (${order.payment_status})</strong></p>
+                                <p style="font-size: 0.85rem; color: #878787; margin-bottom: 4px;">Shipping Address:</p>
+                                <p style="font-size: 0.8rem; color: #212121; margin-bottom: 10px; line-height: 1.4;">${order.shipping_address}</p>
+                                <p style="font-size: 0.85rem; color: #878787; margin-bottom: 2px;">Total Amount:</p>
+                                <h3 style="font-size: 1.2rem; color: #212121; font-weight: 700;">₹${order.total_amount.toLocaleString()}</h3>
+                            </div>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function openReviewModal(name, img) {
+        let selectedProductId = null;
+
+        function openReviewModal(id, name, img) {
+            selectedProductId = id;
             document.getElementById("review-product-name").innerText = name;
             document.getElementById("review-modal-img").src = img;
             document.getElementById("review-modal").style.display = "flex";
@@ -365,10 +416,28 @@
 
         function submitReview() {
             if (!selectedRating) {
-                showToast("Please select a rating to continue");
+                showToast("Please select a rating to continue", "error");
                 return;
             }
-            showToast("Success! Your review has been submitted.");
+            
+            const reviewText = document.getElementById("review-text-input").value.trim();
+            let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            let reviewerName = currentUser ? currentUser.name : "Verified Customer";
+            
+            let reviewObj = {
+                rating: selectedRating,
+                title: selectedRating >= 4 ? "Excellent Quality" : "Value for Money",
+                text: reviewText || "Excellent product, exactly as described. Extremely satisfied with this purchase!",
+                user: reviewerName,
+                verified: true,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+            };
+
+            let reviews = JSON.parse(localStorage.getItem("reviews_" + selectedProductId)) || [];
+            reviews.push(reviewObj);
+            localStorage.setItem("reviews_" + selectedProductId, JSON.stringify(reviews));
+
+            showToast("Success! Your review has been submitted.", "success");
             closeReviewModal();
         }
 
@@ -414,7 +483,43 @@
             }
         }
 
+        function cancelOrder(reversedIndex) {
+            if (confirm("Are you sure you want to cancel this order?")) {
+                let originalIndex = orders.length - 1 - reversedIndex;
+                if (orders[originalIndex]) {
+                    orders[originalIndex].status = "Cancelled";
+                    
+                    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+                    if (currentUser) {
+                        let coinsEarned = Math.floor(orders[originalIndex].total * 0.05);
+                        if (coinsEarned > 0) {
+                            currentUser.superCoins = Math.max(0, (currentUser.superCoins || 100) - coinsEarned);
+                            localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
+                            let users = JSON.parse(localStorage.getItem("users")) || [];
+                            let uIndex = users.findIndex(u => u.mobile === currentUser.mobile);
+                            if (uIndex !== -1) {
+                                users[uIndex].superCoins = currentUser.superCoins;
+                                localStorage.setItem("users", JSON.stringify(users));
+                            }
+
+                            let history = JSON.parse(localStorage.getItem("supercoins_history_" + currentUser.mobile)) || [];
+                            history.push({
+                                title: `Deducted on Order Cancellation`,
+                                date: new Date().toLocaleString(),
+                                amount: coinsEarned,
+                                type: "debit"
+                            });
+                            localStorage.setItem("supercoins_history_" + currentUser.mobile, JSON.stringify(history));
+                        }
+                    }
+
+                    localStorage.setItem("orders", JSON.stringify(orders));
+                    showToast("Order Cancelled Successfully", "info");
+                    renderOrders();
+                }
+            }
+        }
 
         renderOrders();
     </script>

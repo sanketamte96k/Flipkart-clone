@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics | Flipkart Clone Admin</title>
+    <!-- Authentication Check -->
+    <script src="js/auth.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="css/reports.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="dashboard.html" class="brand-logo">
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart">
+                <div class="brand-text">Admin <span>Plus</span></div>
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item"><a href="dashboard.html"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li class="menu-item"><a href="products.html"><i class="fas fa-box"></i><span>Products</span></a></li>
+            <li class="menu-item"><a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Orders</span></a></li>
+            <li class="menu-item"><a href="users.html"><i class="fas fa-users"></i><span>Users</span></a></li>
+            <li class="menu-item"><a href="inventory.html"><i class="fas fa-warehouse"></i><span>Inventory</span></a></li>
+            <li class="menu-item"><a href="coupons.html"><i class="fas fa-ticket-alt"></i><span>Coupons</span></a></li>
+            <li class="menu-item"><a href="reviews.html"><i class="fas fa-star-half-alt"></i><span>Reviews</span></a></li>
+            <li class="menu-item active"><a href="reports.html"><i class="fas fa-chart-pie"></i><span>Reports & Analytics</span></a></li>
+            <li class="menu-item"><a href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <li class="menu-item logout-btn" style="list-style: none;">
+                <a href="../index.html"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            </li>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+        <header class="admin-navbar">
+            <div class="nav-left">
+                <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle Sidebar"><i class="fas fa-bars"></i></button>
+                <h1 class="page-title">Reports & Analytics</h1>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" id="theme-btn" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+                <button class="notifications-bell" aria-label="Notifications"><i class="fas fa-bell"></i><span class="bell-badge"></span></button>
+                <div class="admin-profile" id="profile-trigger">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Admin" class="admin-avatar">
+                    <div class="admin-info"><span class="admin-name">Sanket Amte</span><span class="admin-role">Super Admin</span></div>
+                    <div class="profile-dropdown" id="profile-menu">
+                        <a href="settings.html" class="dropdown-item"><i class="fas fa-user-cog"></i> My Profile</a>
+                        <a href="settings.html" class="dropdown-item"><i class="fas fa-cog"></i> Account Settings</a>
+                        <a href="../index.html" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Filter & Export Bar -->
+            <div class="toolbar-panel">
+                <div class="toolbar-left">
+                    <div class="date-range-group">
+                        <label class="filter-label">From</label>
+                        <input type="date" id="filter-date-from" class="filter-select" value="2026-07-01">
+                    </div>
+                    <div class="date-range-group">
+                        <label class="filter-label">To</label>
+                        <input type="date" id="filter-date-to" class="filter-select" value="2026-07-20">
+                    </div>
+                    <select id="filter-category" class="filter-select">
+                        <option value="All">All Categories</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Home & Kitchen">Home & Kitchen</option>
+                        <option value="Beauty">Beauty</option>
+                    </select>
+                    <select id="filter-payment" class="filter-select">
+                        <option value="All">All Payments</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="COD">Cash on Delivery</option>
+                        <option value="Net Banking">Net Banking</option>
+                    </select>
+                    <select id="filter-status" class="filter-select">
+                        <option value="All">All Statuses</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <button type="button" id="btn-apply-filters" class="apply-btn"><i class="fas fa-filter"></i> Apply</button>
+                </div>
+                <div class="toolbar-right" style="display: flex; gap: 8px;">
+                    <button type="button" class="export-btn" id="btn-export-csv"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button type="button" class="export-btn" id="btn-export-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button type="button" class="export-btn" id="btn-print"><i class="fas fa-print"></i> Print</button>
+                </div>
+            </div>
+
+            <!-- Revenue Period Quick Stats -->
+            <section class="revenue-period-row">
+                <div class="revenue-period-card">
+                    <span class="rp-label">Today's Revenue</span>
+                    <span class="rp-value" id="rev-daily">₹0</span>
+                    <span class="rp-trend up"><i class="fas fa-arrow-up"></i> 12.5%</span>
+                </div>
+                <div class="revenue-period-card">
+                    <span class="rp-label">This Week</span>
+                    <span class="rp-value" id="rev-weekly">₹0</span>
+                    <span class="rp-trend up"><i class="fas fa-arrow-up"></i> 8.3%</span>
+                </div>
+                <div class="revenue-period-card">
+                    <span class="rp-label">This Month</span>
+                    <span class="rp-value" id="rev-monthly">₹0</span>
+                    <span class="rp-trend up"><i class="fas fa-arrow-up"></i> 15.7%</span>
+                </div>
+                <div class="revenue-period-card">
+                    <span class="rp-label">This Year</span>
+                    <span class="rp-value" id="rev-yearly">₹0</span>
+                    <span class="rp-trend up"><i class="fas fa-arrow-up"></i> 22.1%</span>
+                </div>
+            </section>
+
+            <!-- Summary Cards Grid -->
+            <section class="metrics-grid">
+                <div class="metrics-card m-green">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Revenue</span>
+                        <span class="metrics-val" id="total-revenue">₹0</span>
+                        <span class="metrics-sub" id="revenue-sub"></span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-rupee-sign"></i></div>
+                </div>
+                <div class="metrics-card m-blue">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Orders</span>
+                        <span class="metrics-val" id="total-orders">0</span>
+                        <span class="metrics-sub" id="orders-sub"></span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-shopping-bag"></i></div>
+                </div>
+                <div class="metrics-card m-indigo">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Customers</span>
+                        <span class="metrics-val" id="total-customers">0</span>
+                        <span class="metrics-sub" id="customers-sub"></span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="metrics-card m-teal">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Total Products</span>
+                        <span class="metrics-val" id="total-products">0</span>
+                        <span class="metrics-sub" id="products-sub"></span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-box"></i></div>
+                </div>
+                <div class="metrics-card m-gold">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Avg Order Value</span>
+                        <span class="metrics-val" id="avg-order-value">₹0</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-receipt"></i></div>
+                </div>
+                <div class="metrics-card m-orange">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Conversion Rate</span>
+                        <span class="metrics-val" id="conversion-rate">0%</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-percentage"></i></div>
+                </div>
+                <div class="metrics-card m-red">
+                    <div class="metrics-left">
+                        <span class="metrics-title">Refund Rate</span>
+                        <span class="metrics-val" id="refund-rate">0%</span>
+                    </div>
+                    <div class="metrics-icon"><i class="fas fa-undo"></i></div>
+                </div>
+            </section>
+
+            <!-- Charts Row 1: Sales & Revenue Trend -->
+            <section class="charts-row-2">
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-chart-line"></i> Sales Trend</h3>
+                    <div class="chart-container"><canvas id="chart-sales-trend"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-chart-area"></i> Revenue Trend</h3>
+                    <div class="chart-container"><canvas id="chart-revenue-trend"></canvas></div>
+                </div>
+            </section>
+
+            <!-- Charts Row 2: Category & Payment -->
+            <section class="charts-row-2">
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Orders by Category</h3>
+                    <div class="chart-container chart-container-sm"><canvas id="chart-category"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-credit-card"></i> Payment Methods</h3>
+                    <div class="chart-container chart-container-sm"><canvas id="chart-payment"></canvas></div>
+                </div>
+            </section>
+
+            <!-- Charts Row 3: Top Products & Customer Growth -->
+            <section class="charts-row-2">
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-trophy"></i> Top Selling Products</h3>
+                    <div class="chart-container"><canvas id="chart-top-products"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-user-plus"></i> Customer Growth</h3>
+                    <div class="chart-container"><canvas id="chart-customer-growth"></canvas></div>
+                </div>
+            </section>
+
+            <!-- Chart Row 4: Monthly Comparison -->
+            <section class="charts-row-1">
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-balance-scale"></i> Monthly Revenue vs Orders Comparison</h3>
+                    <div class="chart-container"><canvas id="chart-monthly-compare"></canvas></div>
+                </div>
+            </section>
+
+            <!-- Tables Row: Best Sellers & Top Customers -->
+            <section class="tables-row">
+                <div class="table-card">
+                    <h3 class="chart-title"><i class="fas fa-fire"></i> Best Selling Products</h3>
+                    <div class="table-responsive-sm">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Product</th>
+                                    <th style="text-align: center;">Units Sold</th>
+                                    <th style="text-align: right;">Revenue</th>
+                                    <th style="text-align: center;">Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody id="best-sellers-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <h3 class="chart-title"><i class="fas fa-crown"></i> Top Customers</h3>
+                    <div class="table-responsive-sm">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Customer</th>
+                                    <th style="text-align: center;">Orders</th>
+                                    <th style="text-align: right;">Total Spending</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top-customers-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="admin-footer">
+            <div class="footer-content">&copy; 2026 Flipkart Clone Admin Dashboard. Engineered for Excellence.</div>
+        </footer>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+    <script src="js/reports.js"></script>
+</body>
+</html>

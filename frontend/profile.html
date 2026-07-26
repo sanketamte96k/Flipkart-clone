@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Flipkart Clone</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- =========================
+         Navbar
+    ========================== -->
+    <nav id="main-nav">
+        <!-- Logo -->
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="Flipkart" class="brand-img">
+            <div class="logo-sub">
+                Explore <span>Plus</span>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/plus_aef861.png" alt="plus-icon" class="plus-icon">
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="search" placeholder="Search for products, brands and more" autocomplete="off">
+            <i class="fas fa-search search-icon"></i>
+            <div id="suggestions"></div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="nav-right">
+            <div id="user-area">
+                <button onclick="openLogin()" class="login-btn">Login</button>
+            </div>
+
+            <button onclick="window.location.href='orders.html'" class="nav-btn">
+                <i class="fas fa-box"></i> Orders
+            </button>
+            <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
+                <i class="fas fa-shopping-cart cart-icon"></i> Cart
+            </button>
+        </div>
+    </nav>
+
+    <!-- =========================
+         PROFILE CONTAINER
+    ========================== -->
+    <div class="profile-container">
+        <!-- LEFT: Sidebar -->
+        <aside class="profile-sidebar">
+            <div class="profile-user-card">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" alt="Avatar">
+                <div class="greeting-info">
+                    <span>Hello,</span>
+                    <h4 id="sidebar-user-name">Guest</h4>
+                </div>
+            </div>
+
+            <div class="profile-menu-card">
+                <div class="profile-menu-item active" onclick="switchTab('profile-info', this)">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile Information</span>
+                </div>
+                <div class="profile-menu-item" onclick="switchTab('addresses', this)">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Manage Addresses</span>
+                </div>
+                <div class="profile-menu-item" onclick="switchTab('supercoins', this)">
+                    <i class="fas fa-coins"></i>
+                    <span>My SuperCoins</span>
+                </div>
+                <div id="admin-panel-link" class="profile-menu-item" onclick="window.location.href='admin/dashboard.html'" style="display: none;">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Admin Dashboard</span>
+                </div>
+                <div class="profile-menu-item logout" onclick="logoutProfile()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- RIGHT: Content Area -->
+        <main class="profile-panel">
+            <!-- TAB: Profile Information -->
+            <div id="profile-info-tab" class="profile-tab-content active">
+                <div class="profile-panel-header">
+                    <h2>Personal Information</h2>
+                    <p>Manage your account name and security details</p>
+                </div>
+                
+                <div class="profile-form-grid">
+                    <div class="profile-form-group">
+                        <label for="profile-name">Full Name</label>
+                        <input type="text" id="profile-name" placeholder="John Doe">
+                    </div>
+                    <div class="profile-form-group">
+                        <label for="profile-mobile">Registered Mobile Number</label>
+                        <input type="text" id="profile-mobile" readonly title="Mobile number cannot be changed">
+                    </div>
+                </div>
+
+                <div class="profile-panel-header" style="margin-top: 30px; border-top: 1px solid var(--border-soft); padding-top: 25px;">
+                    <h2>Change Password</h2>
+                    <p>Update your credentials for better account safety</p>
+                </div>
+
+                <div class="profile-form-grid">
+                    <div class="profile-form-group">
+                        <label for="profile-new-password">New Password</label>
+                        <input type="password" id="profile-new-password" placeholder="Set a new password">
+                    </div>
+                    <div class="profile-form-group">
+                        <label for="profile-confirm-password">Confirm Password</label>
+                        <input type="password" id="profile-confirm-password" placeholder="Re-enter new password">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="saveProfileInfo()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+
+            <!-- TAB: Manage Addresses -->
+            <div id="addresses-tab" class="profile-tab-content">
+                <div class="profile-panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h2>Manage Addresses</h2>
+                        <p>Save shipping addresses for seamless and faster checkouts</p>
+                    </div>
+                    <button class="btn-primary" onclick="showNewAddressForm()">
+                        <i class="fas fa-plus"></i> ADD NEW ADDRESS
+                    </button>
+                </div>
+
+                <!-- Address Form (Add / Edit) -->
+                <div id="address-form-box" class="address-form-box">
+                    <h3 id="address-form-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: var(--text-main);">Add New Delivery Address</h3>
+                    <input type="hidden" id="edit-address-index">
+                    
+                    <div class="profile-form-grid" style="margin-bottom: 15px;">
+                        <div class="profile-form-group">
+                            <label for="addr-name">Full Name</label>
+                            <input type="text" id="addr-name" placeholder="Name">
+                        </div>
+                        <div class="profile-form-group">
+                            <label for="addr-mobile">10-Digit Mobile Phone</label>
+                            <input type="text" id="addr-mobile" placeholder="10-digit number" maxlength="10">
+                        </div>
+                    </div>
+
+                    <div class="profile-form-grid" style="margin-bottom: 15px;">
+                        <div class="profile-form-group">
+                            <label for="addr-pincode">Pincode (6 digits)</label>
+                            <input type="text" id="addr-pincode" placeholder="6-digit PIN code" maxlength="6">
+                        </div>
+                        <div class="profile-form-group">
+                            <label for="addr-locality">Locality</label>
+                            <input type="text" id="addr-locality" placeholder="e.g. Sector-4">
+                        </div>
+                    </div>
+
+                    <div class="profile-form-group full-width" style="margin-bottom: 15px;">
+                        <label for="addr-details">Address Details (Area and Street)</label>
+                        <textarea id="addr-details" placeholder="House No, Street, Landmark" style="height: 70px; resize: none;"></textarea>
+                    </div>
+
+                    <div class="profile-form-group" style="max-width: 300px; margin-bottom: 25px;">
+                        <label for="addr-type">Address Type</label>
+                        <select id="addr-type">
+                            <option value="Home">Home (All day delivery)</option>
+                            <option value="Work">Work (9 AM - 5 PM delivery)</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-primary" onclick="saveAddress()">Save Address</button>
+                        <button class="btn-outline" onclick="hideAddressForm()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Addresses List -->
+                <div id="address-list-container" class="address-card-list">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
+
+            <!-- TAB: SuperCoins Zone -->
+            <div id="supercoins-tab" class="profile-tab-content">
+                <div class="profile-panel-header">
+                    <h2>My SuperCoins</h2>
+                    <p>Earn SuperCoins on every purchase and redeem them for attractive rewards</p>
+                </div>
+
+                <div class="supercoins-hero-card">
+                    <div class="sc-balance-info">
+                        <h3>Available SuperCoins</h3>
+                        <h2><span id="supercoins-balance">0</span> 🪙</h2>
+                        <span style="font-size: 0.82rem; opacity: 0.85; margin-top: 4px; display: inline-block;">1 SuperCoin = ₹1. Spend coins during payments.</span>
+                    </div>
+                    <div class="sc-icon-sphere">🪙</div>
+                </div>
+
+                <div class="profile-panel-header" style="border-bottom: none; margin-bottom: 15px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-main);">SuperCoin Transaction Ledger</h3>
+                </div>
+
+                <div id="sc-history-container" class="sc-history-list">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>ABOUT</h3>
+                <ul>
+                    <li>Contact Us</li>
+                    <li>About Us</li>
+                    <li>Careers</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>HELP</h3>
+                <ul>
+                    <li>Payments</li>
+                    <li>Returns</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Flipkart-Clone. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Modals (Copied from index.html for authentication sync support) -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Login</h1>
+                <p>Unlock personalized recommendations, track orders and manage your wishlist.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeLogin()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="login-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="login-password" placeholder="Enter Password">
+                <button onclick="loginUser()">Login</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    New to Flipkart? <span onclick="openSignup()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Create an account</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h1>Sign Up</h1>
+                <p>Join the world's most loved shopping community and enjoy exclusive benefits.</p>
+            </div>
+            <div class="modal-right">
+                <span class="close-btn" onclick="closeSignup()" style="position: absolute; right: 20px; top: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+                <input type="text" id="signup-name" placeholder="Full Name">
+                <input type="text" id="signup-mobile" placeholder="Enter Mobile Number" maxlength="10">
+                <input type="password" id="signup-password" placeholder="Set Password">
+                <button onclick="signupUser()">Create Account</button>
+                <p style="margin-top: 20px; text-align: center; color: var(--text-muted);">
+                    Already have an account? <span onclick="openLogin()" style="color: var(--brand-primary); cursor: pointer; font-weight: 600;">Login here</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/login.js"></script>
+    <script src="js/register.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Check if user is logged in. If not, redirect to index.html immediately
+        let userObj = null;
+        
+        function checkUserAuth() {
+            userObj = JSON.parse(localStorage.getItem("currentUser"));
+            if (!userObj) {
+                if (typeof showWarning === 'function') showWarning("Please log in to access your profile account settings!");
+                window.location.href = "index.html";
+                return false;
+            }
+            
+            // Sync Admin dashboard link visibility
+            const adminLink = document.getElementById("admin-panel-link");
+            if (adminLink) {
+                // If user is Sanket Amte (the recognized superadmin), show dashboard link
+                if (userObj.name.toLowerCase().includes("sanket") || userObj.mobile === "9696969696") {
+                    adminLink.style.display = "flex";
+                }
+            }
+            
+            return true;
+        }
+
+        if (checkUserAuth()) {
+            document.getElementById("sidebar-user-name").innerText = userObj.name;
+            document.getElementById("profile-name").value = userObj.name;
+            document.getElementById("profile-mobile").value = userObj.mobile;
+        }
+
+        // ==========================================
+        // TAB NAVIGATOR SWITCH SYSTEM
+        // ==========================================
+        function switchTab(tabId, el) {
+            // Remove active classes
+            document.querySelectorAll(".profile-menu-item").forEach(item => item.classList.remove("active"));
+            document.querySelectorAll(".profile-tab-content").forEach(content => content.classList.remove("active"));
+            
+            // Add active classes
+            el.classList.add("active");
+            document.getElementById(`${tabId}-tab`).classList.add("active");
+            
+            // Specific loaders
+            if (tabId === "addresses") {
+                renderAddresses();
+            } else if (tabId === "supercoins") {
+                renderSuperCoins();
+            }
+        }
+
+        // ==========================================
+        // USER PROFILE SETTINGS LOGIC
+        // ==========================================
+        function saveProfileInfo() {
+            let name = document.getElementById("profile-name").value.trim();
+            let newPass = document.getElementById("profile-new-password").value;
+            let confPass = document.getElementById("profile-confirm-password").value;
+
+            if (!name) {
+                showToast("Name field cannot be left blank.", "error");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let userIndex = users.findIndex(u => u.mobile === userObj.mobile);
+
+            if (userIndex !== -1) {
+                users[userIndex].name = name;
+                userObj.name = name;
+                document.getElementById("sidebar-user-name").innerText = name;
+
+                if (newPass) {
+                    if (newPass !== confPass) {
+                        showToast("Passwords do not match!", "error");
+                        return;
+                    }
+                    if (newPass.length < 4) {
+                        showToast("Password must be at least 4 characters.", "error");
+                        return;
+                    }
+                    users[userIndex].password = newPass;
+                    userObj.password = newPass;
+                    document.getElementById("profile-new-password").value = "";
+                    document.getElementById("profile-confirm-password").value = "";
+                }
+
+                localStorage.setItem("users", JSON.stringify(users));
+                localStorage.setItem("currentUser", JSON.stringify(userObj));
+                showToast("Profile details updated successfully!", "success");
+                
+                // Update header greeting if present
+                updateUserArea(name);
+            }
+        }
+
+        function logoutProfile() {
+            logoutUser();
+            window.location.href = "index.html";
+        }
+
+        // ==========================================
+        // ADDRESS BOOK MANAGEMENT (CRUD) LOGIC
+        // ==========================================
+        function getAddresses() {
+            return JSON.parse(localStorage.getItem("addresses_" + userObj.mobile)) || [];
+        }
+
+        function saveAddressesToDb(arr) {
+            localStorage.setItem("addresses_" + userObj.mobile, JSON.stringify(arr));
+        }
+
+        function renderAddresses() {
+            const listContainer = document.getElementById("address-list-container");
+            const addressList = getAddresses();
+            listContainer.innerHTML = "";
+
+            if (addressList.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted); border: 1px dashed var(--border-soft); border-radius: 6px;">
+                        <i class="fas fa-map-marked-alt" style="font-size: 2.5rem; margin-bottom: 12px; color: var(--brand-primary); opacity: 0.7;"></i>
+                        <h4 style="color: var(--text-main); font-weight: 600; margin-bottom: 4px;">No Saved Addresses</h4>
+                        <p style="font-size: 0.8rem;">Add delivery addresses for faster order checkout placement.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            addressList.forEach((addr, idx) => {
+                listContainer.innerHTML += `
+                    <div class="address-item-card">
+                        <div class="address-card-header">
+                            <div>
+                                <span class="address-tag ${addr.type.toLowerCase()}">${addr.type}</span>
+                                <div>
+                                    <span class="address-card-name">${addr.name}</span>
+                                    <span class="address-card-mobile">${addr.mobile}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="address-card-text">
+                            ${addr.details}, ${addr.locality} - <strong>${addr.pincode}</strong>
+                        </p>
+                        <div class="address-actions">
+                            <button class="address-action-btn" onclick="editAddress(${idx})">Edit</button>
+                            <button class="address-action-btn delete-btn" onclick="deleteAddress(${idx})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function showNewAddressForm() {
+            document.getElementById("address-form-title").innerText = "Add New Delivery Address";
+            document.getElementById("edit-address-index").value = "";
+            document.getElementById("addr-name").value = userObj.name;
+            document.getElementById("addr-mobile").value = userObj.mobile;
+            document.getElementById("addr-pincode").value = "";
+            document.getElementById("addr-locality").value = "";
+            document.getElementById("addr-details").value = "";
+            document.getElementById("addr-type").value = "Home";
+            
+            document.getElementById("address-form-box").style.display = "block";
+            document.getElementById("address-form-box").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideAddressForm() {
+            document.getElementById("address-form-box").style.display = "none";
+        }
+
+        function saveAddress() {
+            let name = document.getElementById("addr-name").value.trim();
+            let mobile = document.getElementById("addr-mobile").value.trim();
+            let pincode = document.getElementById("addr-pincode").value.trim();
+            let locality = document.getElementById("addr-locality").value.trim();
+            let details = document.getElementById("addr-details").value.trim();
+            let type = document.getElementById("addr-type").value;
+            let editIndex = document.getElementById("edit-address-index").value;
+
+            if (!name || !mobile || !pincode || !locality || !details) {
+                showToast("Please fill in all address parameters.", "error");
+                return;
+            }
+
+            if (mobile.length !== 10 || isNaN(mobile)) {
+                showToast("Please enter a valid 10-digit mobile number.", "error");
+                return;
+            }
+
+            if (pincode.length !== 6 || isNaN(pincode)) {
+                showToast("Pincode must be exactly a 6-digit code number.", "error");
+                return;
+            }
+
+            const addrObject = { name, mobile, pincode, locality, details, type };
+            let addresses = getAddresses();
+
+            if (editIndex !== "") {
+                addresses[parseInt(editIndex)] = addrObject;
+                showToast("Address modified successfully!");
+            } else {
+                addresses.push(addrObject);
+                showToast("New address added successfully!");
+            }
+
+            saveAddressesToDb(addresses);
+            hideAddressForm();
+            renderAddresses();
+        }
+
+        function editAddress(idx) {
+            const addresses = getAddresses();
+            const addr = addresses[idx];
+            if (!addr) return;
+
+            document.getElementById("address-form-title").innerText = "Edit Delivery Address";
+            document.getElementById("edit-address-index").value = idx;
+            document.getElementById("addr-name").value = addr.name;
+            document.getElementById("addr-mobile").value = addr.mobile;
+            document.getElementById("addr-pincode").value = addr.pincode;
+            document.getElementById("addr-locality").value = addr.locality;
+            document.getElementById("addr-details").value = addr.details;
+            document.getElementById("addr-type").value = addr.type;
+
+            document.getElementById("address-form-box").style.display = "block";
+            document.getElementById("address-form-box").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteAddress(idx) {
+            if (confirm("Are you sure you want to remove this delivery address?")) {
+                let addresses = getAddresses();
+                addresses.splice(idx, 1);
+                saveAddressesToDb(addresses);
+                showToast("Address deleted successfully.", "info");
+                renderAddresses();
+            }
+        }
+
+        // ==========================================
+        // SUPERCOIN reward logic
+        // ==========================================
+        function getSuperCoinsBalance() {
+            // Default users have 100 coins to start
+            if (userObj.superCoins === undefined) {
+                userObj.superCoins = 100;
+                localStorage.setItem("currentUser", JSON.stringify(userObj));
+                
+                // Update in database list
+                let users = JSON.parse(localStorage.getItem("users")) || [];
+                let idx = users.findIndex(u => u.mobile === userObj.mobile);
+                if (idx !== -1) {
+                    users[idx].superCoins = 100;
+                    localStorage.setItem("users", JSON.stringify(users));
+                }
+            }
+            return userObj.superCoins;
+        }
+
+        function getSuperCoinsHistory() {
+            let hist = JSON.parse(localStorage.getItem("supercoins_history_" + userObj.mobile));
+            if (!hist) {
+                // Initialize default transaction logs
+                hist = [
+                    { title: "Welcome Sign Up Bonus", date: "2026-07-01 10:00", amount: 100, type: "credit" }
+                ];
+                localStorage.setItem("supercoins_history_" + userObj.mobile, JSON.stringify(hist));
+            }
+            return hist;
+        }
+
+        function renderSuperCoins() {
+            const bal = getSuperCoinsBalance();
+            document.getElementById("supercoins-balance").innerText = bal;
+
+            const histContainer = document.getElementById("sc-history-container");
+            const history = getSuperCoinsHistory();
+            histContainer.innerHTML = "";
+
+            history.slice().reverse().forEach(item => {
+                const isCredit = item.type === "credit";
+                const sign = isCredit ? "+" : "-";
+                const classColor = isCredit ? "credit" : "debit";
+
+                histContainer.innerHTML += `
+                    <div class="sc-history-item">
+                        <div class="sc-hist-desc">
+                            <span class="sc-hist-title">${item.title}</span>
+                            <span class="sc-hist-date">${item.date}</span>
+                        </div>
+                        <span class="sc-hist-amount ${classColor}">${sign}${item.amount} 🪙</span>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

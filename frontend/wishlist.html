@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Wishlist | Flipkart Clone</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body class="orders-body-bg">
@@ -38,6 +40,9 @@
 
             <button onclick="window.location.href='orders.html'" class="nav-btn">
                 <i class="fas fa-box"></i> Orders
+            </button>
+            <button id="wishlist-count" class="nav-btn" onclick="window.location.href='wishlist.html'">
+                <i class="fas fa-heart"></i> Wishlist
             </button>
             <button id="cart-count" class="nav-btn nav-cart" onclick="window.location.href='cart.html'">
                 <i class="fas fa-shopping-cart cart-icon"></i> Cart
@@ -142,20 +147,44 @@
         </div>
     </footer>
 
+    <script src="js/login.js"></script>
+    <script src="js/register.js"></script>
     <script src="js/script.js"></script>
     <script>
-        function renderWishlist() {
-            let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        let currentUser = null;
+        let wishlistItems = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadWishlist();
+        });
+
+        function loadWishlist() {
             const container = document.getElementById("wishlist-container");
             const countBadge = document.getElementById("wishlist-count-badge");
-            
-            if (countBadge) {
-                countBadge.innerText = wishlist.length;
+            if (!container) return;
+
+            let items = [];
+            if (typeof getWishlist === 'function') {
+                items = getWishlist();
+            } else {
+                try {
+                    items = JSON.parse(localStorage.getItem("flipkart_wishlist")) || [];
+                } catch (e) {
+                    items = [];
+                }
             }
-            
+
+            if (countBadge) countBadge.innerText = items.length;
+            renderWishlist(items);
+        }
+
+        function renderWishlist(items) {
+            const container = document.getElementById("wishlist-container");
+            if (!container) return;
+
             container.innerHTML = "";
 
-            if (wishlist.length === 0) {
+            if (!items || items.length === 0) {
                 container.innerHTML = `
                     <div class="pro-empty-state">
                         <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/myorders-empty_83141f.png" alt="Empty Wishlist">
@@ -167,26 +196,27 @@
                 return;
             }
 
-            wishlist.forEach((product) => {
+            items.forEach((item) => {
+                const product = item.id ? item : (item.product || { id: 1, name: 'Product', price: 999, image: '', category: 'General' });
                 let originalPrice = Math.floor(product.price * 1.4);
                 let discount = 40;
 
                 container.innerHTML += `
                     <div class="pro-order-card" style="display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: box-shadow 0.2s;">
                         <div style="display: flex; gap: 20px; flex: 2; cursor: pointer;" onclick="window.location.href='product.html?id=${product.id}'">
-                            <img src="${product.image}" style="width: 80px; height: 80px; object-fit: contain;">
+                            <img src="${product.image}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?w=500'" style="width: 80px; height: 80px; object-fit: contain;">
                             <div>
                                 <h3 style="font-size: 1.1rem; color: #212121; margin-bottom: 5px; font-weight: 500;">${product.name}</h3>
                                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                    <span class="rating-badge" style="background: #388e3c; color: white; padding: 2px 6px; font-size: 0.75rem; border-radius: 3px; font-weight: 600;">${product.rating || '4.5 ★'}</span>
-                                    <span style="font-size: 0.85rem; color: #878787;">Category: ${product.category}</span>
+                                    <span class="rating-badge" style="background: #388e3c; color: white; padding: 2px 6px; font-size: 0.75rem; border-radius: 3px; font-weight: 600;">4.5 ★</span>
+                                    <span style="font-size: 0.85rem; color: #878787;">Category: ${product.category || 'General'}</span>
                                 </div>
                                 <p style="font-size: 0.85rem; color: #388e3c; font-weight: 600;">In Stock</p>
                             </div>
                         </div>
                         
                         <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; padding-left: 20px;">
-                            <span style="font-weight: 600; font-size: 1.25rem; color: #212121;">₹${product.price.toLocaleString()}</span>
+                            <span style="font-weight: 600; font-size: 1.25rem; color: #212121;">₹${(product.price || 0).toLocaleString()}</span>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span style="color: #878787; text-decoration: line-through; font-size: 0.85rem;">₹${originalPrice.toLocaleString()}</span>
                                 <span style="color: #388e3c; font-weight: 600; font-size: 0.85rem;">${discount}% off</span>
@@ -194,8 +224,8 @@
                         </div>
                         
                         <div style="flex: 1.5; display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
-                            <button class="add-to-cart-btn" onclick="wishlistAddToCart(event, ${product.id})" style="background: var(--brand-primary, #2874f0); color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(40, 116, 240, 0.2); transition: all 0.2s;">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            <button class="add-to-cart-btn" onclick="moveToCart(event, ${product.id})" style="background: var(--brand-primary, #2874f0); color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(40, 116, 240, 0.2); transition: all 0.2s;">
+                                <i class="fas fa-shopping-cart"></i> Move to Cart
                             </button>
                             <button class="remove-btn" onclick="removeFromWishlist(event, ${product.id})" style="background: none; border: 1px solid #e0e0e0; color: #878787; width: 38px; height: 38px; border-radius: 4px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Remove from wishlist">
                                 <i class="fas fa-trash-alt"></i>
@@ -206,25 +236,27 @@
             });
         }
 
-        function wishlistAddToCart(event, productId) {
+        async function moveToCart(event, productId) {
             if (event) event.stopPropagation();
-            let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-            let product = wishlist.find(p => p.id === productId);
-            if (product) {
-                addToCart(product);
+            if (typeof addToCart === 'function') {
+                await addToCart(productId);
             }
+            removeFromWishlist(event, productId);
         }
 
         function removeFromWishlist(event, productId) {
             if (event) event.stopPropagation();
-            let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-            wishlist = wishlist.filter(item => item.id !== productId);
-            localStorage.setItem("wishlist", JSON.stringify(wishlist));
-            showToast("Removed from wishlist", "info");
-            renderWishlist();
+            let list = typeof getWishlist === 'function' ? getWishlist() : [];
+            list = list.filter(item => Number(item.id) !== Number(productId));
+            if (typeof saveWishlist === 'function') {
+                saveWishlist(list);
+            } else {
+                localStorage.setItem("flipkart_wishlist", JSON.stringify(list));
+            }
+            if (typeof showInfo === 'function') showInfo("Item removed from wishlist");
+            loadWishlist();
+            if (typeof updateWishlistCount === 'function') updateWishlistCount();
         }
-
-        document.addEventListener('DOMContentLoaded', renderWishlist);
     </script>
 </body>
 
