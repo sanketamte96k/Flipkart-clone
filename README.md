@@ -6,23 +6,6 @@ A modern full-stack Flipkart-inspired e-commerce web application built using **F
 
 ---
 
-# 📸 Screenshots
-
-> Add screenshots here after deployment.
-
-- Home Page
-- Product Details
-- Shopping Cart
-- Wishlist
-- User Orders
-- Login & Signup
-- Admin Dashboard
-- Product Management
-- Analytics
-- Settings
-
----
-
 # ✨ Features
 
 ## 👤 Customer
