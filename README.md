@@ -1,119 +1,150 @@
-# 🛒 Flipkart Clone
+# 🛒 Flipkart Clone Pro
 
-A modern **Flipkart-inspired E-Commerce Web Application** built using **Flask, MySQL, HTML, CSS, and JavaScript**. The project provides a complete shopping experience with a customer interface and an admin dashboard for product management.
+A modern full-stack Flipkart-inspired e-commerce web application built using **Flask, MySQL, HTML, CSS, and JavaScript**. The project includes customer shopping features, secure authentication, and a complete admin dashboard for managing the store.
 
-> 🚧 **Project Status:** Active Development
-
----
-
-## 📌 Overview
-
-This project replicates the core functionality of Flipkart and is designed to demonstrate full-stack web development concepts including frontend development, backend APIs, database integration, authentication, and admin management.
+> ⚠️ This project is created for educational and portfolio purposes only and is not affiliated with Flipkart.
 
 ---
 
-## ✨ Features
+# 📸 Screenshots
 
-### 👤 Customer
-- Browse products
-- Product search
-- Add to cart
-- Responsive user interface
-- Product details
-- Persistent cart
+> Add screenshots here after deployment.
 
-### 🛠️ Admin
+- Home Page
+- Product Details
+- Shopping Cart
+- Wishlist
+- User Orders
+- Login & Signup
 - Admin Dashboard
-- Add Products
-- Update Products
-- Delete Products
+- Product Management
+- Analytics
+- Settings
+
+---
+
+# ✨ Features
+
+## 👤 Customer
+
+- User Registration & Login
+- Secure Password Hashing
+- Browse Products
+- Product Search
+- Product Details
+- Shopping Cart
+- Wishlist
+- Order Placement
+- Order History
+- Product Reviews
+- Responsive Design
+
+---
+
+## 👨‍💼 Admin
+
+- Secure Admin Authentication
+- Admin Dashboard
+- Product Management
+- Order Management
+- Customer Management
 - Inventory Management
-- Dashboard Statistics
+- Coupon Management
+- Review Management
+- Analytics Dashboard
+- Store Settings
 
-### ⚙️ Backend
-- RESTful APIs
-- MySQL Database Integration
-- SQLAlchemy ORM
-- Persistent Data Storage
-- JSON API Responses
+---
 
-# 🖥️ Tech Stack
+# 🛠️ Tech Stack
 
-## Frontend
+### Frontend
+
 - HTML5
 - CSS3
 - JavaScript (ES6)
 
-## Backend
+### Backend
+
 - Python
 - Flask
 - Flask-SQLAlchemy
 - Flask-CORS
-- Flask-Bcrypt
-- Flask-Login
 
-## Database
+### Database
+
 - MySQL
 
-## Development Tools
-- VS Code / Antigravity IDE
-- Git
-- GitHub
+### Authentication
+
+- Role-Based Authentication
+- Password Hashing
+- Session Management
 
 ---
 
 # 📂 Project Structure
 
 ```
-Flipkart-clone
+Flipkart-clone/
 │
-├── backend
+├── backend/
 │   ├── app.py
-│   ├── app_backup.py
-│   └── __pycache__
+│   ├── models.py
+│   ├── routes/
+│   ├── static/
+│   └── templates/
 │
-├── frontend
-│   ├── admin
-│   │   ├── css
-│   │   ├── js
-│   │   ├── dashboard.html
-│   │   ├── products.html
-│   │   ├── orders.html
-│   │   ├── inventory.html
-│   │   ├── reports.html
-│   │   ├── reviews.html
-│   │   ├── users.html
-│   │   └── settings.html
-│   │
-│   ├── css
-│   ├── images
-│   ├── js
-│   ├── index.html
-│   └── cart.html
+├── frontend/
+│   ├── admin/
+│   ├── css/
+│   ├── js/
+│   ├── images/
+│   └── assets/
 │
-├── README.md
-└── requirements.txt
+├── uploads/
+├── requirements.txt
+├── run.bat
+└── README.md
 ```
 
 ---
 
-# 🚀 Getting Started
+# 🚀 Installation
 
-## Clone the Repository
+## 1. Clone Repository
 
 ```bash
 git clone https://github.com/sanketamte96k/Flipkart-clone.git
 ```
 
-Move into the project directory:
-
-```bash
+```
 cd Flipkart-clone
 ```
 
 ---
 
-## Install Dependencies
+## 2. Create Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source venv/bin/activate
+```
+
+---
+
+## 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -121,115 +152,113 @@ pip install -r requirements.txt
 
 ---
 
-## Configure MySQL
+## 4. Configure MySQL
 
-Create a database named:
+Create a MySQL database.
 
-```
-flipkart_clone
-```
-
-Update the database credentials in `backend/app.py` if required.
+Update the database configuration in your Flask application.
 
 ---
 
-## Run the Application
+## 5. Run Application
 
 ```bash
-cd backend
-python app.py
+python backend/app.py
+```
+
+Open:
+
+```
+http://127.0.0.1:5000
 ```
 
 ---
 
-# 🌐 Application URLs
-
-### Customer Portal
+# 🔐 Default Admin Account
 
 ```
-http://127.0.0.1:5000/
+Email:
+admin@flipkartclone.com
+
+Password:
+Admin@123
 ```
 
-### Admin Dashboard
-
-```
-http://127.0.0.1:5000/admin/dashboard.html
-```
+> Change these credentials before deploying publicly.
 
 ---
 
-# 📸 Screenshots
+# 📊 Current Modules
 
-> Screenshots will be added after the UI is finalized.
-
----
-
-# 📈 Development Roadmap
-
-### ✅ Completed
-
-- Responsive Homepage
-- Product Listing
-- Product Search
-- Shopping Cart
-- Admin Dashboard
-- Product CRUD Operations
-- MySQL Integration
-- REST API Development
-- Persistent Database
-
-### 🚧 In Progress
-
-- User Authentication
-- Customer Accounts
-- Order Management
-- Payment Gateway
+- Authentication
+- Products
+- Cart
 - Wishlist
+- Orders
+- Reviews
+- Admin Dashboard
+- Inventory
 - Coupons
-- Product Reviews
+- Analytics
+- Settings
 
-### 🔮 Planned
+---
 
-- JWT Authentication
-- Email Verification
-- Password Reset
-- Razorpay/Stripe Integration
+# 📈 Future Improvements
+
+- Razorpay Payment Gateway
+- Email Notifications
+- Invoice Generation
 - Product Recommendations
-- Sales Analytics
-- Admin Reports
-- Dark Mode
-- Docker Deployment
-- CI/CD Pipeline
+- AI Chat Support
+- Multi-Vendor Marketplace
+- PWA Support
 
 ---
 
-# 🤝 Contributing
+# 🧪 Tested On
 
-Contributions are welcome.
-
-1. Fork the repository
-2. Create a new branch
-3. Commit your changes
-4. Push to your branch
-5. Open a Pull Request
+- Windows 11
+- Python 3.x
+- MySQL
+- Google Chrome
 
 ---
 
-# 📄 License
+# 📚 Learning Objectives
 
-This project is developed for educational and portfolio purposes.
+This project helped in understanding:
+
+- Full Stack Web Development
+- REST API Development
+- Authentication & Authorization
+- SQL Database Design
+- CRUD Operations
+- Admin Panel Development
+- Session Management
+- Responsive UI Design
 
 ---
 
 # 👨‍💻 Author
 
-## Sanket Amte
+**Sanket Amte**
 
-**B.Tech Information Technology Student**
+B.Tech Information Technology Student
 
 GitHub:
 https://github.com/sanketamte96k
 
 ---
 
-⭐ If you like this project, consider giving it a **Star** on GitHub.
+# ⭐ Support
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
+
+---
+
+# 📜 License
+
+This project is licensed under the MIT License.
+
+Feel free to use it for learning and educational purposes.
